@@ -1,10 +1,11 @@
 (library
   (name pml)
   (public_name pml)
-  (modules
-    Discid)
+  ;;; Adding the following makes dune crash!
+  ; (modules
+  ;   Discid)
   (private_modules )
-; (wrapped false)
+  ; (wrapped false)
   (inline_tests)
   (preprocess (pps ppx_inline_test))
   ; (flags (:standard -I +unix))
@@ -16,11 +17,11 @@
     ; (build_flags_resolver pkg_config)
     (headers (include "discid/discid.h"))
     (type_description
-    (instance Type)
-    (functor Type_description))
+      (instance Types)
+      (functor Type_description))
     (function_description
-    (concurrency sequential)
-    (instance Functions)
-    (functor Function_description))
+      (concurrency sequential)
+      (instance Functions)
+      (functor Function_description))
     (generated_types Types_generated)
-    (generated_entry_point C)))
+    (generated_entry_point Discid_C)))
