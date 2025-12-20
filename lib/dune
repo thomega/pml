@@ -1,2 +1,13 @@
 (library
- (name pml))
+ (name pml)
+ (public_name pml)
+  (modules
+    Discid)
+  (private_modules )
+; (wrapped false)
+  (inline_tests)
+  (preprocess (pps ppx_inline_test))
+  ; (flags (:standard -I +unix))
+  ; (ocamlc_flags (:standard))
+  (ocamlopt_flags (:standard -inline 32))
+  (libraries ))
