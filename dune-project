@@ -1,11 +1,10 @@
 (lang dune 3.20)
-
 (name pml)
 
 (generate_opam_files true)
 
-(source
- (github username/reponame))
+; (source
+;  (github username/reponame))
 
 (authors "Thorsten Ohl <ohl@physik.uni-wuerzburg.de>")
 
@@ -13,7 +12,7 @@
 
 (license "GPL 3.0")
 
-(documentation https://url/to/documentation)
+; (documentation https://url/to/documentation)
 
 (package
  (name pml)
@@ -22,3 +21,5 @@
  (depends ocaml)
  (tags
   ("music" "media")))
+
+(using ctypes 0.3)
