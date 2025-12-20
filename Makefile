@@ -1,22 +1,25 @@
 all: dune
 
 dune:
-	dune build
+	@dune build
+
+run:
+	@dune exec -- bin/main.exe
 
 test tests runtest check:
-	dune runtest
+	@dune runtest
 
 install:
-	dune install
+	@dune install
 
 promote:
-	dune promote
+	@dune promote
 
 top:
-	utop -init pml.ocamlinit
+	@utop -init pml.ocamlinit
 
 doc docs:
-	dune build @doc
+	@dune build @doc
 
 clean:
 	find -name '*~' | xargs rm -f

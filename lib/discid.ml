@@ -1,3 +1,8 @@
+type t =
+  { id : string;
+    freedb : string;
+    toc : string }
+
 module type Raw =
   sig
     type disc
@@ -7,17 +12,22 @@ module type Raw =
     val get_error_msg : disc -> string
     val get_id : disc -> string
     val get_freedb_id : disc -> string
+    val get_toc_string : disc -> string
   end
+(** The same low level functions as in the module Libdiscid.Functions that
+    is produced by Ctypes and dune.  But we make the disc type opaque. *)
 
 module Raw : Raw =
   struct
+    module L = Libdiscid.Functions
     type disc = unit Ctypes_static.ptr
-    let alloc = Libdiscid.Functions.alloc
-    let free = Libdiscid.Functions.free
-    let read_sparse = Libdiscid.Functions.read_sparse
-    let get_error_msg = Libdiscid.Functions.get_error_msg
-    let get_id = Libdiscid.Functions.get_id
-    let get_freedb_id = Libdiscid.Functions.get_freedb_id
+    let alloc = L.alloc
+    let free = L.free
+    let read_sparse = L.read_sparse
+    let get_error_msg = L.get_error_msg
+    let get_id = L.get_id
+    let get_freedb_id = L.get_freedb_id
+    let get_toc_string = L.get_toc_string
   end
 
 let get ?device () =
@@ -28,19 +38,10 @@ let get ?device () =
      free disc;
      Result.Error ("libdiscid::read_sparse failed: " ^ get_error_msg disc)
   | _ ->
-     let id = get_id disc in
+     let ids =
+       { id = get_id disc;
+         freedb = get_freedb_id disc;
+         toc = get_toc_string disc } in
      free disc;
-     Result.Ok id
-
-let get_freedb ?device () =
-  let open Raw in
-  let disc = alloc () in
-  match read_sparse disc device 0 with
-  | 0 ->
-     free disc;
-     Result.Error ("libdiscid::read_sparse failed: " ^ get_error_msg disc)
-  | _ ->
-     let id = get_freedb_id disc in
-     free disc;
-     Result.Ok id
+     Result.Ok ids
 

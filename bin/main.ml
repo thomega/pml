@@ -1,9 +1,6 @@
 let () =
-  begin match Pml.Discid.get () with
-  | Result.Ok id -> Printf.printf "discid = %s\n" id
-  | Result.Error msg -> Printf.eprintf "error: %s!\n" msg
-  end;
-  match Pml.Discid.get_freedb () with
-  | Result.Ok id -> Printf.printf "freedb_id = %s\n" id
+  match Pml.Discid.get () with
+  | Result.Ok ids ->
+     Printf.printf "id = %s\nfreedb = %s\ntoc = %s\n" ids.id ids.freedb ids.toc
   | Result.Error msg -> Printf.eprintf "error: %s!\n" msg
 

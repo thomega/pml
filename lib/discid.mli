@@ -1,2 +1,6 @@
-val get : ?device:string -> unit -> (string, string) Result.t
-val get_freedb : ?device:string -> unit -> (string, string) Result.t
+type t =
+  { id : string;
+    freedb : string;
+    toc : string }
+
+val get : ?device:string -> unit -> (t, string) Result.t
