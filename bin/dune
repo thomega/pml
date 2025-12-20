@@ -1,4 +1,5 @@
 (executable
- (public_name pml)
- (name main)
- (libraries pml))
+ (public_name pml_cli)
+ (name pml_cli)
+ (libraries
+   pml cmdliner))

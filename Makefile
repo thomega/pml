@@ -4,7 +4,7 @@ dune:
 	@dune build
 
 run:
-	@dune exec -- bin/main.exe
+	@dune exec -- bin/pml_cli.exe disc
 
 test tests runtest check:
 	@dune runtest
