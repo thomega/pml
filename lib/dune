@@ -1,6 +1,6 @@
 (library
- (name pml)
- (public_name pml)
+  (name pml)
+  (public_name pml)
   (modules
     Discid)
   (private_modules )
@@ -10,4 +10,17 @@
   ; (flags (:standard -I +unix))
   ; (ocamlc_flags (:standard))
   (ocamlopt_flags (:standard -inline 32))
-  (libraries ))
+  (libraries )
+  (ctypes
+    (external_library_name libdiscid)
+    ; (build_flags_resolver pkg_config)
+    (headers (include "discid/discid.h"))
+    (type_description
+    (instance Type)
+    (functor Type_description))
+    (function_description
+    (concurrency sequential)
+    (instance Functions)
+    (functor Function_description))
+    (generated_types Types_generated)
+    (generated_entry_point C)))
