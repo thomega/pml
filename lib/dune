@@ -3,9 +3,9 @@
   (public_name pml)
   ;;; Adding the following makes dune crash!
   ; (modules
-  ;   Discid Discid_C)
+  ;   Discid Libdiscid)
   (private_modules
-    Discid_C)
+    Libdiscid)
   ; (wrapped false)
   (inline_tests)
   (preprocess (pps ppx_inline_test))
@@ -19,10 +19,10 @@
     (headers (include "discid/discid.h"))
     (type_description
       (instance Types)
-      (functor Discid_C_type_descriptions))
+      (functor Libdiscid_type_specs))
     (function_description
       (concurrency sequential)
       (instance Functions)
-      (functor Discid_C_function_descriptions))
-    (generated_types Discid_C_types)
-    (generated_entry_point Discid_C)))
+      (functor Libdiscid_function_specs))
+    (generated_types Libdiscid_types)
+    (generated_entry_point Libdiscid)))
