@@ -7,20 +7,18 @@
 (source
  (github username/reponame))
 
-(authors "Author Name <author@example.com>")
+(authors "Thorsten Ohl <ohl@physik.uni-wuerzburg.de>")
 
-(maintainers "Maintainer Name <maintainer@example.com>")
+(maintainers "Thorsten Ohl <ohl@physik.uni-wuerzburg.de>")
 
-(license LICENSE)
+(license "GPL 3.0")
 
 (documentation https://url/to/documentation)
 
 (package
  (name pml)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (synopsis "Physical Media Library")
+ (description "Cataloging and ripping physical discs with interface to MusicBrainz")
  (depends ocaml)
  (tags
-  ("add topics" "to describe" your project)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html
+  ("music" "media")))
