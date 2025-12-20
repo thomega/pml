@@ -3,8 +3,9 @@
   (public_name pml)
   ;;; Adding the following makes dune crash!
   ; (modules
-  ;   Discid)
-  (private_modules )
+  ;   Discid Discid_C)
+  (private_modules
+    Discid_C)
   ; (wrapped false)
   (inline_tests)
   (preprocess (pps ppx_inline_test))
@@ -14,14 +15,14 @@
   (libraries )
   (ctypes
     (external_library_name libdiscid)
-    ; (build_flags_resolver pkg_config)
+    (build_flags_resolver pkg_config)
     (headers (include "discid/discid.h"))
     (type_description
       (instance Types)
-      (functor Type_description))
+      (functor Discid_C_type_descriptions))
     (function_description
       (concurrency sequential)
       (instance Functions)
-      (functor Function_description))
-    (generated_types Types_generated)
+      (functor Discid_C_function_descriptions))
+    (generated_types Discid_C_types)
     (generated_entry_point Discid_C)))

@@ -1,6 +1,6 @@
 open Ctypes
 
-module Types = Types_generated
+module Types = Discid_C_types
 
 module Functions (F : Ctypes.FOREIGN) = struct
   open F
