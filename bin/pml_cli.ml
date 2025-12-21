@@ -51,9 +51,17 @@ module Query_Disc : Exit_Cmd =
                  for fuzzy searches on MusicBrainz." in
       Arg.(value & flag & info ["t"; "toc"] ~doc)
 
-    let query_disc ~verbose ~print_id ~print_freedb ~print_toc =
-      ignore verbose;
-      match Pml.Discid.get () with
+    let default_device =
+      Pml.Discid.default_device ()
+
+    let device =
+      let doc = Printf.sprintf "Choose CD-ROM device." in
+      Arg.(value & opt string default_device & info ["d"; "device"] ~doc)
+
+    let query_disc ~device ~verbose ~print_id ~print_freedb ~print_toc =
+      if verbose then
+        Printf.printf "querying %s ...\n" device;
+      match Pml.Discid.get ~device () with
       | Result.Ok ids ->
          begin
            if not print_id && not print_freedb && not print_toc then
@@ -73,8 +81,8 @@ module Query_Disc : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "disc" ~man) @@
-        let+ verbose and+ print_id and+ print_freedb and+ print_toc in
-        query_disc ~verbose ~print_id ~print_freedb ~print_toc
+        let+ device and+ verbose and+ print_id and+ print_freedb and+ print_toc in
+        query_disc ~device ~verbose ~print_id ~print_freedb ~print_toc
 
 end
 

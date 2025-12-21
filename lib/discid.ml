@@ -6,6 +6,7 @@ type t =
 module type Raw =
   sig
     type disc
+    val default_device : unit -> string
     val alloc : unit -> disc
     val free : disc -> unit
     val read_sparse : disc -> string option -> int -> int
@@ -21,6 +22,7 @@ module Raw : Raw =
   struct
     module L = Libdiscid.Functions
     type disc = unit Ctypes_static.ptr
+    let default_device = L.default_device
     let alloc = L.alloc
     let free = L.free
     let read_sparse = L.read_sparse
@@ -41,7 +43,8 @@ let get ?device () =
      let ids =
        { id = get_id disc;
          freedb = get_freedb_id disc;
-         toc = get_toc_string disc } in
+         toc = String.map (fun c -> if c = ' ' then '+' else c) (get_toc_string disc) } in
      free disc;
      Result.Ok ids
 
+let default_device = Raw.default_device

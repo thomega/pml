@@ -5,6 +5,7 @@ module Types = Libdiscid_types
 module Functions (F : Ctypes.FOREIGN) = struct
   open F
 
+  let default_device = foreign "discid_get_default_device" (void @-> returning string)
   let alloc = foreign "discid_new" (void @-> returning (ptr void))
   let free = foreign "discid_free" ((ptr void) @-> returning void)
   let read_sparse = foreign "discid_read_sparse" ((ptr void) @-> string_opt @-> int @-> returning int)
