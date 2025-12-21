@@ -12,7 +12,7 @@
   ; (flags (:standard -I +unix))
   ; (ocamlc_flags (:standard))
   (ocamlopt_flags (:standard -inline 32))
-  (libraries )
+  (libraries yojson)
   (ctypes
     (external_library_name libdiscid)
     (build_flags_resolver pkg_config)

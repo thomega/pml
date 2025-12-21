@@ -27,6 +27,37 @@ module type Exit_Cmd =
     val cmd : int Cmd.t
   end
 
+module Musicbrainz : Exit_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "Experimental Musicbrainz JSON parsing." ] @ Common.man_footer
+
+    let file =
+      let doc = Printf.sprintf "JSON file." in
+      Arg.(value & opt (some string) None & info ["f"; "file"] ~doc)
+
+    let parse_json ?file () =
+      match file with
+      | None -> 0
+      | Some name ->
+         let raw = In_channel.with_open_text name In_channel.input_all in
+         try
+           let json = Pml.MB.parse_json raw in
+           Pml.MB.interpret_json json;
+           0
+         with
+         | _ -> 1
+
+    let cmd =
+      let open Cmd in
+      make (info "musicbrainz" ~man) @@
+        let+ file in
+        parse_json ?file ()
+
+  end
+
 module Query_Disc : Exit_Cmd =
   struct
 
@@ -102,7 +133,8 @@ module Main : Exit_Cmd =
     let cmd =
       let open Cmd in
       group (info "pml" ~man)
-        [ Query_Disc.cmd ]
+        [ Query_Disc.cmd;
+          Musicbrainz.cmd]
 
   end
 
