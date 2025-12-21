@@ -1,7 +1,7 @@
 (* let version = "0.0.0" *)
 
 open Cmdliner
-(* open Cmdliner.Term.Syntax *)
+open Cmdliner.Term.Syntax
 
 module type Common =
   sig
@@ -51,17 +51,18 @@ module Query_Disc : Exit_Cmd =
                  for fuzzy searches on MusicBrainz." in
       Arg.(value & flag & info ["t"; "toc"] ~doc)
 
-    let query_disc _verbose id freedb toc =
+    let query_disc ~verbose ~print_id ~print_freedb ~print_toc =
+      ignore verbose;
       match Pml.Discid.get () with
       | Result.Ok ids ->
          begin
-           if not id && not freedb && not toc then
+           if not print_id && not print_freedb && not print_toc then
              Printf.printf "id = %s\nfreedb = %s\ntoc = %s\n" ids.id ids.freedb ids.toc
-           else if id then
+           else if print_id then
              print_endline ids.id
-           else if freedb then
+           else if print_freedb then
              print_endline ids.freedb
-           else if toc then
+           else if print_toc then
              print_endline ids.toc
          end;
          0
@@ -69,16 +70,11 @@ module Query_Disc : Exit_Cmd =
          Printf.eprintf "error: %s!\n" msg;
          1
 
-    let term =
-      let open Term in
-      const query_disc
-      $ verbose
-      $ print_id
-      $ print_freedb
-      $ print_toc
-
     let cmd =
-      Cmd.(make (info "disc" ~man) term)
+      let open Cmd in
+      make (info "disc" ~man) @@
+        let+ verbose and+ print_id and+ print_freedb and+ print_toc in
+        query_disc ~verbose ~print_id ~print_freedb ~print_toc
 
 end
 
