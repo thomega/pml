@@ -43,14 +43,20 @@ module Musicbrainz : Exit_Cmd =
       let doc = "Dump the whole tree without syntax elements." in
       Arg.(value & flag & info ["d"; "dump"] ~doc)
 
-    let parse_json ?file dump =
+    let schema =
+      let doc = "Dump the whole tree without contents." in
+      Arg.(value & flag & info ["s"; "schema"] ~doc)
+
+    let parse_json ?file ~dump ~schema () =
       match file with
       | None -> 0
       | Some name ->
          let raw = In_channel.with_open_text name In_channel.input_all in
          try
            let json = Pml.MB.parse_json raw in
-           if dump then
+           if schema then
+             Pml.MB.dump_schema json
+           else if dump then
              Pml.MB.dump_json json
            else
              Pml.MB.interpret_json json;
@@ -61,8 +67,8 @@ module Musicbrainz : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "musicbrainz" ~man) @@
-        let+ file and+ dump in
-        parse_json ?file dump
+        let+ file and+ dump and+ schema in
+        parse_json ?file ~dump ~schema ()
 
   end
 
