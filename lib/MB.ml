@@ -49,16 +49,17 @@ let interpret_json json =
 let interpret_json json =
   Printexc.print interpret_json json
 
-let rec dump_schema' pfx json =
-  let keys = JSON.Util.keys json in
-  List.iter
-    (fun key ->
-      Printf.printf "%s%s\n" pfx key;
-      match JSON.Util.member key json with
-      | `Assoc _ as a -> dump_schema' (pfx ^ ">  ") a
-      | `List l -> List.iter (dump_schema' (pfx ^ "+  ")) l
-      | _ -> ())
-    keys
+let rec dump_schema' pfx = function
+  | `Assoc a ->
+     List.iter
+       (fun (key, json) ->
+         Printf.printf "%s%s\n" pfx key;
+         dump_schema' (pfx ^ "  ") json)
+       a
+  | `List (json::_ as l) ->
+     Printf.printf "%s%d*\n" pfx (List.length l);
+     dump_schema' (pfx ^ "  ") json
+  | _ -> ()
 
 let dump_schema json =
   dump_schema' "" json
