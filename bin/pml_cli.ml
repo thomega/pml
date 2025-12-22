@@ -1,4 +1,5 @@
-(* let version = "0.0.0" *)
+let version = "0.0.0"
+let _user_agent = "Physical Media Library/" ^ version ^ " ( ohl@physik.uni-wuerzburg.de )"
 
 open Cmdliner
 open Cmdliner.Term.Syntax
@@ -38,14 +39,21 @@ module Musicbrainz : Exit_Cmd =
       let doc = Printf.sprintf "JSON file." in
       Arg.(value & opt (some string) None & info ["f"; "file"] ~doc)
 
-    let parse_json ?file () =
+    let dump =
+      let doc = "Dump the whole tree without syntax elements." in
+      Arg.(value & flag & info ["d"; "dump"] ~doc)
+
+    let parse_json ?file dump =
       match file with
       | None -> 0
       | Some name ->
          let raw = In_channel.with_open_text name In_channel.input_all in
          try
            let json = Pml.MB.parse_json raw in
-           Pml.MB.interpret_json json;
+           if dump then
+             Pml.MB.dump_json json
+           else
+             Pml.MB.interpret_json json;
            0
          with
          | _ -> 1
@@ -53,8 +61,8 @@ module Musicbrainz : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "musicbrainz" ~man) @@
-        let+ file in
-        parse_json ?file ()
+        let+ file and+ dump in
+        parse_json ?file dump
 
   end
 

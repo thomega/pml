@@ -13,28 +13,38 @@ let parse_json s =
      flush stderr;
      failwith "invalid JSON"
 
-let interpret_json json =
-  let rec interpret_json' pfx json =
+let dump_json json =
+  let rec dump_json' pfx json =
     match json with
     | `Assoc assoc ->
        List.iter
          (fun (name, subtree) ->
            Printf.printf "%s%s = \n" pfx name;
-           interpret_json' (pfx ^ "  ") subtree ) assoc
+           dump_json' (pfx ^ "  ") subtree ) assoc
     | `List jsons ->
        Printf.printf "%s[\n" pfx;
-       List.iter (interpret_json' (pfx ^ "  ")) jsons;
+       List.iter (dump_json' (pfx ^ "  ")) jsons;
        Printf.printf "%s]\n" pfx;
     | `Null -> Printf.printf "%sNULL\n" pfx
     | `Bool bool -> Printf.printf "%s%b\n" pfx bool
     | `Int n -> Printf.printf "%s%d\n" pfx n
     | `Float x -> Printf.printf "%s%g\n" pfx x
     | `String s -> Printf.printf "%s%s\n" pfx s in
-  interpret_json' "" json;
-  Printf.printf "keys:\n";
-  List.iter print_endline (JSON.Util.keys json);
-  Printf.printf "id:\n";
-  interpret_json' "- " (JSON.Util.member "id" json);
-  Printf.printf "releases:\n";
-  interpret_json' "- " (JSON.Util.member "releases" json)
+  dump_json' "" json
 
+let print_keys path json =
+  let path = String.concat "/" (List.rev path) in
+  Printf.printf "keys /%s:\n" path;
+  JSON.Util.keys json |> List.iter (Printf.printf "  %s\n")
+  
+let interpret_json json =
+  print_keys [] json;
+  let id = JSON.Util.member "id" json |> JSON.Util.to_string in
+  Printf.printf "id = %s\n" id;
+  let releases = JSON.Util.member "releases" json in
+  List.iter (print_keys ["releases"]) (JSON.Util.to_list releases);
+  let media = JSON.Util.member "media" (JSON.Util.to_list releases |> List.hd) in
+  List.iter (print_keys ["media"; "releases"]) (JSON.Util.to_list media)
+    
+let interpret_json json =
+  Printexc.print interpret_json json
