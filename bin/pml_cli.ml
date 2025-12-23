@@ -1,6 +1,3 @@
-let version = "0.0.0"
-let _user_agent = "Physical Media Library/" ^ version ^ " ( ohl@physik.uni-wuerzburg.de )"
-
 open Cmdliner
 open Cmdliner.Term.Syntax
 
