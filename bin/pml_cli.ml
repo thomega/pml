@@ -39,36 +39,28 @@ module Musicbrainz : Exit_Cmd =
       let doc = Printf.sprintf "JSON file." in
       Arg.(value & opt (some string) None & info ["f"; "file"] ~doc)
 
-    let dump =
-      let doc = "Dump the whole tree without syntax elements." in
-      Arg.(value & flag & info ["d"; "dump"] ~doc)
-
     let schema =
       let doc = "Dump the whole tree without contents." in
       Arg.(value & flag & info ["s"; "schema"] ~doc)
 
-    let parse_json ?file ~dump ~schema () =
+    let parse_json ?file ~schema () =
       match file with
       | None -> 0
       | Some name ->
-         let raw = In_channel.with_open_text name In_channel.input_all in
-         try
-           let json = Pml.MB.parse_json raw in
-           if schema then
-             Pml.MB.dump_schema json
-           else if dump then
-             Pml.MB.dump_json json
-           else
-             Pml.MB.interpret_json json;
+         if schema then
+           try
+             Pml.Musicbrainz.Raw.dump_schema_file name;
+             0
+           with
+           | _ -> 1
+         else
            0
-         with
-         | _ -> 1
 
     let cmd =
       let open Cmd in
       make (info "musicbrainz" ~man) @@
-        let+ file and+ dump and+ schema in
-        parse_json ?file ~dump ~schema ()
+        let+ file and+ schema in
+        parse_json ?file ~schema ()
 
   end
 
