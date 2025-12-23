@@ -3,7 +3,7 @@
   (public_name pml)
   ;;; Adding the following makes dune crash!
   ; (modules
-  ;   Discid Libdiscid)
+  ;   Discid Musicbrainz Libdiscid)
   (private_modules
     Libdiscid)
   ; (wrapped false)
