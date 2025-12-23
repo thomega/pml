@@ -1,0 +1,12 @@
+{0 Pml index}
+
+{1 Library}
+This library provides the toplevel module
+{!modules:Pml}
+implementing access to Musicbrainz in order to organize a Physical Media Library.
+
+{2 API}
+You can also jump immediately to the wrapped API modules
+{3 Building Blocks}
+{!modules:Pml.Musicbrainz Pml.Discid}
+

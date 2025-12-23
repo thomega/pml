@@ -26,3 +26,6 @@
       (functor Libdiscid_function_specs))
     (generated_types Libdiscid_types)
     (generated_entry_point Libdiscid)))
+
+(documentation
+  (mld_files index))
