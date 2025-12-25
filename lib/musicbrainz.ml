@@ -240,23 +240,19 @@ module Track =
       |> Jsont.Object.finish
   end
 
-(*
 module Disc =
   struct
     type t =
       { id : string option;
         unknown : Jsont.json }
-    let make id tracks unknown =
-      let tracks = opt_list tracks in
-      { id; tracks; unknown }
+    let make id unknown =
+      { id; unknown }
     let jsont =
-      Jsont.Object.map ~kind:"Disk" make
+      Jsont.Object.map ~kind:"Disc" make
       |> Jsont.Object.opt_mem "id" Jsont.string
-      |> Jsont.Object.opt_mem "tracks" Jsont.(list Track.jsont)
       |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
   end
- *)
 
 module Medium =
   struct
@@ -264,16 +260,19 @@ module Medium =
       { id : string option;
         position : int option;
         title : string option;
+        discs : Disc.t list;
         tracks : Track.t list;
         unknown : Jsont.json }
-    let make id position title tracks unknown =
-      let tracks = opt_list tracks in
-      { id; position; title; tracks; unknown }
+    let make id position title discs tracks unknown =
+      let discs = opt_list discs
+      and tracks = opt_list tracks in
+      { id; position; title; discs; tracks; unknown }
     let jsont =
       Jsont.Object.map ~kind:"Medium" make
       |> Jsont.Object.opt_mem "id" Jsont.string
       |> Jsont.Object.opt_mem "position" Jsont.int
       |> Jsont.Object.opt_mem "title" Jsont.string
+      |> Jsont.Object.opt_mem "discs" Jsont.(list Disc.jsont)
       |> Jsont.Object.opt_mem "tracks" Jsont.(list Track.jsont)
       |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
@@ -302,6 +301,20 @@ module Release =
 let release_of_file name =
   let text = In_channel.with_open_text name In_channel.input_all in
   Jsont_bytesrw.decode_string Release.jsont text
+
+let contains_discid discid medium =
+  List.exists
+    (fun disc ->
+      match disc.Disc.id with
+      | Some id -> discid = id
+      | None -> false)
+    medium.Medium.discs
+
+let media_of_file discid name =
+  release_of_file name
+  |> Result.map (fun release -> List.filter (contains_discid discid) release.Release.media)
+
+     
 
 
 
