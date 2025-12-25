@@ -160,32 +160,121 @@ let release_ids disc_id =
       | None -> ids)
     disc_id.Disc_Id.releases [] 
 
+module Artist =
+  struct
+    type t =
+      { id : string option;
+        name : string option;
+        sort_name : string option;
+        artist_type : string option;
+        disambiguation : string option;
+        unknown : Jsont.json }
+    let make id name sort_name artist_type disambiguation unknown =
+      { id; name; sort_name; artist_type; disambiguation; unknown }
+    let jsont =
+      Jsont.Object.map ~kind:"Artist" make
+      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.opt_mem "name" Jsont.string
+      |> Jsont.Object.opt_mem "sort-name" Jsont.string
+      |> Jsont.Object.opt_mem "type" Jsont.string
+      |> Jsont.Object.opt_mem "disambiguation" Jsont.string
+      |> Jsont.Object.keep_unknown Jsont.json_mems
+      |> Jsont.Object.finish
+  end
+
 module Artist_Credit =
   struct
     type t =
       { name : string option;
-        artist : Jsont.json option;
+        artist : Artist.t option;
         unknown : Jsont.json }
     let make name artist unknown =
       { name; artist; unknown }
     let jsont =
       Jsont.Object.map ~kind:"Artist_Credit" make
       |> Jsont.Object.opt_mem "name" Jsont.string
-      |> Jsont.Object.opt_mem "artist" Jsont.json
+      |> Jsont.Object.opt_mem "artist" Artist.jsont
       |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
   end
 
-module Media =
+module Recording =
+  struct
+    type t =
+      { id : string option;
+        title : string option;
+        artist_credit : Artist_Credit.t list;
+        unknown : Jsont.json }
+    let make id title artist_credit unknown =
+      let artist_credit = opt_list artist_credit in
+      { id; title; artist_credit; unknown }
+    let jsont =
+      Jsont.Object.map ~kind:"Recording" make
+      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.opt_mem "title" Jsont.string
+      |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
+      |> Jsont.Object.keep_unknown Jsont.json_mems
+      |> Jsont.Object.finish
+  end
+
+module Track =
+  struct
+    type t =
+      { id : string option;
+        position : int option;
+        title : string option;
+        artist_credit : Artist_Credit.t list;
+        recording : Recording.t option;
+        unknown : Jsont.json }
+    let make id position title artist_credit recording unknown =
+      let artist_credit = opt_list artist_credit in
+      { id; position; title; artist_credit; recording; unknown }
+    let jsont =
+      Jsont.Object.map ~kind:"Track" make
+      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.opt_mem "position" Jsont.int
+      |> Jsont.Object.opt_mem "title" Jsont.string
+      |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
+      |> Jsont.Object.opt_mem "recording" Recording.jsont
+      |> Jsont.Object.keep_unknown Jsont.json_mems
+      |> Jsont.Object.finish
+  end
+
+(*
+module Disc =
   struct
     type t =
       { id : string option;
         unknown : Jsont.json }
-    let make id unknown =
-      { id; unknown }
+    let make id tracks unknown =
+      let tracks = opt_list tracks in
+      { id; tracks; unknown }
     let jsont =
-      Jsont.Object.map ~kind:"Media" make
+      Jsont.Object.map ~kind:"Disk" make
       |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.opt_mem "tracks" Jsont.(list Track.jsont)
+      |> Jsont.Object.keep_unknown Jsont.json_mems
+      |> Jsont.Object.finish
+  end
+ *)
+
+module Medium =
+  struct
+    type t =
+      { id : string option;
+        position : int option;
+        title : string option;
+        tracks : Track.t list;
+        unknown : Jsont.json }
+    let make id position title tracks unknown =
+      let tracks = opt_list tracks in
+      { id; position; title; tracks; unknown }
+    let jsont =
+      Jsont.Object.map ~kind:"Medium" make
+      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.opt_mem "position" Jsont.int
+      |> Jsont.Object.opt_mem "title" Jsont.string
+      |> Jsont.Object.opt_mem "tracks" Jsont.(list Track.jsont)
       |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
   end
@@ -196,7 +285,7 @@ module Release =
       { id : string option;
         title : string option;
         artist_credit : Artist_Credit.t list;
-        media : Media.t list }
+        media : Medium.t list }
     let make id title artist_credit media =
       let artist_credit = opt_list artist_credit
       and media = opt_list media in
@@ -206,7 +295,7 @@ module Release =
       |> Jsont.Object.opt_mem "id" Jsont.string
       |> Jsont.Object.opt_mem "title" Jsont.string
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
-      |> Jsont.Object.opt_mem "media" Jsont.(list Media.jsont)
+      |> Jsont.Object.opt_mem "media" Jsont.(list Medium.jsont)
       |> Jsont.Object.finish
   end
 
