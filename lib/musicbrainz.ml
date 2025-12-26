@@ -123,26 +123,26 @@ let opt_list = function
 module Release_Short =
   struct
     type t =
-      { id : string option }
+      { id : string }
     let make id =
       { id }
     let jsont =
       Jsont.Object.map ~kind:"Release_Short" make
-      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.finish
   end
 
 module Disc_Id =
   struct
     type t =
-      { id : string option;
+      { id : string;
         releases : Release_Short.t list }
     let make id releases =
       let releases = opt_list releases in
       { id; releases }
     let jsont =
       Jsont.Object.map ~kind:"Diskid" make
-      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.opt_mem "releases" Jsont.(list Release_Short.jsont)
       |> Jsont.Object.finish
 
@@ -153,17 +153,12 @@ let discid_of_file name =
   Jsont_bytesrw.decode_string Disc_Id.jsont text
 
 let release_ids disc_id =
-  List.fold_right
-    (fun r ids ->
-      match r.Release_Short.id with
-      | Some id -> id :: ids
-      | None -> ids)
-    disc_id.Disc_Id.releases [] 
+  List.map (fun r -> r.Release_Short.id) disc_id.Disc_Id.releases
 
 module Artist =
   struct
     type t =
-      { id : string option;
+      { id : string (** While this is optional in the DTD, it should be there anyway. *);
         name : string option;
         sort_name : string option;
         artist_type : string option;
@@ -173,7 +168,7 @@ module Artist =
       { id; name; sort_name; artist_type; disambiguation; unknown }
     let jsont =
       Jsont.Object.map ~kind:"Artist" make
-      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.opt_mem "name" Jsont.string
       |> Jsont.Object.opt_mem "sort-name" Jsont.string
       |> Jsont.Object.opt_mem "type" Jsont.string
@@ -201,7 +196,7 @@ module Artist_Credit =
 module Recording =
   struct
     type t =
-      { id : string option;
+      { id : string (** While this is optional in the DTD, it should be there anyway. *);
         title : string option;
         artist_credit : Artist_Credit.t list;
         unknown : Jsont.json }
@@ -210,7 +205,7 @@ module Recording =
       { id; title; artist_credit; unknown }
     let jsont =
       Jsont.Object.map ~kind:"Recording" make
-      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.opt_mem "title" Jsont.string
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
       |> Jsont.Object.keep_unknown Jsont.json_mems
@@ -220,7 +215,7 @@ module Recording =
 module Track =
   struct
     type t =
-      { id : string option;
+      { id : string (** While this is optional in the DTD, it should be there anyway. *);
         position : int option;
         title : string option;
         artist_credit : Artist_Credit.t list;
@@ -231,7 +226,7 @@ module Track =
       { id; position; title; artist_credit; recording; unknown }
     let jsont =
       Jsont.Object.map ~kind:"Track" make
-      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.opt_mem "position" Jsont.int
       |> Jsont.Object.opt_mem "title" Jsont.string
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
@@ -243,13 +238,13 @@ module Track =
 module Disc =
   struct
     type t =
-      { id : string option;
+      { id : string (** While this is optional in the DTD, it should be there anyway. *);
         unknown : Jsont.json }
     let make id unknown =
       { id; unknown }
     let jsont =
       Jsont.Object.map ~kind:"Disc" make
-      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
   end
@@ -257,7 +252,7 @@ module Disc =
 module Medium =
   struct
     type t =
-      { id : string option;
+      { id : string (** While this is optional in the DTD, it should be there anyway. *);
         position : int option;
         title : string option;
         discs : Disc.t list;
@@ -269,7 +264,7 @@ module Medium =
       { id; position; title; discs; tracks; unknown }
     let jsont =
       Jsont.Object.map ~kind:"Medium" make
-      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.opt_mem "position" Jsont.int
       |> Jsont.Object.opt_mem "title" Jsont.string
       |> Jsont.Object.opt_mem "discs" Jsont.(list Disc.jsont)
@@ -281,7 +276,7 @@ module Medium =
 module Release =
   struct
     type t =
-      { id : string option;
+      { id : string (** While this is optional in the DTD, it should be there anyway. *);
         title : string option;
         artist_credit : Artist_Credit.t list;
         media : Medium.t list }
@@ -291,7 +286,7 @@ module Release =
       { id; title; artist_credit; media }
     let jsont =
       Jsont.Object.map ~kind:"Release" make
-      |> Jsont.Object.opt_mem "id" Jsont.string
+      |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.opt_mem "title" Jsont.string
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
       |> Jsont.Object.opt_mem "media" Jsont.(list Medium.jsont)
@@ -303,12 +298,7 @@ let release_of_file name =
   Jsont_bytesrw.decode_string Release.jsont text
 
 let contains_discid discid medium =
-  List.exists
-    (fun disc ->
-      match disc.Disc.id with
-      | Some id -> discid = id
-      | None -> false)
-    medium.Medium.discs
+  List.exists (fun disc -> discid = disc.Disc.id) medium.Medium.discs
 
 let media_of_file discid name =
   release_of_file name

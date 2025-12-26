@@ -18,7 +18,7 @@ promote:
 top:
 	@utop -init pml.ocamlinit
 
-doc docs:
+docs:
 	@dune build @doc
 
 clean:
