@@ -86,6 +86,14 @@ let url_discid discid =
 let url_release release =
   url_of_query musicbrainz query_release release
 
+let read_discid_cache _discid =
+  None
+
+let get_discid_cached discid =
+  match read_discid_cache discid with
+  | Some s -> Ok s
+  | None -> get_discid discid
+
 module type Raw =
   sig
     val of_file : string -> (Jsont.json, string) result
