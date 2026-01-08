@@ -1,9 +1,3 @@
-type config =
-  { root : string;
-    subdir : string;
-    prefix : string;
-    suffix : string }
-
 let is_directory name =
   if Sys.file_exists name then
     if Sys.is_directory name then
@@ -13,17 +7,17 @@ let is_directory name =
   else
     Error ("no such file or directory: " ^ name)
     
-let dir config =
-  match is_directory config.root with
+let dir ~root ~subdir =
+  match is_directory root with
   | Error _ as e -> e
-  | Ok root -> is_directory (Filename.concat root config.subdir)
+  | Ok root -> is_directory (Filename.concat root subdir)
 
-let filename config tag =
-  dir config
-  |>  Result.map (fun path -> Filename.concat path (config.prefix ^ tag ^ config.suffix))
+let filename ~root ~subdir tag =
+  dir ~root ~subdir
+  |>  Result.map (fun path -> Filename.concat path tag)
 
-let lookup config tag =
-  match filename config tag with
+let lookup ~root ~subdir tag =
+  match filename ~root ~subdir tag with
   | Error _ as e -> e
   | Ok name ->
      if Sys.file_exists name then
@@ -34,8 +28,8 @@ let lookup config tag =
      else
        Ok None
 
-let replace config tag text =
-  match filename config tag with
+let replace ~root ~subdir tag text =
+  match filename ~root ~subdir tag with
   | Error _ as e -> e
   | Ok name ->
      try
@@ -43,8 +37,8 @@ let replace config tag text =
      with
      | exn -> Error (Printexc.to_string exn)
 
-let delete config tag =
-  match filename config tag with
+let delete ~root ~subdir tag =
+  match filename ~root ~subdir tag with
   | Error _ as e -> e
   | Ok name ->
      if Sys.file_exists name then
