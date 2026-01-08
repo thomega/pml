@@ -14,8 +14,11 @@ module type T =
 
 module type Table =
   sig
+
     val name : string
-    (** Name of a table in the cache. *)
+    (** Name of a table in the cache.  Currently, this is the name of a
+        subdirectory of the cache [root] directory. *)
+
   end
 
 module Make (_ : Table) : T

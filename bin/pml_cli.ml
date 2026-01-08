@@ -32,9 +32,16 @@ module Musicbrainz : Exit_Cmd =
         `S Manpage.s_description;
         `P "Experimental Musicbrainz JSON parsing." ] @ Common.man_footer
 
+    let default_cache = "."
+
+    let cache =
+      let doc = Printf.sprintf "Path to the root directory of the local cache."
+      and env = Cmd.Env.info "PML_CACHE" in
+      Arg.(value & opt string default_cache & info ["c"; "cache"] ~docv:"path" ~doc ~env)
+
     let file =
-      let doc = Printf.sprintf "JSON file." in
-      Arg.(value & opt (some string) None & info ["f"; "file"] ~doc)
+      let doc = Printf.sprintf "JSON file to be examined." in
+      Arg.(value & opt (some string) None & info ["f"; "file"] ~docv:"name" ~doc)
 
     let schema =
       let doc = "Dump the whole tree without contents." in
@@ -44,7 +51,8 @@ module Musicbrainz : Exit_Cmd =
       let doc = "Dump the whole tree." in
       Arg.(value & flag & info ["p"; "pretty"] ~doc)
 
-    let parse_json ?file ~schema ~pretty () =
+    let parse_json ~cache ?file ~schema ~pretty () =
+      ignore cache;
       match file with
       | None -> 0
       | Some name ->
@@ -66,8 +74,8 @@ module Musicbrainz : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "musicbrainz" ~man) @@
-        let+ file and+ schema and+ pretty in
-        parse_json ?file ~schema ~pretty ()
+        let+ cache and+ file and+ schema and+ pretty in
+        parse_json ~cache ?file ~schema ~pretty ()
 
   end
 

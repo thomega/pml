@@ -1,0 +1,3359 @@
+{
+  "title" : "On DSCH",
+  "packaging" : null,
+  "release-group" : {
+    "secondary-types" : [],
+    "title" : "On DSCH",
+    "artist-credit" : [
+      {
+        "joinphrase" : "",
+        "name" : "Igor Levit",
+        "artist" : {
+          "disambiguation" : "pianist",
+          "name" : "Igor Levit",
+          "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+          "country" : "DE",
+          "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+          "type" : "Person",
+          "sort-name" : "Levit, Igor"
+        }
+      }
+    ],
+    "first-release-date" : "2021-09-10",
+    "id" : "d6ad37c1-46ba-4309-8912-8799f4007fba",
+    "primary-type-id" : "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+    "disambiguation" : "",
+    "secondary-type-ids" : [],
+    "primary-type" : "Album"
+  },
+  "asin" : "B095LFLLQ4",
+  "status" : "Official",
+  "status-id" : "4e304316-386d-3409-af2e-78857eec5cfe",
+  "release-events" : [
+    {
+      "area" : null,
+      "date" : "2021-09-10"
+    }
+  ],
+  "label-info" : [
+    {
+      "catalog-number" : "19439809212",
+      "label" : {
+        "disambiguation" : "",
+        "id" : "10920823-9ed8-45d9-adb3-69fc22475ab0",
+        "name" : "Sony Classical",
+        "type" : "Imprint",
+        "type-id" : "b6285b2a-3514-3d43-80df-fcf528824ded",
+        "label-code" : 6868,
+        "sort-name" : "Sony Classical"
+      }
+    }
+  ],
+  "quality" : "normal",
+  "country" : null,
+  "artist-credit" : [
+    {
+      "name" : "Igor Levit",
+      "joinphrase" : "",
+      "artist" : {
+        "sort-name" : "Levit, Igor",
+        "type" : "Person",
+        "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+        "country" : "DE",
+        "name" : "Igor Levit",
+        "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+        "disambiguation" : "pianist"
+      }
+    }
+  ],
+  "packaging-id" : null,
+  "text-representation" : {
+    "language" : "eng",
+    "script" : "Latn"
+  },
+  "relations" : [
+    {
+      "end" : null,
+      "url" : {
+        "resource" : "https://www.amazon.com/gp/product/B095LFLLQ4",
+        "id" : "c8174b05-e6f3-4ba3-8b1f-a4035ac7957e"
+      },
+      "target-credit" : "",
+      "type-id" : "4f2e710d-166c-480c-a293-2e2c8d658d87",
+      "attributes" : [],
+      "attribute-ids" : {      },
+      "ended" : false,
+      "type" : "amazon asin",
+      "direction" : "forward",
+      "begin" : null,
+      "source-credit" : "",
+      "target-type" : "url",
+      "attribute-values" : {      }
+    },
+    {
+      "target-type" : "url",
+      "source-credit" : "",
+      "attribute-values" : {      },
+      "direction" : "forward",
+      "begin" : null,
+      "ended" : false,
+      "attribute-ids" : {      },
+      "type" : "purchase for mail-order",
+      "url" : {
+        "id" : "56b9972a-9617-4efe-9b21-bc5fadde156e",
+        "resource" : "https://www.prestomusic.com/classical/products/8920511--on-dsch"
+      },
+      "end" : null,
+      "target-credit" : "",
+      "type-id" : "3ee51e05-a06a-415e-b40c-b3f740dedfd7",
+      "attributes" : []
+    }
+  ],
+  "disambiguation" : "",
+  "media" : [
+    {
+      "id" : "14ad2e09-01e2-3567-93ff-82adca6f593b",
+      "track-count" : 24,
+      "track-offset" : 0,
+      "position" : 1,
+      "title" : "",
+      "format-id" : "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "format" : "CD",
+      "discs" : [
+        {
+          "sectors" : 286412,
+          "offsets" : [
+            150,
+            11950,
+            23421,
+            27445,
+            33910,
+            42116,
+            50492,
+            63842,
+            85247,
+            91880,
+            100015,
+            108609,
+            130957,
+            136494,
+            146382,
+            151811,
+            184200,
+            193688,
+            200917,
+            210678,
+            235226,
+            240108,
+            249136,
+            269527
+          ],
+          "offset-count" : 24,
+          "id" : "Ft8aW122M6v3ViiinKGGHwOlQBw-"
+        }
+      ],
+      "tracks" : [
+        {
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 1 in C major",
+          "recording" : {
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                }
+              }
+            ],
+            "length" : 157342,
+            "video" : false,
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 1 in C major",
+            "id" : "e8257b41-3b56-4e1b-9297-d69885d5b5b2"
+          },
+          "position" : 1,
+          "number" : "1",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "country" : "RU",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "disambiguation" : "composer",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "id" : "8b5b4056-4eba-4cb4-b40a-1be1cf465d21",
+          "length" : 157000
+        },
+        {
+          "number" : "2",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "disambiguation" : "composer",
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              }
+            }
+          ],
+          "position" : 2,
+          "recording" : {
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 1 in C major",
+            "id" : "e8c00495-a634-4b75-a72e-65663a710302",
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "length" : 152942,
+            "video" : false
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 1 in C major",
+          "length" : 153000,
+          "id" : "0e007b04-0485-4a6d-9dfb-2dd2a090982c"
+        },
+        {
+          "length" : 54000,
+          "id" : "72ef2daa-d391-45b3-a8f1-631a0fbe0a07",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "disambiguation" : "composer",
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "number" : "3",
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 2 in A minor",
+          "recording" : {
+            "length" : 53661,
+            "video" : false,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "id" : "07798762-3956-4cba-98f8-f8e5ed27dacd",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 2 in A minor",
+            "disambiguation" : ""
+          },
+          "position" : 3
+        },
+        {
+          "position" : 4,
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 2 in A minor",
+          "recording" : {
+            "id" : "7b4ff022-baba-4996-8d34-79a269650fba",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 2 in A minor",
+            "disambiguation" : "",
+            "video" : false,
+            "length" : 86000,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10"
+          },
+          "artist-credit" : [
+            {
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country" : "RU",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "disambiguation" : "composer"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "number" : "4",
+          "id" : "329907b6-16fc-4cfa-8b79-f03f959875f5",
+          "length" : 86000
+        },
+        {
+          "recording" : {
+            "length" : 109000,
+            "video" : false,
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                }
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "id" : "ab82ecd7-1871-43f2-864b-a4e93ae18ad1",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 3 in G major",
+            "disambiguation" : ""
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 3 in G major",
+          "position" : 5,
+          "number" : "5",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "disambiguation" : "composer"
+              }
+            }
+          ],
+          "id" : "be7d636e-46ec-41ac-b305-0812ccfb1970",
+          "length" : 109000
+        },
+        {
+          "number" : "6",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country" : "RU",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "disambiguation" : "composer"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "recording" : {
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 3 in G major",
+            "disambiguation" : "",
+            "id" : "21e4d8fb-13a2-4902-8c59-067dca9b9d66",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "video" : false,
+            "length" : 111670
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 3 in G major",
+          "position" : 6,
+          "length" : 112000,
+          "id" : "2b849c42-8636-43e8-93cf-59b31b97c963"
+        },
+        {
+          "id" : "a9ac6848-03de-4123-ba71-5c759504a514",
+          "length" : 178000,
+          "position" : 7,
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 4 in E minor",
+          "recording" : {
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 4 in E minor",
+            "id" : "cd2ffa27-e5e1-4271-996c-5dc0e500b85d",
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person"
+                }
+              }
+            ],
+            "length" : 177998,
+            "video" : false
+          },
+          "number" : "7",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "disambiguation" : "composer",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ]
+        },
+        {
+          "id" : "87ba65ea-9a09-4c42-a857-e0f85e93e6e1",
+          "length" : 285000,
+          "position" : 8,
+          "recording" : {
+            "length" : 285000,
+            "video" : false,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "id" : "cdc12520-a952-484b-9e7a-927f84b620c4",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 4 in E minor",
+            "disambiguation" : ""
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 4 in E minor",
+          "number" : "8",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "90f35ad4-3e5d-45f7-a7e3-86c1a6f1df52",
+          "length" : 88000,
+          "recording" : {
+            "id" : "dfeeeed4-74d0-46ad-ac82-e76d08d0e6f5",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 5 in D major",
+            "length" : 88000,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person"
+                }
+              }
+            ]
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 5 in D major",
+          "position" : 9,
+          "number" : "9",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "country" : "RU",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "disambiguation" : "composer",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ]
+        },
+        {
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "number" : "10",
+          "recording" : {
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 5 in D major",
+            "disambiguation" : "",
+            "id" : "b7fb1002-0be0-4fe1-803b-e1da02378687",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "video" : false,
+            "length" : 108000
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 5 in D major",
+          "position" : 10,
+          "length" : 108000,
+          "id" : "beee7e99-360d-4e28-ab03-ed1f0ddca6f8"
+        },
+        {
+          "length" : 115000,
+          "id" : "ff3e45cd-449c-4303-9668-5d280d74c654",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "number" : "11",
+          "position" : 11,
+          "recording" : {
+            "id" : "0f908a18-23fa-438c-9315-b4c0c790c6e8",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 6 in B minor",
+            "length" : 114592,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE"
+                }
+              }
+            ]
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 6 in B minor"
+        },
+        {
+          "length" : 298000,
+          "id" : "fec89093-26cc-4bc9-9d77-c7f0bdaca51c",
+          "number" : "12",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "recording" : {
+            "id" : "09573f37-e74d-42c0-9b2e-e3e0cd75676c",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 6 in B minor",
+            "length" : 297967,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ]
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 6 in B minor",
+          "position" : 12
+        },
+        {
+          "artist-credit" : [
+            {
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "number" : "13",
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 7 in A major",
+          "recording" : {
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 7 in A major",
+            "disambiguation" : "",
+            "id" : "13f5ad55-cea7-483d-81b9-4c16ef741d1a",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "length" : 73830,
+            "video" : false
+          },
+          "position" : 13,
+          "length" : 74000,
+          "id" : "32a147b6-5d05-4d1e-b7d5-a91085d6c454"
+        },
+        {
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "disambiguation" : "composer",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "number" : "14",
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 7 in A major",
+          "recording" : {
+            "video" : false,
+            "length" : 131840,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "disambiguation" : "pianist"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "id" : "4ac56e10-43c2-428c-94f7-7730006480d3",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 7 in A major"
+          },
+          "position" : 14,
+          "length" : 132000,
+          "id" : "c01b65d1-b987-4457-9c1c-1af4ea58efed"
+        },
+        {
+          "length" : 72000,
+          "id" : "c26903e6-7993-4d4b-a598-3d9f977236c1",
+          "number" : "15",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "recording" : {
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 8 in F‐sharp minor",
+            "disambiguation" : "",
+            "id" : "bf7a63dc-81f7-45d5-b506-2174a6a15109",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "length" : 72000,
+            "video" : false
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 8 in F-sharp minor",
+          "position" : 15
+        },
+        {
+          "length" : 432000,
+          "id" : "7328a704-ebb1-422a-9b28-6daa59119bc3",
+          "number" : "16",
+          "artist-credit" : [
+            {
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : "",
+              "artist" : {
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              }
+            }
+          ],
+          "position" : 16,
+          "recording" : {
+            "id" : "1f00ae2c-a522-4403-8f84-ee2b9a64802b",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 8 in F‐sharp minor",
+            "video" : false,
+            "length" : 431857,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE"
+                }
+              }
+            ]
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 8 in F-sharp minor"
+        },
+        {
+          "length" : 127000,
+          "id" : "080d8941-d1f5-4c8a-94d6-384d0f095bd3",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "disambiguation" : "composer",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              }
+            }
+          ],
+          "number" : "17",
+          "position" : 17,
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 9 in E major",
+          "recording" : {
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 9 in E major",
+            "disambiguation" : "",
+            "id" : "eb00e17f-dc1e-438e-9c5b-b73160a971c5",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "disambiguation" : "pianist"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "length" : 126503,
+            "video" : false
+          }
+        },
+        {
+          "id" : "3a6cb194-92c3-49b0-b34d-34d81b85f5cb",
+          "length" : 96000,
+          "position" : 18,
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 9 in E major",
+          "recording" : {
+            "video" : false,
+            "length" : 96000,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                }
+              }
+            ],
+            "id" : "6d08a18b-d2cd-4c88-8a6b-0226177202c2",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 9 in E major"
+          },
+          "number" : "18",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "country" : "RU",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ]
+        },
+        {
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              }
+            }
+          ],
+          "number" : "19",
+          "position" : 19,
+          "recording" : {
+            "id" : "ea90bec6-2e9b-4c18-a44b-c509c1f28cd5",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 10 in C‐sharp minor",
+            "disambiguation" : "",
+            "video" : false,
+            "length" : 130000,
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d"
+                }
+              }
+            ],
+            "first-release-date" : "2021-09-10"
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 10 in C-sharp minor",
+          "length" : 130000,
+          "id" : "2f993810-3b36-4295-a52c-82ab5b47a743"
+        },
+        {
+          "length" : 327000,
+          "id" : "3df55dbc-c48c-4a49-8236-ad8b6c7eb3bf",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "number" : "20",
+          "recording" : {
+            "video" : false,
+            "length" : 327000,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "id" : "a20447ec-671d-4021-93e0-cdaa4d743eea",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 10 in C‐sharp minor"
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 10 in C-sharp minor",
+          "position" : 20
+        },
+        {
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "disambiguation" : "composer",
+                "country" : "RU",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович"
+              }
+            }
+          ],
+          "number" : "21",
+          "position" : 21,
+          "recording" : {
+            "length" : 65000,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                }
+              }
+            ],
+            "id" : "aa31ba6a-e8de-4187-b41f-11f0fabea56e",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 11 in B major"
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 11 in B major",
+          "length" : 65000,
+          "id" : "49dbf3d5-48db-4eb7-97e0-b53dc4c0ce35"
+        },
+        {
+          "length" : 120000,
+          "id" : "c58ae75c-5d90-4c98-9d10-17d2263952e2",
+          "number" : "22",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "disambiguation" : "composer",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 11 in B major",
+          "recording" : {
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d"
+                }
+              }
+            ],
+            "video" : false,
+            "length" : 120000,
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 11 in B major",
+            "id" : "57d4345f-872b-4854-9796-cfb835dc7296"
+          },
+          "position" : 22
+        },
+        {
+          "id" : "32867afb-5aa1-4f7f-9e8b-b4ca6f7a8fe8",
+          "length" : 272000,
+          "position" : 23,
+          "recording" : {
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "length" : 271888,
+            "video" : false,
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 12 in G‐sharp minor",
+            "disambiguation" : "",
+            "id" : "71f953f9-781c-42ce-b5ec-22e14609db62"
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 12 in G-sharp minor",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "disambiguation" : "composer",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "number" : "23"
+        },
+        {
+          "id" : "a9e36880-2fc2-409f-bf36-a4c689854929",
+          "length" : 225000,
+          "recording" : {
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                }
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "video" : false,
+            "length" : 225000,
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 12 in G‐sharp minor",
+            "disambiguation" : "",
+            "id" : "71c39c24-8060-4086-8ad1-87b771d62b9a"
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 12 in G-sharp minor",
+          "position" : 24,
+          "number" : "24",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "baebe77c-4369-32a6-8507-f5b7d6ee8e87",
+      "track-count" : 24,
+      "track-offset" : 0,
+      "format-id" : "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "title" : "",
+      "position" : 2,
+      "format" : "CD",
+      "tracks" : [
+        {
+          "position" : 1,
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 13 in F-sharp major",
+          "recording" : {
+            "id" : "8a790561-bb8c-43dd-bbc9-de66ec2f8129",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 13 in F‐sharp major",
+            "disambiguation" : "",
+            "video" : false,
+            "length" : 147719,
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE"
+                }
+              }
+            ],
+            "first-release-date" : "2021-09-10"
+          },
+          "number" : "1",
+          "artist-credit" : [
+            {
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : "",
+              "artist" : {
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "disambiguation" : "composer",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "id" : "567720ae-ae6d-4f98-a7f6-0f4901abdc78",
+          "length" : 148000
+        },
+        {
+          "number" : "2",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "recording" : {
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                }
+              }
+            ],
+            "length" : 285636,
+            "video" : false,
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 13 in F‐sharp major",
+            "id" : "9fe81bf4-25c4-4dc5-ab82-766c63b80213"
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 13 in F-sharp major",
+          "position" : 2,
+          "length" : 286000,
+          "id" : "eb1e0ff3-6154-42d4-8eab-eede01bc7160"
+        },
+        {
+          "position" : 3,
+          "recording" : {
+            "video" : false,
+            "length" : 248000,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "id" : "3097bbf4-1871-47a9-b783-9eb408993b27",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 14 in E‐flat minor",
+            "disambiguation" : ""
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 14 in E-flat minor",
+          "number" : "3",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "disambiguation" : "composer"
+              }
+            }
+          ],
+          "id" : "24358a87-1bb3-42b4-9b9b-05058d30c8cd",
+          "length" : 248000
+        },
+        {
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 14 in E-flat minor",
+          "recording" : {
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "disambiguation" : "pianist"
+                }
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "video" : false,
+            "length" : 164000,
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 14 in E‐flat minor",
+            "disambiguation" : "",
+            "id" : "43970c77-ab79-4a74-bc97-a146c431f119"
+          },
+          "position" : 4,
+          "artist-credit" : [
+            {
+              "artist" : {
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU",
+                "disambiguation" : "composer",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "number" : "4",
+          "id" : "69e35ad9-d57c-4fe5-a6e4-a68ff7c0c7f9",
+          "length" : 164000
+        },
+        {
+          "position" : 5,
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 15 in D-flat major",
+          "recording" : {
+            "video" : false,
+            "length" : 154000,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "id" : "8423cf7d-594b-4cff-841c-37259c40e929",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 15 in D‐flat major"
+          },
+          "number" : "5",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU"
+              }
+            }
+          ],
+          "id" : "4bab7521-2d12-4a0a-a6e5-eed5528fb423",
+          "length" : 154000
+        },
+        {
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 15 in D-flat major",
+          "recording" : {
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 15 in D‐flat major",
+            "id" : "e79e514f-f5cc-44e3-a619-c11c339d56f6",
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor"
+                }
+              }
+            ],
+            "video" : false,
+            "length" : 93000
+          },
+          "position" : 6,
+          "number" : "6",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "id" : "09839cb8-f9a9-4002-a082-5a916fd857b4",
+          "length" : 93000
+        },
+        {
+          "length" : 159000,
+          "id" : "9089e9cb-464e-44ac-ad61-35419d51db05",
+          "number" : "7",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "disambiguation" : "composer",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "position" : 7,
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 16 in B-flat minor",
+          "recording" : {
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "video" : false,
+            "length" : 158579,
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 16 in B‐flat minor",
+            "id" : "fbc45a0b-3d6d-423c-b3a3-09d361c7dfd0"
+          }
+        },
+        {
+          "position" : 8,
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 16 in B-flat minor",
+          "recording" : {
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "video" : false,
+            "length" : 449000,
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 16 in B‐flat minor",
+            "id" : "a6c960c4-9400-4fd1-bc18-b79ac8fe90e4"
+          },
+          "number" : "8",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "id" : "38f51883-e318-4b90-93a8-26d683c9011f",
+          "length" : 449000
+        },
+        {
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 17 in A-flat major",
+          "recording" : {
+            "video" : false,
+            "length" : 99000,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "id" : "f6dceaab-8f44-4e3f-9e8d-1647e6539f4e",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 17 in A‐flat major",
+            "disambiguation" : ""
+          },
+          "position" : 9,
+          "number" : "9",
+          "artist-credit" : [
+            {
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : "",
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "disambiguation" : "composer"
+              }
+            }
+          ],
+          "id" : "9409926b-31cf-402f-9d1e-784200327a89",
+          "length" : 99000
+        },
+        {
+          "position" : 10,
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 17 in A-flat major",
+          "recording" : {
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 17 in A‐flat major",
+            "id" : "de392ba4-ce77-4c41-9949-9ef1034ae7fc",
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE"
+                }
+              }
+            ],
+            "video" : false,
+            "length" : 220000
+          },
+          "number" : "10",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "disambiguation" : "composer"
+              }
+            }
+          ],
+          "id" : "52452c4e-8e12-497d-a1b5-9ab8bbc98703",
+          "length" : 220000
+        },
+        {
+          "length" : 130000,
+          "id" : "7c5f6a1d-6d93-4b8a-920c-e3a101dddef1",
+          "number" : "11",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU",
+                "disambiguation" : "composer"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "recording" : {
+            "length" : 129736,
+            "video" : false,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "id" : "4343c20f-fe03-4726-8618-4192e610c340",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 18 in F minor",
+            "disambiguation" : ""
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 18 in F minor",
+          "position" : 11
+        },
+        {
+          "number" : "12",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "disambiguation" : "composer",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person"
+              }
+            }
+          ],
+          "position" : 12,
+          "recording" : {
+            "video" : false,
+            "length" : 183000,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor"
+                }
+              }
+            ],
+            "id" : "9d786c2c-742a-461e-9edc-06341ab89a6d",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 18 in F minor"
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 18 in F minor",
+          "length" : 183000,
+          "id" : "0deb4066-cc9a-47a8-8879-6fc2314576d5"
+        },
+        {
+          "position" : 13,
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 19 in E-flat major",
+          "recording" : {
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 19 in E‐flat major",
+            "id" : "d01d5c6f-5c7a-4b50-9b2c-c7d3f3c49d8b",
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                }
+              }
+            ],
+            "length" : 135535,
+            "video" : false
+          },
+          "number" : "13",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "disambiguation" : "composer"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "id" : "beb9b2b2-8026-4c35-afc2-ddcb2918a55f",
+          "length" : 136000
+        },
+        {
+          "number" : "14",
+          "artist-credit" : [
+            {
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : "",
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU",
+                "disambiguation" : "composer"
+              }
+            }
+          ],
+          "recording" : {
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 19 in E‐flat major",
+            "id" : "723acd99-8c3e-49da-b217-66c0c29fb34b",
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "disambiguation" : "pianist"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "video" : false,
+            "length" : 146000
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 19 in E-flat major",
+          "position" : 14,
+          "length" : 146000,
+          "id" : "4a6af432-38f2-4775-9101-c41d04c475f0"
+        },
+        {
+          "id" : "b7dad6d3-e7d8-4a42-a409-a574c53a8bf2",
+          "length" : 244000,
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 20 in C minor",
+          "recording" : {
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "disambiguation" : "pianist"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "length" : 243954,
+            "video" : false,
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 20 in C minor",
+            "disambiguation" : "",
+            "id" : "962f17c7-40a6-451d-82df-0e0ab423bb28"
+          },
+          "position" : 15,
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "disambiguation" : "composer"
+              }
+            }
+          ],
+          "number" : "15"
+        },
+        {
+          "length" : 312000,
+          "id" : "737d6953-92b1-4463-8cbb-cde9f5c5010e",
+          "artist-credit" : [
+            {
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : "",
+              "artist" : {
+                "country" : "RU",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "disambiguation" : "composer",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "number" : "16",
+          "position" : 16,
+          "recording" : {
+            "id" : "f9c97bd8-fdc8-496b-bb55-3b44266ee640",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 20 in C minor",
+            "disambiguation" : "",
+            "length" : 312000,
+            "video" : false,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "first-release-date" : "2021-09-10"
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 20 in C minor"
+        },
+        {
+          "recording" : {
+            "id" : "94eab477-7d8b-4631-9310-871f0e0386ea",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 21 in B‐flat major",
+            "video" : false,
+            "length" : 76561,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "disambiguation" : "pianist"
+                }
+              }
+            ]
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 21 in B-flat major",
+          "position" : 17,
+          "number" : "17",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "id" : "a94c96e0-6de4-403b-ab9e-f8fe883f0130",
+          "length" : 77000
+        },
+        {
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "number" : "18",
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 21 in B-flat major",
+          "recording" : {
+            "length" : 162756,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "id" : "45a7e626-7821-463c-bdac-aedd17737120",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 21 in B‐flat major"
+          },
+          "position" : 18,
+          "length" : 163000,
+          "id" : "f9350f52-cb68-4c25-8535-60914335de9b"
+        },
+        {
+          "number" : "19",
+          "artist-credit" : [
+            {
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : "",
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "country" : "RU",
+                "disambiguation" : "composer"
+              }
+            }
+          ],
+          "position" : 19,
+          "recording" : {
+            "id" : "4482e611-d3c8-4527-b6a4-a1693ef71ce9",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 22 in G minor",
+            "length" : 120551,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                }
+              }
+            ]
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 22 in G minor",
+          "length" : 121000,
+          "id" : "fb53cb8e-600c-4632-a597-ddf0ce1c3809"
+        },
+        {
+          "position" : 20,
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 22 in G minor",
+          "recording" : {
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 22 in G minor",
+            "disambiguation" : "",
+            "id" : "336c7343-35bb-4be8-a1f0-fdc52c1f3094",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "video" : false,
+            "length" : 192000
+          },
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "composer",
+                "country" : "RU",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "number" : "20",
+          "id" : "1afc6bd8-158a-49c8-8c19-360c032d63d6",
+          "length" : 192000
+        },
+        {
+          "artist-credit" : [
+            {
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : "",
+              "artist" : {
+                "disambiguation" : "composer",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              }
+            }
+          ],
+          "number" : "21",
+          "recording" : {
+            "id" : "bb232027-00be-4c76-8d22-c0315ee580e0",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 23 in F major",
+            "disambiguation" : "",
+            "video" : false,
+            "length" : 144851,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "first-release-date" : "2021-09-10"
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 23 in F major",
+          "position" : 21,
+          "length" : 145000,
+          "id" : "e93d6c49-62d6-41d2-a2b2-8382d5077c82"
+        },
+        {
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 23 in F major",
+          "recording" : {
+            "id" : "8aab40ed-9aed-4f2e-a3bb-a179b7049e3a",
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 23 in F major",
+            "length" : 242000,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ]
+          },
+          "position" : 22,
+          "artist-credit" : [
+            {
+              "artist" : {
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "disambiguation" : "composer"
+              },
+              "name" : "Dmitri Shostakovich",
+              "joinphrase" : ""
+            }
+          ],
+          "number" : "22",
+          "id" : "e6068eda-23c1-47e6-ad81-bf6ece9f221f",
+          "length" : 242000
+        },
+        {
+          "length" : 252000,
+          "id" : "b7bbf973-c920-4b39-8258-46b4bed47d95",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich",
+              "artist" : {
+                "disambiguation" : "composer",
+                "country" : "RU",
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich"
+              }
+            }
+          ],
+          "number" : "23",
+          "title" : "24 Preludes and Fugues, op. 87: Prelude no. 24 in D minor",
+          "recording" : {
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "disambiguation" : "pianist"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "length" : 251818,
+            "video" : false,
+            "disambiguation" : "",
+            "title" : "24 Preludes and Fugues, op. 87: Prelude no. 24 in D minor",
+            "id" : "a25554a2-33e8-493a-b966-97e41f9e6c41"
+          },
+          "position" : 23
+        },
+        {
+          "recording" : {
+            "id" : "ef0bcb1a-6d75-4878-9feb-053aa820eecc",
+            "title" : "24 Preludes and Fugues, op. 87: Fugue no. 24 in D minor",
+            "disambiguation" : "",
+            "length" : 563000,
+            "video" : false,
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                }
+              }
+            ],
+            "first-release-date" : "2021-09-10"
+          },
+          "title" : "24 Preludes and Fugues, op. 87: Fugue no. 24 in D minor",
+          "position" : 24,
+          "artist-credit" : [
+            {
+              "artist" : {
+                "id" : "519dd32e-8f30-4380-8826-7aa99169e1bb",
+                "name" : "Дмитрий Дмитриевич Шостакович",
+                "country" : "RU",
+                "disambiguation" : "composer",
+                "sort-name" : "Shostakovich, Dmitri Dmitrievich",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person"
+              },
+              "joinphrase" : "",
+              "name" : "Dmitri Shostakovich"
+            }
+          ],
+          "number" : "24",
+          "id" : "c7382635-8eda-40b3-a4a9-6790d0d9dfce",
+          "length" : 563000
+        }
+      ],
+      "discs" : [
+        {
+          "id" : "RPtU8gSRzvdtsrgo6g_7oN5Gs9Y-",
+          "offset-count" : 24,
+          "sectors" : 369672,
+          "offsets" : [
+            150,
+            11228,
+            32651,
+            51272,
+            63607,
+            75177,
+            82166,
+            94060,
+            127761,
+            135202,
+            151717,
+            161447,
+            175179,
+            185344,
+            196317,
+            214614,
+            238049,
+            243791,
+            255998,
+            265039,
+            279472,
+            290336,
+            308521,
+            327407
+          ]
+        }
+      ]
+    },
+    {
+      "discs" : [
+        {
+          "id" : "tgAmVy0X8_YXo7e1n_cRN1xI6SY-",
+          "offset-count" : 21,
+          "offsets" : [
+            150,
+            29995,
+            40468,
+            45691,
+            101126,
+            113734,
+            116839,
+            125801,
+            150590,
+            160538,
+            170155,
+            178809,
+            183003,
+            192651,
+            201939,
+            218662,
+            235290,
+            244118,
+            268011,
+            299727,
+            329245
+          ],
+          "sectors" : 384240
+        }
+      ],
+      "tracks" : [
+        {
+          "id" : "63e5fd6a-49a3-4bc8-909e-5923493faf34",
+          "length" : 398000,
+          "position" : 1,
+          "recording" : {
+            "video" : false,
+            "length" : 397946,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "id" : "326dbaed-2ba1-47f9-9bbf-cb811c8717d7",
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Prima: Sonata allegro"
+          },
+          "title" : "Passacaglia on DSCH: Pars Prima: Sonata allegro",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Ronald Stevenson",
+              "artist" : {
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "country" : "GB",
+                "disambiguation" : "",
+                "sort-name" : "Stevenson, Ronald",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person"
+              }
+            }
+          ],
+          "number" : "1"
+        },
+        {
+          "position" : 2,
+          "recording" : {
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "disambiguation" : "pianist"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "length" : 139637,
+            "video" : false,
+            "title" : "Passacaglia on DSCH: Pars Prima: Waltz in Rondo‐Form",
+            "disambiguation" : "",
+            "id" : "84fd239d-ce41-405f-9f5c-ebcd510288bc"
+          },
+          "title" : "Passacaglia on DSCH: Pars Prima: Waltz in rondo-form",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Ronald Stevenson",
+              "artist" : {
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "country" : "GB",
+                "disambiguation" : "",
+                "sort-name" : "Stevenson, Ronald",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person"
+              }
+            }
+          ],
+          "number" : "2",
+          "id" : "d233add3-2593-4618-9561-c3215fa9af2f",
+          "length" : 140000
+        },
+        {
+          "number" : "3",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Ronald Stevenson",
+              "artist" : {
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Stevenson, Ronald",
+                "disambiguation" : "",
+                "country" : "GB",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "name" : "Ronald Stevenson"
+              }
+            }
+          ],
+          "position" : 3,
+          "title" : "Passacaglia on DSCH: Pars Prima: Episode",
+          "recording" : {
+            "video" : false,
+            "length" : 69640,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "id" : "22198183-ade3-4e8c-b2d2-11dd5cdf6a84",
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Prima: Episode"
+          },
+          "length" : 70000,
+          "id" : "2bfb73dd-6065-4980-a369-aa8b5dfabc89"
+        },
+        {
+          "length" : 739000,
+          "id" : "09e0f446-97de-45f6-bd02-dfb7a36c3a31",
+          "number" : "4",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "sort-name" : "Stevenson, Ronald",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "country" : "GB",
+                "disambiguation" : ""
+              },
+              "name" : "Ronald Stevenson",
+              "joinphrase" : ""
+            }
+          ],
+          "position" : 4,
+          "title" : "Passacaglia on DSCH: Pars Prima: Suite. Prelude - Sarabande - Jig - Sarabande. Minuet - Jig - Gavotte - Polonaise",
+          "recording" : {
+            "length" : 739000,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit"
+                }
+              }
+            ],
+            "id" : "bbd01a3c-d1af-4593-86b9-5788899b6963",
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Prima: Suite. Prelude - Sarabande - Jig - Sarabande - Minuet - Jig - Gavotte - Polonaise"
+          }
+        },
+        {
+          "length" : 168000,
+          "id" : "7d0f1aa4-7382-443a-bc58-0c62bd6eda3b",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Ronald Stevenson",
+              "artist" : {
+                "country" : "GB",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "name" : "Ronald Stevenson",
+                "disambiguation" : "",
+                "sort-name" : "Stevenson, Ronald",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "number" : "5",
+          "recording" : {
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "length" : 168000,
+            "video" : false,
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Prima: Pibroch (Lament for the Children)",
+            "id" : "aedd7811-981a-413b-85bd-f69605a58a7b"
+          },
+          "title" : "Passacaglia on DSCH: Pars Prima: Pibroch (Lament for the Children)",
+          "position" : 5
+        },
+        {
+          "length" : 41000,
+          "id" : "d1c43b1d-3a72-4d3a-99c2-1670f49b847d",
+          "number" : "6",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "country" : "GB",
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "disambiguation" : "",
+                "sort-name" : "Stevenson, Ronald",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "name" : "Ronald Stevenson",
+              "joinphrase" : ""
+            }
+          ],
+          "position" : 6,
+          "title" : "Passacaglia on DSCH: Pars Prima: Episode. Arabesque Variations",
+          "recording" : {
+            "id" : "b8263f46-ead1-4ab6-95dc-848ccb6c65e9",
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Prima: Episode. Arabesque Variations",
+            "video" : false,
+            "length" : 41000,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ]
+          }
+        },
+        {
+          "position" : 7,
+          "recording" : {
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Prima: Nocturne",
+            "id" : "182e01ac-c4bd-40f5-b025-3cb02ba523e0",
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "length" : 119000,
+            "video" : false
+          },
+          "title" : "Passacaglia on DSCH: Pars Prima: Nocturne",
+          "number" : "7",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Stevenson, Ronald",
+                "disambiguation" : "",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "name" : "Ronald Stevenson",
+                "country" : "GB"
+              },
+              "name" : "Ronald Stevenson",
+              "joinphrase" : ""
+            }
+          ],
+          "id" : "2c637470-c080-4485-a2a0-0e64316a8279",
+          "length" : 119000
+        },
+        {
+          "position" : 8,
+          "title" : "Passacaglia on DSCH: Pars Altera: Reverie-Fantasy",
+          "recording" : {
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor"
+                }
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "video" : false,
+            "length" : 330530,
+            "title" : "Passacaglia on DSCH: Pars Altera: Reverie‐Fantasy",
+            "disambiguation" : "",
+            "id" : "a98a2cb3-725d-4f62-9cce-e7b001677101"
+          },
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Ronald Stevenson",
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Stevenson, Ronald",
+                "disambiguation" : "",
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "country" : "GB"
+              }
+            }
+          ],
+          "number" : "8",
+          "id" : "44791094-bc04-46bd-b8e0-f4d30d0cfdfb",
+          "length" : 331000
+        },
+        {
+          "length" : 133000,
+          "id" : "cfd327d2-167d-4bc9-ab45-4d173272bffd",
+          "number" : "9",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "country" : "GB",
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "disambiguation" : "",
+                "sort-name" : "Stevenson, Ronald",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "joinphrase" : "",
+              "name" : "Ronald Stevenson"
+            }
+          ],
+          "position" : 9,
+          "recording" : {
+            "id" : "8919d1f6-8919-429d-a7b3-3e3d5af49b22",
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Altera: Fanfare - Forebodings. Alarm - Glimpse of a War‐Vision",
+            "video" : false,
+            "length" : 132633,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                }
+              }
+            ]
+          },
+          "title" : "Passacaglia on DSCH: Pars Altera: Fanfare - Forebodings. Alarm - Glimpse of a War-Vision"
+        },
+        {
+          "length" : 128000,
+          "id" : "2fff2604-0cff-457a-8359-e78178029df8",
+          "number" : "10",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "",
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "country" : "GB",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Stevenson, Ronald"
+              },
+              "joinphrase" : "",
+              "name" : "Ronald Stevenson"
+            }
+          ],
+          "title" : "Passacaglia on DSCH: Pars Altera: Variations on \"Peace, Bread & the Land\" (1917)",
+          "recording" : {
+            "id" : "90f9e9e7-d46c-431f-85ce-104bd2ca7f29",
+            "title" : "Passacaglia on DSCH: Pars Altera: Variations on “Peace, Bread & the Land” (1917)",
+            "disambiguation" : "",
+            "video" : false,
+            "length" : 128000,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10"
+          },
+          "position" : 10
+        },
+        {
+          "id" : "93723af6-e371-4cac-a2a2-1b4a0cb3da5a",
+          "length" : 115000,
+          "title" : "Passacaglia on DSCH: Pars Altera: Symphonic March",
+          "recording" : {
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Altera: Symphonic March",
+            "id" : "d7f595f8-ce65-49c0-bd16-3132bd780260",
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "length" : 115000,
+            "video" : false
+          },
+          "position" : 11,
+          "number" : "11",
+          "artist-credit" : [
+            {
+              "name" : "Ronald Stevenson",
+              "joinphrase" : "",
+              "artist" : {
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "country" : "GB",
+                "disambiguation" : "",
+                "sort-name" : "Stevenson, Ronald",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person"
+              }
+            }
+          ]
+        },
+        {
+          "length" : 56000,
+          "id" : "8c616b86-5a88-426d-a628-1c2e5c733d2b",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "disambiguation" : "",
+                "country" : "GB",
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Stevenson, Ronald"
+              },
+              "name" : "Ronald Stevenson",
+              "joinphrase" : ""
+            }
+          ],
+          "number" : "12",
+          "position" : 12,
+          "title" : "Passacaglia on DSCH: Pars Altera: Episode",
+          "recording" : {
+            "video" : false,
+            "length" : 55916,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "disambiguation" : "pianist"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "id" : "c2bcb15f-ce5c-4758-96e4-2ac6ee1f6d45",
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Altera: Episode"
+          }
+        },
+        {
+          "artist-credit" : [
+            {
+              "artist" : {
+                "country" : "GB",
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "disambiguation" : "",
+                "sort-name" : "Stevenson, Ronald",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "name" : "Ronald Stevenson",
+              "joinphrase" : ""
+            }
+          ],
+          "number" : "13",
+          "title" : "Passacaglia on DSCH: Pars Altera: Fandango",
+          "recording" : {
+            "length" : 128652,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "country" : "DE",
+                  "disambiguation" : "pianist",
+                  "sort-name" : "Levit, Igor",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "id" : "659d7a1d-08d2-44b8-8fef-59b1adf1dae1",
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Altera: Fandango"
+          },
+          "position" : 13,
+          "length" : 129000,
+          "id" : "12cc5efc-dcfc-4ea1-985f-079843aab201"
+        },
+        {
+          "position" : 14,
+          "recording" : {
+            "length" : 123836,
+            "video" : false,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "id" : "db23b9b1-0eaa-426e-a701-56431c7b0038",
+            "title" : "Passacaglia on DSCH: Pars Altera: Pedal‐Point. “To Emergent Africa”",
+            "disambiguation" : ""
+          },
+          "title" : "Passacaglia on DSCH: Pars Altera: Pedal-Point. \"To emergent Africa\"",
+          "number" : "14",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name" : "Stevenson, Ronald",
+                "disambiguation" : "",
+                "country" : "GB",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "name" : "Ronald Stevenson"
+              },
+              "joinphrase" : "",
+              "name" : "Ronald Stevenson"
+            }
+          ],
+          "id" : "46147fcc-c323-4627-bf74-d035db8f2b1a",
+          "length" : 124000
+        },
+        {
+          "length" : 223000,
+          "id" : "001987ea-ff86-4dd7-88ee-1af0408ba62e",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Ronald Stevenson",
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Stevenson, Ronald",
+                "disambiguation" : "",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "name" : "Ronald Stevenson",
+                "country" : "GB"
+              }
+            }
+          ],
+          "number" : "15",
+          "position" : 15,
+          "recording" : {
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "video" : false,
+            "length" : 222970,
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Altera: Central Episode. Études",
+            "id" : "1d437447-b8bf-4410-a169-3f1b0868cc26"
+          },
+          "title" : "Passacaglia on DSCH: Pars Altera: Central Episode. Études"
+        },
+        {
+          "position" : 16,
+          "recording" : {
+            "id" : "7d263fb6-85ec-4a94-a8d6-d206fc921d35",
+            "title" : "Passacaglia on DSCH: Pars Altera: Variations in C minor",
+            "disambiguation" : "",
+            "video" : false,
+            "length" : 221704,
+            "artist-credit" : [
+              {
+                "joinphrase" : "",
+                "name" : "Igor Levit",
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                }
+              }
+            ],
+            "first-release-date" : "2021-09-10"
+          },
+          "title" : "Passacaglia on DSCH: Pars Altera: Variations in C Minor",
+          "artist-credit" : [
+            {
+              "name" : "Ronald Stevenson",
+              "joinphrase" : "",
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Stevenson, Ronald",
+                "disambiguation" : "",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "name" : "Ronald Stevenson",
+                "country" : "GB"
+              }
+            }
+          ],
+          "number" : "16",
+          "id" : "fc4dc993-91bf-40d4-bb06-770e0add6f12",
+          "length" : 222000
+        },
+        {
+          "position" : 17,
+          "recording" : {
+            "length" : 117712,
+            "video" : false,
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                }
+              }
+            ],
+            "first-release-date" : "2021-09-10",
+            "id" : "0f088eb6-73b1-4efd-b569-8aeae7e9b6c7",
+            "title" : "Passacaglia on DSCH: Pars Tertia: Adagio. Tribute to Bach",
+            "disambiguation" : ""
+          },
+          "title" : "Passacaglia on DSCH: Pars Tertia: Adagio. Tribute to Bach",
+          "number" : "17",
+          "artist-credit" : [
+            {
+              "name" : "Ronald Stevenson",
+              "joinphrase" : "",
+              "artist" : {
+                "disambiguation" : "",
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "country" : "GB",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Stevenson, Ronald"
+              }
+            }
+          ],
+          "id" : "c677e726-49c3-4a7c-8ac9-c568009230ad",
+          "length" : 118000
+        },
+        {
+          "length" : 319000,
+          "id" : "0e81e4fb-0f67-4774-82d9-99b564c8149c",
+          "artist-credit" : [
+            {
+              "name" : "Ronald Stevenson",
+              "joinphrase" : "",
+              "artist" : {
+                "sort-name" : "Stevenson, Ronald",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "name" : "Ronald Stevenson",
+                "country" : "GB",
+                "disambiguation" : ""
+              }
+            }
+          ],
+          "number" : "18",
+          "recording" : {
+            "id" : "5670ec47-7874-410c-bb0c-78fb3f97ff3e",
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Tertia: Triple Fugue over Ground Bass, Subject I. Andamento",
+            "length" : 318576,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name" : "Levit, Igor"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ]
+          },
+          "title" : "Passacaglia on DSCH: Pars Tertia: Triple Fugue over Ground Bass: Subject I. Andamento",
+          "position" : 18
+        },
+        {
+          "length" : 423000,
+          "id" : "b280674a-7a42-4b43-a002-a1265793161a",
+          "number" : "19",
+          "artist-credit" : [
+            {
+              "joinphrase" : "",
+              "name" : "Ronald Stevenson",
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Stevenson, Ronald",
+                "disambiguation" : "",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "name" : "Ronald Stevenson",
+                "country" : "GB"
+              }
+            }
+          ],
+          "title" : "Passacaglia on DSCH: Pars Tertia: Triple Fugue over Ground Bass: Subject II. B A C H",
+          "recording" : {
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "name" : "Igor Levit",
+                "joinphrase" : "",
+                "artist" : {
+                  "sort-name" : "Levit, Igor",
+                  "type" : "Person",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country" : "DE",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "name" : "Igor Levit",
+                  "disambiguation" : "pianist"
+                }
+              }
+            ],
+            "video" : false,
+            "length" : 422882,
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Tertia: Triple Fugue over Ground Bass, Subject II. B A C H",
+            "id" : "bc776087-9876-431b-96c0-79ee525d9bb5"
+          },
+          "position" : 19
+        },
+        {
+          "length" : 394000,
+          "id" : "24b181e9-e86d-4e59-84cb-e24c2d6f1603",
+          "number" : "20",
+          "artist-credit" : [
+            {
+              "name" : "Ronald Stevenson",
+              "joinphrase" : "",
+              "artist" : {
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type" : "Person",
+                "sort-name" : "Stevenson, Ronald",
+                "disambiguation" : "",
+                "name" : "Ronald Stevenson",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "country" : "GB"
+              }
+            }
+          ],
+          "title" : "Passacaglia on DSCH: Pars Tertia: Triple Fugue over Ground Bass: Subject III. Dies Irae (In memoriam the six million)",
+          "recording" : {
+            "length" : 393564,
+            "video" : false,
+            "first-release-date" : "2021-09-10",
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor",
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE"
+                },
+                "joinphrase" : "",
+                "name" : "Igor Levit"
+              }
+            ],
+            "id" : "157cb9a8-3210-4bf7-bd8a-77801db2844f",
+            "disambiguation" : "",
+            "title" : "Passacaglia on DSCH: Pars Tertia: Triple Fugue over Ground Bass, Subject III. Dies Irae (In Memoriam the Six Million)"
+          },
+          "position" : 20
+        },
+        {
+          "position" : 21,
+          "recording" : {
+            "id" : "3f2fcf8c-9bef-40fb-bcbd-b5467d66dee7",
+            "title" : "Passacaglia on DSCH: Pars Tertia: Final Variations on a Theme Derived from Ground. Adagissimo barocco",
+            "disambiguation" : "",
+            "video" : false,
+            "length" : 733000,
+            "artist-credit" : [
+              {
+                "artist" : {
+                  "disambiguation" : "pianist",
+                  "name" : "Igor Levit",
+                  "id" : "2297faf9-2cc0-45c6-bfcf-e9280d640f6d",
+                  "country" : "DE",
+                  "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type" : "Person",
+                  "sort-name" : "Levit, Igor"
+                },
+                "name" : "Igor Levit",
+                "joinphrase" : ""
+              }
+            ],
+            "first-release-date" : "2021-09-10"
+          },
+          "title" : "Passacaglia on DSCH: Pars Tertia: Final Variations on a Theme Derived from Ground. Adagissimo barocco",
+          "artist-credit" : [
+            {
+              "artist" : {
+                "country" : "GB",
+                "id" : "607bc6a0-47c4-4cab-8d14-595624ea8721",
+                "name" : "Ronald Stevenson",
+                "disambiguation" : "",
+                "sort-name" : "Stevenson, Ronald",
+                "type" : "Person",
+                "type-id" : "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "name" : "Ronald Stevenson",
+              "joinphrase" : ""
+            }
+          ],
+          "number" : "21",
+          "id" : "690a0b5a-d53c-4fe5-a1cc-884fbd453d3c",
+          "length" : 733000
+        }
+      ],
+      "title" : "",
+      "format-id" : "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "position" : 3,
+      "format" : "CD",
+      "track-count" : 21,
+      "track-offset" : 0,
+      "id" : "d897ad3c-c847-38af-9e7c-62d84b41e6f4"
+    }
+  ],
+  "id" : "f8a9a5e3-b47b-4996-9b83-da0716ad8421",
+  "cover-art-archive" : {
+    "front" : true,
+    "count" : 2,
+    "darkened" : false,
+    "artwork" : true,
+    "back" : false
+  },
+  "barcode" : "194398092126",
+  "date" : "2021-09-10"
+}

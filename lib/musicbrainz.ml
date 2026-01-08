@@ -184,6 +184,10 @@ module Disc_Id =
 
   end
 
+module Discid_cache = Cache.Make (struct let name = "diskid" end)
+module Release_cache = Cache.Make (struct let name = "release" end)
+module Releaseid_cache = Cache.Make (struct let name = "releaseid" end)
+
 let discid_of_file name =
   let text = In_channel.with_open_text name In_channel.input_all in
   Jsont_bytesrw.decode_string Disc_Id.jsont text

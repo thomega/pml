@@ -27,12 +27,12 @@ module Make (Table : Table) : T =
       | Error _ as e -> e
       | Ok root -> is_directory (Filename.concat root Table.name)
 
-    let filename ~root tag =
+    let filename ~root key =
       table ~root
-      |>  Result.map (fun path -> Filename.concat path tag)
+      |>  Result.map (fun path -> Filename.concat path key)
 
-    let lookup ~root tag =
-      match filename ~root tag with
+    let lookup ~root key =
+      match filename ~root key with
       | Error _ as e -> e
       | Ok name ->
          if Sys.file_exists name then
@@ -43,8 +43,8 @@ module Make (Table : Table) : T =
          else
            Ok None
 
-    let delete ~root tag =
-      match filename ~root tag with
+    let delete ~root key =
+      match filename ~root key with
       | Error _ as e -> e
       | Ok name ->
          if Sys.file_exists name then
@@ -55,8 +55,8 @@ module Make (Table : Table) : T =
          else
            Ok ()
 
-    let replace ~root tag text =
-      match filename ~root tag with
+    let replace ~root key text =
+      match filename ~root key with
       | Error _ as e -> e
       | Ok name ->
          try
