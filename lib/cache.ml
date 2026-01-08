@@ -28,15 +28,6 @@ let lookup ~root ~subdir tag =
      else
        Ok None
 
-let replace ~root ~subdir tag text =
-  match filename ~root ~subdir tag with
-  | Error _ as e -> e
-  | Ok name ->
-     try
-       Ok (Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc text))
-     with
-     | exn -> Error (Printexc.to_string exn)
-
 let delete ~root ~subdir tag =
   match filename ~root ~subdir tag with
   | Error _ as e -> e
@@ -48,3 +39,31 @@ let delete ~root ~subdir tag =
        | exn -> Error (Printexc.to_string exn)
      else
        Ok ()
+
+let replace ~root ~subdir tag text =
+  match filename ~root ~subdir tag with
+  | Error _ as e -> e
+  | Ok name ->
+     try
+       Ok (Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc text))
+     with
+     | exn -> Error (Printexc.to_string exn)
+
+module type T =
+  sig
+    val lookup : root:string -> string -> (string option, string) result
+    val delete : root:string -> string -> (unit, string) result
+    val replace : root:string -> string -> string -> (unit, string) result
+  end
+
+module type Subdir =
+  sig
+    val name : string
+  end
+
+module Make (Subdir : Subdir) : T =
+  struct
+    let lookup ~root tag = lookup ~root ~subdir:Subdir.name tag
+    let delete ~root tag = delete ~root ~subdir:Subdir.name tag
+    let replace ~root text tag = replace ~root ~subdir:Subdir.name text tag
+  end
