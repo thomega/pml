@@ -40,7 +40,11 @@ module Musicbrainz : Exit_Cmd =
       let doc = "Dump the whole tree without contents." in
       Arg.(value & flag & info ["s"; "schema"] ~doc)
 
-    let parse_json ?file ~schema () =
+    let pretty =
+      let doc = "Dump the whole tree." in
+      Arg.(value & flag & info ["p"; "pretty"] ~doc)
+
+    let parse_json ?file ~schema ~pretty () =
       match file with
       | None -> 0
       | Some name ->
@@ -50,14 +54,20 @@ module Musicbrainz : Exit_Cmd =
              0
            with
            | _ -> 1
+         else if pretty then
+           try
+             Pml.Musicbrainz.Raw.print_file name;
+             0
+           with
+           | _ -> 1
          else
            0
 
     let cmd =
       let open Cmd in
       make (info "musicbrainz" ~man) @@
-        let+ file and+ schema in
-        parse_json ?file ~schema ()
+        let+ file and+ schema and+ pretty in
+        parse_json ?file ~schema ~pretty ()
 
   end
 

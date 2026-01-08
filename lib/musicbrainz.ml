@@ -72,7 +72,7 @@ let query_release =
   { query = "release";
     inc = ["artists"; "artist-credits";
            "recordings"; "release-groups"; "discids";
-           "url-rels";"labels"; ] }
+           "url-rels"; "labels"; ] }
 
 let get_discid discid =
   do_curl musicbrainz query_discid discid
@@ -97,6 +97,7 @@ let get_discid_cached discid =
 module type Raw =
   sig
     val of_file : string -> (Jsont.json, string) result
+    val print_file : string -> unit
     val dump_schema_file : string -> unit
   end
 
@@ -105,12 +106,22 @@ module Raw : Raw =
 
     let jsont =
       Jsont.Object.map Fun.id
-      |> Jsont.Object.keep_unknown Jsont.json_mems
+      |> Jsont.Object.keep_unknown Jsont.json_mems ~enc:Fun.id
       |> Jsont.Object.finish
 
     let of_file name =
       let text = In_channel.with_open_text name In_channel.input_all in
       Jsont_bytesrw.decode_string jsont text
+
+    let print_json json = 
+      match Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont json with
+      | Ok text -> print_endline text
+      | Error msg -> prerr_endline msg
+
+    let print_file name =
+      match of_file name with
+      | Ok json -> print_json json
+      | Error msg -> prerr_endline msg
 
     let indent pfx = pfx ^ "  "
 
