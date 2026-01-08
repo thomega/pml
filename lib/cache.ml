@@ -56,14 +56,14 @@ module type T =
     val replace : root:string -> string -> string -> (unit, string) result
   end
 
-module type Subdir =
+module type Table =
   sig
     val name : string
   end
 
-module Make (Subdir : Subdir) : T =
+module Make (Table : Table) : T =
   struct
-    let lookup ~root tag = lookup ~root ~subdir:Subdir.name tag
-    let delete ~root tag = delete ~root ~subdir:Subdir.name tag
-    let replace ~root text tag = replace ~root ~subdir:Subdir.name text tag
+    let lookup ~root tag = lookup ~root ~subdir:Table.name tag
+    let delete ~root tag = delete ~root ~subdir:Table.name tag
+    let replace ~root text tag = replace ~root ~subdir:Table.name text tag
   end

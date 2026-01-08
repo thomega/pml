@@ -11,3 +11,11 @@ module type T =
     (** Replace the contents of a file indexed by a key. *)
 
   end
+
+module type Table =
+  sig
+    val name : string
+    (** Name of a table in the cache. *)
+  end
+
+module Make (_ : Table) : T
