@@ -66,7 +66,7 @@ module Cachetest : Exit_Cmd =
           match release with
           | None -> 0
           | Some release ->
-             begin match MB.Discid_cache.map MB.Raw.normalize ~root:cache release with
+             begin match MB.Release_cache.map MB.Raw.normalize ~root:cache release with
              | Error msg -> Printf.eprintf "error: %s\n" msg; 1
              | Ok () -> 0
              end in
