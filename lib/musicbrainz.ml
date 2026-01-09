@@ -1,24 +1,24 @@
 let query_discid =
-  { Query.query = "discid";
-    Query.inc = [] }
+  Query.{ table = "discid";
+          inc = [] }
 
 let query_release =
-  { Query.query = "release";
-    Query.inc = ["artists"; "artist-credits";
+  Query.{ table = "release";
+          inc = ["artists"; "artist-credits";
                  "recordings"; "release-groups"; "discids";
                  "url-rels"; "labels"; ] }
 
 let get_discid discid =
-  Query.(do_curl musicbrainz query_discid discid)
+  Query.(exec musicbrainz query_discid discid)
 
 let get_release release =
-  Query.(do_curl musicbrainz query_release release)
+  Query.(exec musicbrainz query_release release)
 
 let url_discid discid =
-  Query.(url_of_query musicbrainz query_discid discid)
+  Query.(url musicbrainz query_discid discid)
 
 let url_release release =
-  Query.(url_of_query musicbrainz query_release release)
+  Query.(url musicbrainz query_release release)
 
 let read_discid_cache _discid =
   None
