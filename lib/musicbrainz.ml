@@ -1,90 +1,24 @@
-let version = "0.0.1"
-let user_agent = "Physical Media Library/" ^ version ^ " ( ohl@physik.uni-wuerzburg.de )"
-
-type api =
-  { ssl : bool;
-    host : string;
-    api : string;
-    user_agent : string option;
-    timeout : int option }
-
-let musicbrainz =
-  { ssl = true;
-    host = "musicbrainz.org";
-    api = "ws/2";
-    user_agent = Some user_agent;
-    timeout = Some 10 }
-
-type query =
-  { query : string;
-    inc : string list }
-
-let query_to_string query key =
-  match query.inc with
-  | [] -> query.query ^ "/" ^ key ^ "?fmt=json"
-  | inc -> query.query ^ "/" ^ key ^ "?fmt=json&inc=" ^ String.concat "+" inc
-
-let url_of_query options query key =
-  let protocol =
-    if options.ssl then
-      "https"
-    else
-      "http" in
-  protocol ^ "://" ^ options.host ^ "/" ^ options.api ^ "/" ^ query_to_string query key
-
-let write_to buffer data =
-  Buffer.add_string buffer data;
-  String.length data
-
-let do_curl options query key =
-  let result = Buffer.create 16384
-  and error_response = ref "" in
-  Curl.global_init Curl.CURLINIT_GLOBALALL;
-  try
-    let curl = Curl.init () in
-    Curl.set_url curl (url_of_query musicbrainz query key);
-    begin match options.timeout with
-    | None -> ()
-    | Some t -> Curl.set_timeout curl t
-    end;
-    begin match options.user_agent with
-    | None -> ()
-    | Some a -> Curl.set_useragent curl a
-    end;
-    Curl.set_errorbuffer curl error_response;
-    Curl.set_writefunction curl (write_to result);
-    Curl.perform curl;
-    Curl.cleanup curl;
-    Curl.global_cleanup ();
-    Ok (Buffer.contents result)
-  with
-  | Curl.CurlException (curlcode, _code, _msg) ->
-     Curl.global_cleanup ();
-     match !error_response with
-     | "" -> Error (Curl.strerror curlcode)
-     | s -> Error s
-
 let query_discid =
-  { query = "discid";
-    inc = [] }
+  { Query.query = "discid";
+    Query.inc = [] }
 
 let query_release =
-  { query = "release";
-    inc = ["artists"; "artist-credits";
-           "recordings"; "release-groups"; "discids";
-           "url-rels"; "labels"; ] }
+  { Query.query = "release";
+    Query.inc = ["artists"; "artist-credits";
+                 "recordings"; "release-groups"; "discids";
+                 "url-rels"; "labels"; ] }
 
 let get_discid discid =
-  do_curl musicbrainz query_discid discid
+  Query.(do_curl musicbrainz query_discid discid)
 
 let get_release release =
-  do_curl musicbrainz query_release release
+  Query.(do_curl musicbrainz query_release release)
 
 let url_discid discid =
-  url_of_query musicbrainz query_discid discid
+  Query.(url_of_query musicbrainz query_discid discid)
 
 let url_release release =
-  url_of_query musicbrainz query_release release
+  Query.(url_of_query musicbrainz query_release release)
 
 let read_discid_cache _discid =
   None
