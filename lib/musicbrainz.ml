@@ -1,3 +1,36 @@
+(* A sequence of exactly 28 characters from the set [A-Za-z0-9._-]. *)
+
+(* [Re.alnum] contains accented characters! *)
+
+let alphanum =
+  Re.(alt [rg 'A' 'Z'; rg 'a' 'z'; rg '0' '9'])
+
+(* TODO: '-' can appear only as padding at the end.  We must check
+   the length of the strong as well. *)
+
+let re_discid =
+  Re.(seq [start; alt [alphanum; set "._"] |> rep1; set "-" |> rep; stop] |> compile)
+
+let is_discid s =
+  String.length s = 28 && Re.execp re_discid s
+
+(* A MBID/UUID: 8-4-4-4-12 hex digits [0-9a-fA-F] *)
+
+let hexrep n =
+  Re.(repn xdigit n (Some n))
+
+let re_uuid =
+  Re.(seq [start;
+           hexrep 8; set "-";
+           hexrep 4; set "-";
+           hexrep 4; set "-";
+           hexrep 4; set "-";
+           hexrep 12;
+           stop] |> compile)
+
+let is_uuid s =
+  Re.execp re_uuid s
+
 let query_discid =
   Query.{ table = "discid";
           inc = [] }
@@ -9,32 +42,50 @@ let query_release =
                  "url-rels"; "labels"; ] }
 
 let get_discid discid =
-  Query.(exec musicbrainz query_discid discid)
+  if is_discid discid then
+    Query.(exec musicbrainz query_discid discid)
+  else
+    Error (Printf.sprintf "'%s' is not a valid discid!" discid)
 
 let get_release release =
-  Query.(exec musicbrainz query_release release)
+  if is_uuid release then
+    Query.(exec musicbrainz query_release release)
+  else
+    Error (Printf.sprintf "'%s' is not a valid MBID!" release)
 
 let url_discid discid =
-  Query.(url musicbrainz query_discid discid)
+  if is_discid discid then
+    Query.(url musicbrainz query_discid discid)
+  else
+    invalid_arg (Printf.sprintf "'%s' is not a valid discid!" discid)
 
 let url_release release =
-  Query.(url musicbrainz query_release release)
+  if is_uuid release then
+    Query.(url musicbrainz query_release release)
+  else
+    invalid_arg (Printf.sprintf "'%s' is not a valid MBID!" release)
 
 module Discid_cache = Cache.Make (struct let name = "discid" end)
 module Release_cache = Cache.Make (struct let name = "release" end)
 module Releaseid_cache = Cache.Make (struct let name = "releaseid" end)
 
 let get_discid_cached ~root discid =
-  match Discid_cache.get ~root discid with
-  | Error _ as e -> e
-  | Ok (Some json) -> Ok json
-  | Ok None -> Error "not found / Curl disbled" (* get_discid discid *)
+  if is_discid discid then
+    match Discid_cache.get ~root discid with
+    | Error _ as e -> e
+    | Ok (Some json) -> Ok json
+    | Ok None -> Error "not found / Curl disbled" (* get_discid discid *)
+  else
+    Error (Printf.sprintf "'%s' is not a valid discid!" discid)
 
 let get_release_cached ~root release =
-  match Release_cache.get ~root release with
-  | Error _ as e -> e
-  | Ok (Some json) -> Ok json
-  | Ok None -> Error "not found / Curl disbled" (* get_release release *)
+  if is_uuid release then
+    match Release_cache.get ~root release with
+    | Error _ as e -> e
+    | Ok (Some json) -> Ok json
+    | Ok None -> Error "not found / Curl disbled" (* get_release release *)
+  else
+    Error (Printf.sprintf "'%s' is not a valid MBID!" release)
 
 module type Raw =
   sig
