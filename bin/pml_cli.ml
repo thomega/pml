@@ -25,19 +25,64 @@ module type Exit_Cmd =
     val cmd : int Cmd.t
   end
 
+let default_cache = "."
+
+let cache =
+  let doc = Printf.sprintf "Path to the root directory of the local cache."
+  and env = Cmd.Env.info "PML_CACHE" in
+  Arg.(value & opt string default_cache & info ["c"; "cache"] ~docv:"path" ~doc ~env)
+
+module Cachetest : Exit_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "Testing." ] @ Common.man_footer
+
+    let normalize =
+      let doc = "Normalize the JSON file." in
+      Arg.(value & flag & info ["n"; "normalize"] ~doc)
+
+    let diskid =
+      let doc = Printf.sprintf "Lookup by diskid." in
+      Arg.(value & opt (some string) None & info ["d"; "diskid"] ~docv:"diskid" ~doc)
+
+    let release =
+      let doc = Printf.sprintf "Lookup by release." in
+      Arg.(value & opt (some string) None & info ["r"; "release"] ~docv:"release" ~doc)
+
+    let cache_tool ~cache ~normalize ?diskid ?release () =
+      if normalize then
+        1
+      else
+        match diskid, release with
+        | None, None -> 0
+        | Some _, Some _ -> 1
+        | Some diskid, None ->
+           begin match Pml.Musicbrainz.get_discid_cached ~root:cache diskid with
+           | Error msg -> Printf.eprintf "error: %s\n" msg; 1
+           | Ok json -> print_endline json; 0
+           end
+        | None, Some release ->
+           begin match Pml.Musicbrainz.get_release_cached ~root:cache release with
+           | Error msg -> Printf.eprintf "error: %s\n" msg; 1
+           | Ok json -> print_endline json; 0
+           end
+
+    let cmd =
+      let open Cmd in
+      make (info "cache" ~man) @@
+        let+ cache and+ normalize and+ diskid and+ release in
+        cache_tool ~cache ~normalize ?diskid ?release ()
+
+  end
+
 module Musicbrainz : Exit_Cmd =
   struct
 
     let man = [
         `S Manpage.s_description;
         `P "Experimental Musicbrainz JSON parsing." ] @ Common.man_footer
-
-    let default_cache = "."
-
-    let cache =
-      let doc = Printf.sprintf "Path to the root directory of the local cache."
-      and env = Cmd.Env.info "PML_CACHE" in
-      Arg.(value & opt string default_cache & info ["c"; "cache"] ~docv:"path" ~doc ~env)
 
     let file =
       let doc = Printf.sprintf "JSON file to be examined." in
@@ -155,7 +200,8 @@ module Main : Exit_Cmd =
       let open Cmd in
       group (info "pml" ~man)
         [ Query_Disc.cmd;
-          Musicbrainz.cmd]
+          Musicbrainz.cmd;
+          Cachetest.cmd]
 
   end
 

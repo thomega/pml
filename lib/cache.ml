@@ -1,8 +1,8 @@
 module type T =
   sig
-    val lookup : root:string -> string -> (string option, string) result
-    val delete : root:string -> string -> (unit, string) result
-    val replace : root:string -> string -> string -> (unit, string) result
+    val get : root:string -> string -> (string option, string) result
+    val remove : root:string -> string -> (unit, string) result
+    val set : root:string -> string -> string -> (unit, string) result
   end
 
 module type Table =
@@ -31,7 +31,7 @@ module Make (Table : Table) : T =
       table ~root
       |>  Result.map (fun path -> Filename.concat path key)
 
-    let lookup ~root key =
+    let get ~root key =
       match filename ~root key with
       | Error _ as e -> e
       | Ok name ->
@@ -43,7 +43,7 @@ module Make (Table : Table) : T =
          else
            Ok None
 
-    let delete ~root key =
+    let remove ~root key =
       match filename ~root key with
       | Error _ as e -> e
       | Ok name ->
@@ -55,7 +55,7 @@ module Make (Table : Table) : T =
          else
            Ok ()
 
-    let replace ~root key text =
+    let set ~root key text =
       match filename ~root key with
       | Error _ as e -> e
       | Ok name ->

@@ -20,16 +20,26 @@ let url_discid discid =
 let url_release release =
   Query.(url musicbrainz query_release release)
 
-let read_discid_cache _discid =
-  None
+module Discid_cache = Cache.Make (struct let name = "diskid" end)
+module Release_cache = Cache.Make (struct let name = "release" end)
+module Releaseid_cache = Cache.Make (struct let name = "releaseid" end)
 
-let get_discid_cached discid =
-  match read_discid_cache discid with
-  | Some s -> Ok s
-  | None -> get_discid discid
+let get_discid_cached ~root discid =
+  match Discid_cache.get ~root discid with
+  | Error _ as e -> e
+  | Ok (Some json) -> Ok json
+  | Ok None -> Error "not found / Curl disbled" (* get_discid discid *)
+
+let get_release_cached ~root release =
+  match Release_cache.get ~root release with
+  | Error _ as e -> e
+  | Ok (Some json) -> Ok json
+  | Ok None -> Error "not found / Curl disbled" (* get_release release *)
 
 module type Raw =
   sig
+    val normalize : string -> (string, string) result
+    val normalize_file : string -> unit
     val of_file : string -> (Jsont.json, string) result
     val print_file : string -> unit
     val dump_schema_file : string -> unit
@@ -55,6 +65,26 @@ module Raw : Raw =
     let print_file name =
       match of_file name with
       | Ok json -> print_json json
+      | Error msg -> prerr_endline msg
+
+    let normalize text =
+      match Jsont_bytesrw.decode_string jsont text with
+      | Error _ as e -> e
+      | Ok json -> Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont json
+
+    let normalize_file name =
+      let text = In_channel.with_open_text name In_channel.input_all in
+      match normalize text with
+      | Ok text' ->
+         begin
+           if text' = text then
+             Printf.printf "file %s unchanged\n" name
+           else
+             try
+               Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc text')
+             with
+             | exn -> prerr_endline (Printexc.to_string exn)
+         end
       | Error msg -> prerr_endline msg
 
     let indent pfx = pfx ^ "  "
@@ -117,10 +147,6 @@ module Disc_Id =
       |> Jsont.Object.finish
 
   end
-
-module Discid_cache = Cache.Make (struct let name = "diskid" end)
-module Release_cache = Cache.Make (struct let name = "release" end)
-module Releaseid_cache = Cache.Make (struct let name = "releaseid" end)
 
 let discid_of_file name =
   let text = In_channel.with_open_text name In_channel.input_all in

@@ -1,13 +1,13 @@
 module type T =
   sig
 
-    val lookup : root:string -> string -> (string option, string) result
-    (** Look up the contents of a file indexed by a key. *)
+    val get : root:string -> string -> (string option, string) result
+    (** Get the contents of a file indexed by a key. *)
 
-    val delete : root:string -> string -> (unit, string) result
+    val remove : root:string -> string -> (unit, string) result
     (** Remove a file indexed by a key. *)
 
-    val replace : root:string -> string -> string -> (unit, string) result
+    val set : root:string -> string -> string -> (unit, string) result
     (** Replace the contents of a file indexed by a key. *)
 
   end
