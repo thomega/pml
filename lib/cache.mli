@@ -10,6 +10,9 @@ module type T =
     val set : root:string -> string -> string -> (unit, string) result
     (** Replace the contents of a file indexed by a key. *)
 
+    val map : root:string -> (string -> (string, string) result) -> string-> (unit, string) result
+    (** Change the contents of a file indexed by a key. *)
+
   end
 
 module type Table =

@@ -43,23 +43,40 @@ module Cachetest : Exit_Cmd =
       let doc = "Normalize the JSON file." in
       Arg.(value & flag & info ["n"; "normalize"] ~doc)
 
-    let diskid =
-      let doc = Printf.sprintf "Lookup by diskid." in
-      Arg.(value & opt (some string) None & info ["d"; "diskid"] ~docv:"diskid" ~doc)
+    let discid =
+      let doc = Printf.sprintf "Lookup by discid." in
+      Arg.(value & opt (some string) None & info ["d"; "discid"] ~docv:"discid" ~doc)
 
     let release =
       let doc = Printf.sprintf "Lookup by release." in
       Arg.(value & opt (some string) None & info ["r"; "release"] ~docv:"release" ~doc)
 
-    let cache_tool ~cache ~normalize ?diskid ?release () =
+    let cache_tool ~cache ~normalize ?discid ?release () =
+      let module MB = Pml.Musicbrainz in
       if normalize then
-        1
+        let rc_discid =
+          match discid with
+          | None -> 0
+          | Some discid ->
+             begin match MB.Discid_cache.map MB.Raw.normalize ~root:cache discid with
+             | Error msg -> Printf.eprintf "error: %s\n" msg; 1
+             | Ok () -> 0
+             end
+        and rc_release =
+          match release with
+          | None -> 0
+          | Some release ->
+             begin match MB.Discid_cache.map MB.Raw.normalize ~root:cache release with
+             | Error msg -> Printf.eprintf "error: %s\n" msg; 1
+             | Ok () -> 0
+             end in
+        rc_discid + rc_release
       else
-        match diskid, release with
+        match discid, release with
         | None, None -> 0
         | Some _, Some _ -> 1
-        | Some diskid, None ->
-           begin match Pml.Musicbrainz.get_discid_cached ~root:cache diskid with
+        | Some discid, None ->
+           begin match Pml.Musicbrainz.get_discid_cached ~root:cache discid with
            | Error msg -> Printf.eprintf "error: %s\n" msg; 1
            | Ok json -> print_endline json; 0
            end
@@ -72,8 +89,8 @@ module Cachetest : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "cache" ~man) @@
-        let+ cache and+ normalize and+ diskid and+ release in
-        cache_tool ~cache ~normalize ?diskid ?release ()
+        let+ cache and+ normalize and+ discid and+ release in
+        cache_tool ~cache ~normalize ?discid ?release ()
 
   end
 

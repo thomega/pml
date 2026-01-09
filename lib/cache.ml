@@ -3,6 +3,7 @@ module type T =
     val get : root:string -> string -> (string option, string) result
     val remove : root:string -> string -> (unit, string) result
     val set : root:string -> string -> string -> (unit, string) result
+    val map : root:string -> (string -> (string, string) result) -> string-> (unit, string) result
   end
 
 module type Table =
@@ -63,5 +64,22 @@ module Make (Table : Table) : T =
            Ok (Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc text))
          with
          | exn -> Error (Printexc.to_string exn)
+
+    let map ~root f key =
+      match filename ~root key with
+      | Error _ as e -> e
+      | Ok name ->
+         if Sys.file_exists name then
+           try
+             let text = In_channel.with_open_text name In_channel.input_all in
+             match f text with
+             | Error _ as e -> e
+             | Ok text' ->
+                Ok (if text' <> text then
+                      Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc text'))
+           with
+           | exn -> Error (Printexc.to_string exn)
+         else
+           Error (Printf.sprintf "entry '%s' not found in table '%s'" key Table.name)
 
   end

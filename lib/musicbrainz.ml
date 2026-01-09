@@ -20,7 +20,7 @@ let url_discid discid =
 let url_release release =
   Query.(url musicbrainz query_release release)
 
-module Discid_cache = Cache.Make (struct let name = "diskid" end)
+module Discid_cache = Cache.Make (struct let name = "discid" end)
 module Release_cache = Cache.Make (struct let name = "release" end)
 module Releaseid_cache = Cache.Make (struct let name = "releaseid" end)
 
@@ -39,7 +39,6 @@ let get_release_cached ~root release =
 module type Raw =
   sig
     val normalize : string -> (string, string) result
-    val normalize_file : string -> unit
     val of_file : string -> (Jsont.json, string) result
     val print_file : string -> unit
     val dump_schema_file : string -> unit
@@ -71,21 +70,6 @@ module Raw : Raw =
       match Jsont_bytesrw.decode_string jsont text with
       | Error _ as e -> e
       | Ok json -> Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont json
-
-    let normalize_file name =
-      let text = In_channel.with_open_text name In_channel.input_all in
-      match normalize text with
-      | Ok text' ->
-         begin
-           if text' = text then
-             Printf.printf "file %s unchanged\n" name
-           else
-             try
-               Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc text')
-             with
-             | exn -> prerr_endline (Printexc.to_string exn)
-         end
-      | Error msg -> prerr_endline msg
 
     let indent pfx = pfx ^ "  "
 
