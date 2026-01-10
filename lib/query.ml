@@ -44,6 +44,7 @@ let exec api query key =
   try
     let curl = Curl.init () in
     Curl.set_url curl (url musicbrainz query key);
+    Curl.set_followlocation curl true;
     Option.iter (Curl.set_timeout curl) api.timeout;
     Curl.set_useragent curl api.user_agent;
     Curl.set_errorbuffer curl error_response;
