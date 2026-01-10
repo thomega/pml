@@ -1,6 +1,6 @@
 open Ctypes
 
-module Types = Libdiscid_types
+module Types = Clibdiscid_types
 
 module Functions (F : Ctypes.FOREIGN) = struct
   open F

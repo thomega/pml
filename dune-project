@@ -22,4 +22,12 @@
  (tags
   ("music" "media")))
 
+(package
+ (name clibdiscid)
+ (synopsis "Wrapper for MusicBrainz Discid functions")
+ (description "Generated with Ctypes")
+ (depends ocaml)
+ (tags
+  ("media")))
+
 (using ctypes 0.3)

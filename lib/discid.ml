@@ -15,12 +15,12 @@ module type Raw =
     val get_freedb_id : disc -> string
     val get_toc_string : disc -> string
   end
-(** The same low level functions as in the module Libdiscid.Functions that
+(** The same low level functions as in the module Clibdiscid.Functions that
     is produced by Ctypes and dune.  But we make the disc type opaque. *)
 
 module Raw : Raw =
   struct
-    module L = Libdiscid.Functions
+    module L = Clibdiscid.Functions
     type disc = unit Ctypes_static.ptr
     let default_device = L.default_device
     let alloc = L.alloc

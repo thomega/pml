@@ -1,0 +1,20 @@
+(library
+  (name clibdiscid)
+  (public_name clibdiscid)
+  ; (wrapped false)
+  ; (flags (:standard -I +unix))
+  ; (ocamlc_flags (:standard))
+  (ocamlopt_flags (:standard -inline 32))
+  (ctypes
+    (external_library_name libdiscid)
+    (build_flags_resolver pkg_config)
+    (headers (include "discid/discid.h"))
+    (type_description
+      (instance Types)
+      (functor Clibdiscid_type_specs))
+    (function_description
+      (concurrency sequential)
+      (instance Functions)
+      (functor Clibdiscid_function_specs))
+    (generated_types Clibdiscid_types)
+    (generated_entry_point Clibdiscid)))

@@ -1,31 +1,18 @@
 (library
   (name pml)
   (public_name pml)
-  ;;; Adding the following makes dune crash!
-  ; (modules
-  ;   Discid Musicbrainz Libdiscid)
+  (modules
+    Musicbrainz Discid Query Cache)
   (private_modules
-    Libdiscid)
+    )
   ; (wrapped false)
   (inline_tests)
   (preprocess (pps ppx_inline_test))
   ; (flags (:standard -I +unix))
   ; (ocamlc_flags (:standard))
   (ocamlopt_flags (:standard -inline 32))
-  (libraries curl jsont jsont.bytesrw re)
-  (ctypes
-    (external_library_name libdiscid)
-    (build_flags_resolver pkg_config)
-    (headers (include "discid/discid.h"))
-    (type_description
-      (instance Types)
-      (functor Libdiscid_type_specs))
-    (function_description
-      (concurrency sequential)
-      (instance Functions)
-      (functor Libdiscid_function_specs))
-    (generated_types Libdiscid_types)
-    (generated_entry_point Libdiscid)))
+  (libraries clibdiscid curl jsont jsont.bytesrw re))
 
 (documentation
+  (package pml)
   (mld_files index))
