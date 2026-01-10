@@ -27,7 +27,7 @@ module Track =
         title : string;
         performers : Artist.t list }
     let of_mb mb =
-      let module MB = Musicbrainz.Artist in
+      let module MB = Musicbrainz.Track in
       let id = mb.MB.id in
       let number = 0 in
       let title = "" in
@@ -38,16 +38,11 @@ module Track =
 module Partial =
   struct
     type t =
-      { release : string; (** The Musicbrainz id of the release from which the data are taken. *)
-        disk : string; (** The diskid from which the audio was ripped. *)
-        title : string; (** The title of the whole work. This can not be empty. *)
-        composers : Artist.t list (** Composers of a work that is expected to be performed
-                                      by others.  This will usually be left empty for
-                                   popular music.  *);
-        performers : Artist.t list; (** Instrumentalists, singers, conductors. *)
+      { release : string;
+        disk : string;
+        title : string;
+        composers : Artist.t list;
+        performers : Artist.t list;
         tracks : Track.t list;
-        total_tracks : int (** The total number of tracks of the piece.  This is only needed
-                               for the correct number of leading zeros in numbers in filenames. *)
-      }
+        total_tracks : int }
   end
-(** The part of a a musical work that fits on one disk. *)

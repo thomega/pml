@@ -51,3 +51,27 @@ module Artist : sig
     }
 end
 
+module Artist_Credit : sig
+  type t =
+    { name : string option;
+      artist : Artist.t option;
+      ignored : Jsont.json }
+end
+
+module Recording : sig
+  type t =
+    { id : string (** While this is optional in the DTD, it should be there anyway. *);
+      title : string option;
+      artist_credit : Artist_Credit.t list;
+      ignored : Jsont.json }
+end
+
+module Track : sig
+  type t =
+    { id : string (** While this is optional in the DTD, it should be there anyway. *);
+      position : int option;
+      title : string option;
+      artist_credit : Artist_Credit.t list;
+      recording : Recording.t option;
+      ignored : Jsont.json }
+end

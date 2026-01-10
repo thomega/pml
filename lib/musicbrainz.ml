@@ -215,11 +215,11 @@ module Artist =
 module Artist_Credit =
   struct
     type t =
-      { _name : string option;
-        _artist : Artist.t option;
-        _ignored : Jsont.json }
-    let make _name _artist _ignored =
-      { _name; _artist; _ignored }
+      { name : string option;
+        artist : Artist.t option;
+        ignored : Jsont.json }
+    let make name artist ignored =
+      { name; artist; ignored }
     let jsont =
       Jsont.Object.map ~kind:"Artist_Credit" make
       |> Jsont.Object.opt_mem "name" Jsont.string
@@ -231,13 +231,13 @@ module Artist_Credit =
 module Recording =
   struct
     type t =
-      { _id : string (** While this is optional in the DTD, it should be there anyway. *);
-        _title : string option;
-        _artist_credit : Artist_Credit.t list;
-        _ignored : Jsont.json }
-    let make _id _title artist_credit _ignored =
-      let _artist_credit = opt_list artist_credit in
-      { _id; _title; _artist_credit; _ignored }
+      { id : string (** While this is optional in the DTD, it should be there anyway. *);
+        title : string option;
+        artist_credit : Artist_Credit.t list;
+        ignored : Jsont.json }
+    let make id title artist_credit ignored =
+      let artist_credit = opt_list artist_credit in
+      { id; title; artist_credit; ignored }
     let jsont =
       Jsont.Object.map ~kind:"Recording" make
       |> Jsont.Object.mem "id" Jsont.string
@@ -250,15 +250,15 @@ module Recording =
 module Track =
   struct
     type t =
-      { _id : string (** While this is optional in the DTD, it should be there anyway. *);
-        _position : int option;
-        _title : string option;
-        _artist_credit : Artist_Credit.t list;
-        _recording : Recording.t option;
-        _ignored : Jsont.json }
-    let make _id _position _title artist_credit _recording _ignored =
-      let _artist_credit = opt_list artist_credit in
-      { _id; _position; _title; _artist_credit; _recording; _ignored }
+      { id : string (** While this is optional in the DTD, it should be there anyway. *);
+        position : int option;
+        title : string option;
+        artist_credit : Artist_Credit.t list;
+        recording : Recording.t option;
+        ignored : Jsont.json }
+    let make id position title artist_credit recording ignored =
+      let artist_credit = opt_list artist_credit in
+      { id; position; title; artist_credit; recording; ignored }
     let jsont =
       Jsont.Object.map ~kind:"Track" make
       |> Jsont.Object.mem "id" Jsont.string
