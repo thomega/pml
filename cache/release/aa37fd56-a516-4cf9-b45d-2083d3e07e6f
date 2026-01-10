@@ -1,0 +1,4211 @@
+{
+  "status": "Official",
+  "id": "aa37fd56-a516-4cf9-b45d-2083d3e07e6f",
+  "release-events": [
+    {
+      "date": "2025-06-27",
+      "area": {
+        "type-id": null,
+        "id": "89a675c2-3e37-3518-b83c-418bad59a85a",
+        "name": "Europe",
+        "sort-name": "Europe",
+        "type": null,
+        "disambiguation": "",
+        "iso-3166-1-codes": [
+          "XE"
+        ]
+      }
+    }
+  ],
+  "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+  "country": "XE",
+  "relations": [
+    {
+      "direction": "forward",
+      "target-type": "url",
+      "end": null,
+      "attribute-values": {},
+      "url": {
+        "resource": "https://www.amazon.com/gp/product/B0F2LCMLBX",
+        "id": "18d4cb69-2cdb-428a-bd4b-acbaf6574120"
+      },
+      "ended": false,
+      "type-id": "4f2e710d-166c-480c-a293-2e2c8d658d87",
+      "attribute-ids": {},
+      "attributes": [],
+      "type": "amazon asin",
+      "target-credit": "",
+      "source-credit": "",
+      "begin": null
+    },
+    {
+      "attribute-values": {},
+      "url": {
+        "resource": "https://www.amazon.de/gp/product/B0F2LCMLBX",
+        "id": "8a917e2d-25f9-4980-9aeb-6b47fbda2145"
+      },
+      "direction": "forward",
+      "end": null,
+      "target-type": "url",
+      "ended": false,
+      "type-id": "4f2e710d-166c-480c-a293-2e2c8d658d87",
+      "attribute-ids": {},
+      "attributes": [],
+      "target-credit": "",
+      "type": "amazon asin",
+      "begin": null,
+      "source-credit": ""
+    },
+    {
+      "url": {
+        "id": "b0604dc3-af66-46bc-a813-c7916c01bff2",
+        "resource": "https://www.springsteenlyrics.com/collection.php?item=9649"
+      },
+      "attribute-values": {},
+      "end": null,
+      "direction": "forward",
+      "target-type": "url",
+      "ended": false,
+      "type-id": "823656dd-0309-4247-b282-b92d287d59c5",
+      "attribute-ids": {},
+      "attributes": [],
+      "target-credit": "",
+      "type": "discography entry",
+      "begin": null,
+      "source-credit": ""
+    },
+    {
+      "ended": false,
+      "direction": "forward",
+      "end": null,
+      "target-type": "url",
+      "attribute-values": {},
+      "url": {
+        "resource": "https://www.discogs.com/release/34402969",
+        "id": "24c735eb-fd52-4a79-b8d3-f8eb46bca591"
+      },
+      "type-id": "4a78823c-1c53-4176-a5f3-58026c76f2bc",
+      "attributes": [],
+      "attribute-ids": {},
+      "begin": null,
+      "source-credit": "",
+      "target-credit": "",
+      "type": "discogs"
+    },
+    {
+      "type": "purchase for mail-order",
+      "target-credit": "",
+      "source-credit": "",
+      "begin": null,
+      "attribute-ids": {},
+      "attributes": [],
+      "type-id": "3ee51e05-a06a-415e-b40c-b3f740dedfd7",
+      "attribute-values": {},
+      "url": {
+        "id": "d243dce6-498f-4128-9ce1-b7c05c80924d",
+        "resource": "https://brucespringsteen.store/products/tracks-ii-the-lost-albums-7cd-box-set"
+      },
+      "end": null,
+      "direction": "forward",
+      "target-type": "url",
+      "ended": false
+    },
+    {
+      "attribute-ids": {},
+      "attributes": [],
+      "type": "purchase for mail-order",
+      "target-credit": "",
+      "source-credit": "",
+      "begin": null,
+      "attribute-values": {},
+      "url": {
+        "resource": "https://brucespringsteenuk.store/products/tracks-ii-the-lost-albums-7cd-box-set",
+        "id": "24508524-d1ed-4596-a030-cfeb64ace0f6"
+      },
+      "end": null,
+      "direction": "forward",
+      "target-type": "url",
+      "ended": false,
+      "type-id": "3ee51e05-a06a-415e-b40c-b3f740dedfd7"
+    },
+    {
+      "ended": false,
+      "attribute-values": {},
+      "url": {
+        "id": "2a97f346-0cee-470f-b509-c6b081bb1bef",
+        "resource": "https://www.jpc.de/jpcng/poprock/detail/-/art/bruce-springsteen-tracks-ii-the-lost-albums/hnum/12245903"
+      },
+      "direction": "forward",
+      "end": null,
+      "target-type": "url",
+      "type-id": "3ee51e05-a06a-415e-b40c-b3f740dedfd7",
+      "attributes": [],
+      "attribute-ids": {},
+      "begin": null,
+      "source-credit": "",
+      "target-credit": "",
+      "type": "purchase for mail-order"
+    }
+  ],
+  "quality": "normal",
+  "media": [
+    {
+      "position": 1,
+      "id": "f0aab1dd-34f9-337f-9ae5-465194741277",
+      "discs": [
+        {
+          "sectors": 303354,
+          "offset-count": 18,
+          "offsets": [
+            150,
+            17642,
+            31282,
+            37449,
+            50084,
+            62855,
+            71196,
+            88563,
+            107644,
+            121893,
+            144047,
+            165417,
+            181823,
+            196070,
+            226518,
+            239286,
+            265226,
+            285295
+          ],
+          "id": "v81tgyo49ORMUQMIg.rk0mbjMYA-"
+        }
+      ],
+      "format-id": "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "tracks": [
+        {
+          "recording": {
+            "video": false,
+            "id": "5b41da7e-6f4c-4e26-8128-68f6c4cbb394",
+            "first-release-date": "2025-06-27",
+            "length": 233227,
+            "title": "Follow That Dream",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "disambiguation": ""
+          },
+          "id": "ff34545e-30ca-410b-950a-49af6d62d96e",
+          "position": 1,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "title": "Follow That Dream",
+          "length": 233226,
+          "number": "1"
+        },
+        {
+          "position": 2,
+          "id": "731c3745-b33d-40f2-9830-aeded8e012b1",
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "title": "Don’t Back Down on Our Love",
+            "length": 181866,
+            "first-release-date": "2025-06-27",
+            "id": "26191502-250d-444f-a21c-c7b3377421b3",
+            "video": false
+          },
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "title": "Don’t Back Down on Our Love",
+          "number": "2",
+          "length": 181866
+        },
+        {
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              }
+            }
+          ],
+          "title": "Little Girl Like You",
+          "length": 82226,
+          "number": "3",
+          "recording": {
+            "id": "ca419c3b-8aa7-400c-88c3-966fa68936f6",
+            "video": false,
+            "first-release-date": "2025-06-27",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "disambiguation": "",
+                  "country": "US"
+                }
+              }
+            ],
+            "length": 82226,
+            "title": "Little Girl Like You",
+            "disambiguation": ""
+          },
+          "id": "75ea5413-d6cd-4136-a76e-3d8db0db1de1",
+          "position": 3
+        },
+        {
+          "position": 4,
+          "id": "1e042bfb-9c62-4ed7-b418-68be3f9417e2",
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "title": "Johnny Bye Bye",
+            "length": 168466,
+            "first-release-date": "2025-06-27",
+            "id": "920407c8-6e68-43a3-81dd-98fc7f6c4d59",
+            "video": false
+          },
+          "title": "Johnny Bye Bye",
+          "number": "4",
+          "length": 168466,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ]
+        },
+        {
+          "length": 170280,
+          "title": "Sugarland",
+          "number": "5",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "disambiguation": "",
+                "country": "US"
+              }
+            }
+          ],
+          "recording": {
+            "disambiguation": "",
+            "length": 170280,
+            "title": "Sugarland",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type": "Person",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "joinphrase": ""
+              }
+            ],
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "442ebd57-af61-4027-9122-b8ddf962f165"
+          },
+          "id": "9164cd93-5a57-4b88-a3ec-41da66641390",
+          "position": 5
+        },
+        {
+          "id": "e8770add-c95a-4ed0-9d56-2ce5ce65ba1e",
+          "position": 6,
+          "recording": {
+            "title": "Seven Tears",
+            "length": 111213,
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "joinphrase": ""
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "153136bf-a3f4-4e56-93b4-2b983a94c0cd",
+            "first-release-date": "2025-06-27"
+          },
+          "title": "Seven Tears",
+          "number": "6",
+          "length": 111213,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ]
+        },
+        {
+          "title": "Fugitives Dream",
+          "number": "7",
+          "length": 231560,
+          "artist-credit": [
+            {
+              "artist": {
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "8ca4945b-67d1-4229-83c6-6f84ea6d379e",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "artist": {
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "length": 231560,
+            "title": "Fugitives Dream"
+          },
+          "id": "9ec5cc3b-c2ca-47a8-a592-5baa5d4e1669",
+          "position": 7
+        },
+        {
+          "recording": {
+            "video": false,
+            "id": "d3df5311-53f7-42ef-a67e-788916eec2c6",
+            "first-release-date": "2025-06-27",
+            "length": 254413,
+            "title": "Black Mountain Ballad",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "disambiguation": ""
+          },
+          "id": "c970b05b-5473-48f2-9a2c-c98ef2ed9712",
+          "position": 8,
+          "title": "Black Mountain Ballad",
+          "length": 254413,
+          "number": "8",
+          "artist-credit": [
+            {
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "recording": {
+            "disambiguation": "",
+            "length": 189986,
+            "title": "Jim Deer",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                }
+              }
+            ],
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "8f5ac171-3aaf-4b6b-b7d3-87c8752a8a1d"
+          },
+          "id": "4f7b341a-8ac6-4cb4-b404-2f02112c9fac",
+          "position": 9,
+          "artist-credit": [
+            {
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "number": "9",
+          "title": "Jim Deer",
+          "length": 189986
+        },
+        {
+          "recording": {
+            "video": false,
+            "id": "8109e0f5-97d2-4f6e-9343-4d2bb6e14812",
+            "first-release-date": "2025-06-27",
+            "length": 295386,
+            "title": "County Fair",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "disambiguation": ""
+          },
+          "id": "f3d662ba-9279-4172-ac1c-1b42eb0e991f",
+          "position": 10,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "length": 295386,
+          "title": "County Fair",
+          "number": "10"
+        },
+        {
+          "id": "b861ff44-e93e-43d4-9eab-5549a7c98311",
+          "position": 11,
+          "recording": {
+            "video": false,
+            "id": "e754062d-af14-4714-afcb-d7ee0b8e74fc",
+            "first-release-date": "2025-06-27",
+            "title": "My Hometown",
+            "length": 284933,
+            "artist-credit": [
+              {
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "disambiguation": ""
+          },
+          "artist-credit": [
+            {
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "length": 284933,
+          "title": "My Hometown",
+          "number": "11"
+        },
+        {
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "title": "One Love",
+          "number": "12",
+          "length": 218746,
+          "position": 12,
+          "id": "84f86958-2c9a-45b0-a612-5766f8b868c1",
+          "recording": {
+            "id": "ac09969f-dfa7-41bb-8abf-d368e99b210b",
+            "video": false,
+            "first-release-date": "2025-06-27",
+            "artist-credit": [
+              {
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "length": 218746,
+            "title": "One Love",
+            "disambiguation": ""
+          }
+        },
+        {
+          "title": "Don’t Back Down",
+          "number": "13",
+          "length": 189960,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "disambiguation": "",
+                "country": "US"
+              }
+            }
+          ],
+          "position": 13,
+          "id": "70d00330-66e1-4512-97a3-705b771b3af8",
+          "recording": {
+            "disambiguation": "",
+            "length": 189960,
+            "title": "Don’t Back Down",
+            "artist-credit": [
+              {
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "ada7df7d-ae27-4245-995a-c615fe22c419"
+          }
+        },
+        {
+          "recording": {
+            "artist-credit": [
+              {
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "length": 405973,
+            "title": "Richfield Whistle",
+            "disambiguation": "",
+            "id": "2158c17a-ecdc-4319-b905-b4fd8681f519",
+            "video": false,
+            "first-release-date": "2025-06-27"
+          },
+          "position": 14,
+          "id": "3c5110f6-a928-4373-b2a0-0bb4cf4a527b",
+          "length": 405973,
+          "title": "Richfield Whistle",
+          "number": "14",
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "artist-credit": [
+            {
+              "artist": {
+                "type": "Person",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "number": "15",
+          "title": "The Klansman",
+          "length": 170240,
+          "id": "f0d328a0-e581-4cbc-9776-872d6a5c960d",
+          "position": 15,
+          "recording": {
+            "video": false,
+            "id": "743ec22b-2a81-49c8-90c9-8a9a9849fcba",
+            "first-release-date": "2025-06-27",
+            "length": 170240,
+            "title": "The Klansman",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "disambiguation": ""
+          }
+        },
+        {
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "title": "Unsatisfied Heart",
+          "length": 345866,
+          "number": "16",
+          "position": 16,
+          "id": "98810eca-4693-478f-9e18-edeab99f15fe",
+          "recording": {
+            "length": 345867,
+            "title": "Unsatisfied Heart",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "b7fb2d33-0397-4e94-a4d0-951f58ac9aff",
+            "first-release-date": "2025-06-27"
+          }
+        },
+        {
+          "title": "Shut Out the Light",
+          "length": 267586,
+          "number": "17",
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "recording": {
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "length": 267586,
+            "title": "Shut Out the Light",
+            "disambiguation": "",
+            "id": "5763e4a1-97b7-499b-bd8e-bbc4444111fc",
+            "video": false,
+            "first-release-date": "2025-06-27"
+          },
+          "id": "ec4214aa-cc0e-4668-8f17-7f3e2357b26b",
+          "position": 17
+        },
+        {
+          "id": "fa92d4fb-f042-4388-8087-2f10c77d2808",
+          "position": 18,
+          "recording": {
+            "disambiguation": "",
+            "length": 240786,
+            "title": "Fugitive’s Dream (Ballad)",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "59cac30f-383c-4e32-ae66-c86818c930d8"
+          },
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "number": "18",
+          "title": "Fugitive’s Dream (Ballad)",
+          "length": 240786
+        }
+      ],
+      "format": "CD",
+      "track-count": 18,
+      "track-offset": 0,
+      "title": "LA Garage Sessions ’83"
+    },
+    {
+      "track-offset": 0,
+      "track-count": 10,
+      "format": "CD",
+      "title": "Streets of Philadelphia Sessions",
+      "discs": [
+        {
+          "id": "xHXYEOwdFAXS759frIe.KXauAFY-",
+          "offsets": [
+            150,
+            16323,
+            34112,
+            53912,
+            74636,
+            90310,
+            110692,
+            130671,
+            151306,
+            169371
+          ],
+          "offset-count": 10,
+          "sectors": 188066
+        }
+      ],
+      "format-id": "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "position": 2,
+      "id": "49858a7f-1ba3-3991-90ac-c9e819c97e1e",
+      "tracks": [
+        {
+          "artist-credit": [
+            {
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "number": "1",
+          "title": "Blind Spot",
+          "length": 215640,
+          "id": "940f655f-6c94-4859-869f-7ace0064879a",
+          "position": 1,
+          "recording": {
+            "first-release-date": "2025-04-17",
+            "video": false,
+            "id": "efa1155d-dd83-4026-a467-104ecda31de8",
+            "disambiguation": "",
+            "length": 215640,
+            "title": "Blind Spot",
+            "artist-credit": [
+              {
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ]
+          }
+        },
+        {
+          "position": 2,
+          "id": "376909e9-5739-4104-9f4e-277f846318f4",
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "3388e26b-0b6c-4df1-8ca0-c9709c31519f",
+            "disambiguation": "",
+            "length": 236213,
+            "title": "Maybe I Don’t Know You",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "joinphrase": ""
+              }
+            ]
+          },
+          "title": "Maybe I Don’t Know You",
+          "length": 237186,
+          "number": "2",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              }
+            }
+          ]
+        },
+        {
+          "position": 3,
+          "id": "87175725-e853-4bee-8a48-0f88d368f290",
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "54471bea-cef2-4c19-9266-fc5b9dec1810",
+            "disambiguation": "",
+            "title": "Something in the Well",
+            "length": 264000,
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen"
+                },
+                "joinphrase": ""
+              }
+            ]
+          },
+          "length": 264000,
+          "title": "Something in the Well",
+          "number": "3",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ]
+        },
+        {
+          "recording": {
+            "length": 275253,
+            "title": "Waiting on the End of the World",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "19073621-f565-4d2a-b8bd-0db1579f0394",
+            "first-release-date": "2025-06-27"
+          },
+          "id": "24f008a3-2aa8-4636-87f0-4f6e62a11f5d",
+          "position": 4,
+          "artist-credit": [
+            {
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "number": "4",
+          "title": "Waiting on the End of the World",
+          "length": 276320
+        },
+        {
+          "recording": {
+            "disambiguation": "",
+            "length": 206853,
+            "title": "The Little Things",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "disambiguation": "",
+                  "country": "US"
+                }
+              }
+            ],
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "01ddf393-6a2a-42ba-a2f4-94ce2ab18f9a"
+          },
+          "position": 5,
+          "id": "27e4d5dd-d3cc-49c0-8c65-3c45ff817404",
+          "title": "The Little Things",
+          "number": "5",
+          "length": 208986,
+          "artist-credit": [
+            {
+              "artist": {
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "position": 6,
+          "id": "442bd08f-0527-43ba-b40e-0c2a61be3fc1",
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "title": "We Fell Down",
+            "length": 271760,
+            "first-release-date": "2025-06-27",
+            "id": "bf258059-e3ac-460a-b22b-5c3fc9c91899",
+            "video": false
+          },
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "length": 271760,
+          "title": "We Fell Down",
+          "number": "6"
+        },
+        {
+          "id": "870c30f1-f170-4f19-8543-ecd82f69809b",
+          "position": 7,
+          "recording": {
+            "id": "ff4b1aba-9832-43e7-84bf-469b2ca5bfef",
+            "video": false,
+            "first-release-date": "2025-06-27",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                }
+              }
+            ],
+            "title": "One Beautiful Morning",
+            "length": 266386,
+            "disambiguation": ""
+          },
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "disambiguation": "",
+                "country": "US"
+              }
+            }
+          ],
+          "length": 266386,
+          "title": "One Beautiful Morning",
+          "number": "7"
+        },
+        {
+          "recording": {
+            "id": "a85ab739-82c8-4339-822c-34aa45a60c3a",
+            "video": false,
+            "first-release-date": "2025-06-27",
+            "artist-credit": [
+              {
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "title": "Between Heaven and Earth",
+            "length": 273293,
+            "disambiguation": ""
+          },
+          "position": 8,
+          "id": "4ca5ebb1-2133-4ef4-893d-c889c6f2d928",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "number": "8",
+          "title": "Between Heaven and Earth",
+          "length": 275133
+        },
+        {
+          "artist-credit": [
+            {
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "title": "Secret Garden",
+          "number": "9",
+          "length": 240866,
+          "recording": {
+            "id": "d33c121f-f184-4146-bc81-10dffbd93da3",
+            "video": false,
+            "first-release-date": "2025-06-27",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "disambiguation": "",
+                  "country": "US"
+                }
+              }
+            ],
+            "length": 240866,
+            "title": "Secret Garden",
+            "disambiguation": ""
+          },
+          "position": 9,
+          "id": "293d377c-70bb-4379-852c-d6f1611777b6"
+        },
+        {
+          "recording": {
+            "title": "The Farewell Party",
+            "length": 249266,
+            "artist-credit": [
+              {
+                "artist": {
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "7633749c-a888-4b20-a67e-4055a16622fc",
+            "first-release-date": "2025-06-27"
+          },
+          "id": "e2c70af5-ecfa-49b1-89c6-6db35d13ba9a",
+          "position": 10,
+          "number": "10",
+          "title": "The Farewell Party",
+          "length": 249266,
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person"
+              },
+              "joinphrase": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d4b2fe5f-a0b5-3e33-aba5-823af907126f",
+      "position": 3,
+      "discs": [
+        {
+          "id": "j1shoDLEnMCEECUX9Krp.syazqY-",
+          "offset-count": 11,
+          "offsets": [
+            150,
+            7363,
+            26841,
+            44232,
+            64282,
+            72268,
+            89345,
+            106548,
+            112498,
+            130998,
+            144421
+          ],
+          "sectors": 159981
+        }
+      ],
+      "format-id": "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "tracks": [
+        {
+          "position": 1,
+          "id": "196b36e9-b451-41f7-84d5-b931389eac03",
+          "recording": {
+            "disambiguation": "",
+            "title": "The Desert (instrumental)",
+            "length": 96173,
+            "artist-credit": [
+              {
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "a810b694-8e54-4659-9c81-ff634eb55265"
+          },
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              }
+            }
+          ],
+          "length": 96173,
+          "title": "The Desert (instrumental)",
+          "number": "1"
+        },
+        {
+          "number": "2",
+          "title": "Where You Goin’, Where You From",
+          "length": 259706,
+          "artist-credit": [
+            {
+              "artist": {
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "cbcd8dd4-6fef-41b3-9610-335e660fd375",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "title": "Where You Goin’, Where You From",
+            "length": 259706
+          },
+          "position": 2,
+          "id": "342c75aa-bd20-4025-8883-d3d5fed2392c"
+        },
+        {
+          "recording": {
+            "id": "e71cd17f-6306-41bc-9444-3bd62824ea72",
+            "video": false,
+            "first-release-date": "2025-05-01",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "length": 231880,
+            "title": "Faithless",
+            "disambiguation": ""
+          },
+          "position": 3,
+          "id": "1d5a640d-1613-4ef8-846a-e7dcc194a86b",
+          "title": "Faithless",
+          "number": "3",
+          "length": 231880,
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen"
+              },
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "position": 4,
+          "id": "a9ae1cee-1747-4f40-8a5c-a38a02b15968",
+          "recording": {
+            "length": 267333,
+            "title": "All God’s Children",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "disambiguation": "",
+                  "country": "US"
+                }
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "39675cc3-8071-4102-ac97-7d1aed0bfbac",
+            "first-release-date": "2025-06-27"
+          },
+          "length": 267333,
+          "title": "All God’s Children",
+          "number": "4",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ]
+        },
+        {
+          "number": "5",
+          "title": "A Prayer by the River (instrumental)",
+          "length": 106480,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "a94050ad-8cea-42e7-bcc8-ad276b2181a8",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "title": "A Prayer by the River (instrumental)",
+            "length": 106480
+          },
+          "id": "abbbfce9-b69f-47f8-97f8-3fda173d6554",
+          "position": 5
+        },
+        {
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "title": "God Sent You",
+            "length": 227693,
+            "first-release-date": "2025-06-27",
+            "id": "4cf4d705-0eb3-4610-8b82-89b70662299c",
+            "video": false
+          },
+          "position": 6,
+          "id": "2763d5d5-ec19-4f81-8c4e-43c6ed5a22cd",
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "type": "Person",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "length": 227693,
+          "title": "God Sent You",
+          "number": "6"
+        },
+        {
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "title": "Goin’ to California",
+          "length": 229373,
+          "number": "7",
+          "position": 7,
+          "id": "888b9618-86b0-4bf3-8cda-83d919060e82",
+          "recording": {
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "title": "Goin’ to California",
+            "length": 229373,
+            "disambiguation": "",
+            "id": "e16aee03-8bf7-4667-a91a-bfa7985e7e0d",
+            "video": false,
+            "first-release-date": "2025-06-27"
+          }
+        },
+        {
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "number": "8",
+          "title": "The Western Sea (instrumental)",
+          "length": 79333,
+          "recording": {
+            "title": "The Western Sea (instrumental)",
+            "length": 79333,
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "disambiguation": "",
+                  "country": "US"
+                }
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "3f65cf45-9cff-4fb6-8720-1c4f7f3a508b",
+            "first-release-date": "2025-06-27"
+          },
+          "id": "c0735c74-bb4e-4f55-be09-3d14ebda01e3",
+          "position": 8
+        },
+        {
+          "recording": {
+            "title": "My Master’s Hand",
+            "length": 246666,
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type": "Person",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                }
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "2ae15c55-1511-40f1-9520-8d0fefef3163",
+            "first-release-date": "2025-06-27"
+          },
+          "position": 9,
+          "id": "69445b83-a26f-4ba7-bddd-3818e4c32870",
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "title": "My Master’s Hand",
+          "number": "9",
+          "length": 246666
+        },
+        {
+          "position": 10,
+          "id": "86c5c9ea-f517-44ac-95b0-dfc01958a6ce",
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "35a1ce51-92e9-406d-9aa6-83a7875d90bf",
+            "disambiguation": "",
+            "length": 178973,
+            "title": "Let Me Ride",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ]
+          },
+          "title": "Let Me Ride",
+          "length": 178973,
+          "number": "10",
+          "artist-credit": [
+            {
+              "artist": {
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "title": "My Master’s Hand (Theme)",
+          "number": "11",
+          "length": 207466,
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "edb52a3f-0cbf-4f26-961f-02c9b9e9e717",
+            "disambiguation": "",
+            "title": "My Master’s Hand (Theme)",
+            "length": 207466,
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "joinphrase": ""
+              }
+            ]
+          },
+          "position": 11,
+          "id": "4fa3709d-d463-468e-9856-de1ee15b127d"
+        }
+      ],
+      "format": "CD",
+      "track-count": 11,
+      "track-offset": 0,
+      "title": "Faithless"
+    },
+    {
+      "format": "CD",
+      "track-count": 12,
+      "track-offset": 0,
+      "title": "Somewhere North of Nashville",
+      "id": "c7219ff9-eb88-32b4-b8a5-e143e4400d80",
+      "position": 4,
+      "discs": [
+        {
+          "offsets": [
+            150,
+            13281,
+            22274,
+            36336,
+            48934,
+            68757,
+            81574,
+            95651,
+            111576,
+            125037,
+            139491,
+            154502
+          ],
+          "offset-count": 12,
+          "sectors": 168373,
+          "id": "aM8ght188sJfg59H.01JlJ4oaIE-"
+        }
+      ],
+      "format-id": "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "tracks": [
+        {
+          "title": "Repo Man",
+          "length": 175080,
+          "number": "1",
+          "artist-credit": [
+            {
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "recording": {
+            "id": "4a41486f-b755-47b9-bb72-1341b00c0f00",
+            "video": false,
+            "first-release-date": "2025-05-14",
+            "artist-credit": [
+              {
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "title": "Repo Man",
+            "length": 175080,
+            "disambiguation": ""
+          },
+          "position": 1,
+          "id": "6cba3c7b-eb02-4b80-9c4d-fa498c9fc86d"
+        },
+        {
+          "artist-credit": [
+            {
+              "artist": {
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "title": "Tiger Rose",
+          "number": "2",
+          "length": 119906,
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "59b5b71f-6a2d-4562-abd5-5f1288dc9252",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                }
+              }
+            ],
+            "length": 117573,
+            "title": "Tiger Rose"
+          },
+          "id": "323ab21d-a983-4ba8-a6db-245c16169093",
+          "position": 2
+        },
+        {
+          "position": 3,
+          "id": "b18b9b3e-2b3a-4ff9-b6b4-cd5817d3e51f",
+          "recording": {
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                }
+              }
+            ],
+            "title": "Poor Side of Town",
+            "length": 186373,
+            "disambiguation": "",
+            "id": "071771bd-c07e-4dbe-a6bd-da461fe5c99f",
+            "video": false,
+            "first-release-date": "2025-06-27"
+          },
+          "number": "3",
+          "title": "Poor Side of Town",
+          "length": 187493,
+          "artist-credit": [
+            {
+              "artist": {
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "length": 167973,
+          "title": "Delivery Man",
+          "number": "4",
+          "id": "5fe7215b-621a-4992-bfaa-77ba58c80db9",
+          "position": 4,
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "8e72adf1-3f65-46f3-9c28-0eb923586a1b",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                }
+              }
+            ],
+            "title": "Delivery Man",
+            "length": 164413
+          }
+        },
+        {
+          "title": "Under a Big Sky",
+          "number": "5",
+          "length": 264306,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "length": 263347,
+            "title": "Under a Big Sky",
+            "first-release-date": "2025-06-27",
+            "id": "366a9ea4-773c-42dc-866b-56f22b84be5d",
+            "video": false
+          },
+          "position": 5,
+          "id": "5a3ab53b-4460-4486-8fd6-738ae8b1e543"
+        },
+        {
+          "recording": {
+            "id": "d7268462-b842-47e8-b338-7af0eb2ac7d0",
+            "video": false,
+            "first-release-date": "2025-06-27",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type": "Person"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "title": "Detail Man",
+            "length": 168707,
+            "disambiguation": ""
+          },
+          "id": "2edc44d5-6cbf-43aa-98c3-fbab73b95bb2",
+          "position": 6,
+          "title": "Detail Man",
+          "number": "6",
+          "length": 170893,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ]
+        },
+        {
+          "title": "Silver Mountain",
+          "length": 187693,
+          "number": "7",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "length": 186240,
+            "title": "Silver Mountain",
+            "first-release-date": "2025-06-27",
+            "id": "0bdc6d72-9e43-40e1-a603-764b7b69867d",
+            "video": false
+          },
+          "position": 7,
+          "id": "486b8da4-6212-4b61-9821-61bd38eaa0e7"
+        },
+        {
+          "id": "4ee0f133-99b6-43ab-9867-841b5ac6072e",
+          "position": 8,
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "artist": {
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "title": "Janey Don’t You Lose Heart",
+            "length": 210893,
+            "first-release-date": "2025-06-27",
+            "id": "292fc4e7-6f14-4274-91f4-2635e3721275",
+            "video": false
+          },
+          "title": "Janey Don’t You Lose Heart",
+          "number": "8",
+          "length": 212333,
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "title": "You’re Gonna Miss Me When I’m Gone",
+          "number": "9",
+          "length": 179480,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "recording": {
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "title": "You’re Gonna Miss Me When I’m Gone",
+            "length": 179480,
+            "disambiguation": "",
+            "id": "d30c3bb1-a704-4dc3-a42b-91fe8b8596c0",
+            "video": false,
+            "first-release-date": "2025-06-27"
+          },
+          "position": 9,
+          "id": "bb0b6571-c79e-4ed7-a4da-f5ec51283ad7"
+        },
+        {
+          "recording": {
+            "video": false,
+            "id": "b524d171-dc74-4752-9705-563e617510e1",
+            "first-release-date": "2025-06-27",
+            "title": "Stand on It",
+            "length": 191053,
+            "artist-credit": [
+              {
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "disambiguation": ""
+          },
+          "id": "09102b6d-2091-44de-949c-aae103b36d33",
+          "position": 10,
+          "number": "10",
+          "title": "Stand on It",
+          "length": 192720,
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "length": 198480,
+            "title": "Blue Highway",
+            "first-release-date": "2025-06-27",
+            "id": "31ba639b-5e77-4d79-a64c-1995ca56cb1d",
+            "video": false
+          },
+          "position": 11,
+          "id": "ff8adc31-2e82-4389-a2bf-93592f115878",
+          "title": "Blue Highway",
+          "length": 200146,
+          "number": "11",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ]
+        },
+        {
+          "title": "Somewhere North of Nashville",
+          "length": 184946,
+          "number": "12",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "position": 12,
+          "id": "f2877eae-9ef7-4176-8595-bd1068549874",
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "a20dc9d6-c47d-4c2f-abd9-4be69c170960",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "length": 184946,
+            "title": "Somewhere North of Nashville"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Inyo",
+      "track-offset": 0,
+      "track-count": 10,
+      "format": "CD",
+      "tracks": [
+        {
+          "recording": {
+            "length": 276587,
+            "title": "Inyo",
+            "artist-credit": [
+              {
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "69f93a86-6a4f-44c0-a9aa-489d6cc828c9",
+            "first-release-date": "2025-06-27"
+          },
+          "id": "a90f2ca0-640c-4967-9da9-b5a7bb90320e",
+          "position": 1,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "length": 276586,
+          "title": "Inyo",
+          "number": "1"
+        },
+        {
+          "recording": {
+            "length": 198400,
+            "title": "Indian Town",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "disambiguation": "",
+                  "country": "US"
+                }
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "c943c9b9-d0f4-4c5c-b3b9-3f467b77a802",
+            "first-release-date": "2025-06-27"
+          },
+          "id": "46fc1a35-7685-4773-a0c3-61764151c8ed",
+          "position": 2,
+          "number": "2",
+          "title": "Indian Town",
+          "length": 198400,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              }
+            }
+          ]
+        },
+        {
+          "artist-credit": [
+            {
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "title": "Adelita",
+          "length": 277546,
+          "number": "3",
+          "id": "e24895a3-e64e-4986-8ca6-9e2e9423969f",
+          "position": 3,
+          "recording": {
+            "disambiguation": "",
+            "length": 277547,
+            "title": "Adelita",
+            "artist-credit": [
+              {
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "first-release-date": "2025-05-29",
+            "video": false,
+            "id": "7d3aa44d-09dd-41ba-ac35-061b6262346d"
+          }
+        },
+        {
+          "position": 4,
+          "id": "37e267e4-f3ea-4045-8832-b242f6709c3e",
+          "recording": {
+            "video": false,
+            "id": "6b7bfc98-8092-4d03-8c6e-aa66dd6943a2",
+            "first-release-date": "2025-06-27",
+            "title": "The Aztec Dance",
+            "length": 285453,
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "disambiguation": ""
+          },
+          "artist-credit": [
+            {
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "length": 285453,
+          "title": "The Aztec Dance",
+          "number": "4"
+        },
+        {
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              }
+            }
+          ],
+          "title": "The Lost Charro",
+          "number": "5",
+          "length": 287880,
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "2a21634a-662f-4f2f-969f-25968ad97926",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "length": 287880,
+            "title": "The Lost Charro"
+          },
+          "id": "3382df16-11b9-4b7a-9b00-4d9429093814",
+          "position": 5
+        },
+        {
+          "position": 6,
+          "id": "38a11b33-664d-4ff5-ab0f-ef33aa82ae9e",
+          "recording": {
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "title": "Our Lady of Monroe",
+            "length": 237200,
+            "disambiguation": "",
+            "id": "7e46da3f-e97c-42d9-8d65-a7be13cda4c6",
+            "video": false,
+            "first-release-date": "2025-06-27"
+          },
+          "number": "6",
+          "title": "Our Lady of Monroe",
+          "length": 237200,
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              }
+            }
+          ],
+          "number": "7",
+          "title": "El Jardinero (Upon the Death of Ramona)",
+          "length": 314640,
+          "recording": {
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "length": 314640,
+            "title": "El Jardinero (Upon the Death of Ramona)",
+            "disambiguation": "",
+            "id": "90becc4b-900a-4eb2-918e-cb232206821e",
+            "video": false,
+            "first-release-date": "2025-06-27"
+          },
+          "id": "a64ea1b3-f632-46d6-b857-8bf5e46b6b8c",
+          "position": 7
+        },
+        {
+          "id": "9cfc055a-4772-4d51-adb6-93c1af84ea47",
+          "position": 8,
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "title": "One False Move",
+            "length": 204426,
+            "first-release-date": "2025-06-27",
+            "id": "d352f09b-db32-405b-8642-5b8e95e94a75",
+            "video": false
+          },
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "title": "One False Move",
+          "length": 204426,
+          "number": "8"
+        },
+        {
+          "recording": {
+            "length": 237280,
+            "title": "Ciudad Juarez",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "577abf4d-baf1-4eea-bcb5-ddad2a89478e",
+            "first-release-date": "2025-06-27"
+          },
+          "id": "b10a3f65-1b7b-4ec3-8472-bc7a16507f25",
+          "position": 9,
+          "number": "9",
+          "title": "Ciudad Juarez",
+          "length": 237280,
+          "artist-credit": [
+            {
+              "artist": {
+                "type": "Person",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "length": 182960,
+            "title": "When I Build My Beautiful House",
+            "first-release-date": "2025-06-27",
+            "id": "44f2a2b4-8510-4da6-a9d7-d92d76b27451",
+            "video": false
+          },
+          "position": 10,
+          "id": "26831d07-3966-4e3e-9c19-fc3bb2214c1a",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              }
+            }
+          ],
+          "number": "10",
+          "title": "When I Build My Beautiful House",
+          "length": 182960
+        }
+      ],
+      "format-id": "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "discs": [
+        {
+          "sectors": 187828,
+          "offsets": [
+            150,
+            20894,
+            35774,
+            56590,
+            77999,
+            99590,
+            117380,
+            140978,
+            156310,
+            174106
+          ],
+          "offset-count": 10,
+          "id": "cBCumvwQqMHmb2aev6M_fI4FSD8-"
+        }
+      ],
+      "position": 5,
+      "id": "ab56cc3e-1e0f-397f-b1a6-a095c92c2e70"
+    },
+    {
+      "title": "Twilight Hours",
+      "format": "CD",
+      "track-count": 12,
+      "track-offset": 0,
+      "tracks": [
+        {
+          "id": "4c285763-fc31-47b5-b277-995536b8fb82",
+          "position": 1,
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "length": 316373,
+            "title": "Sunday Love",
+            "first-release-date": "2025-06-12",
+            "id": "5cad0982-ee23-4aca-a6ab-60e4f3467ecc",
+            "video": false
+          },
+          "title": "Sunday Love",
+          "length": 316373,
+          "number": "1",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ]
+        },
+        {
+          "position": 2,
+          "id": "2ee413c7-6e5d-43d8-8534-e1a044f0f677",
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "length": 284200,
+            "title": "Late in the Evening",
+            "first-release-date": "2025-06-27",
+            "id": "cc7e0099-5df3-419a-9943-c4aa7f2c8e27",
+            "video": false
+          },
+          "artist-credit": [
+            {
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "length": 284200,
+          "title": "Late in the Evening",
+          "number": "2"
+        },
+        {
+          "position": 3,
+          "id": "da857d3f-1748-4ca3-bfee-8ac6e8058771",
+          "recording": {
+            "id": "d70a8387-c13e-4c92-9783-3a7d9ed11508",
+            "video": false,
+            "first-release-date": "2025-06-27",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type": "Person"
+                }
+              }
+            ],
+            "title": "Two of Us",
+            "length": 310200,
+            "disambiguation": ""
+          },
+          "title": "Two of Us",
+          "number": "3",
+          "length": 310200,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ]
+        },
+        {
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "966cb1a6-2d0a-43d5-a936-859b2e860c66",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                }
+              }
+            ],
+            "title": "Lonely Town",
+            "length": 398733
+          },
+          "id": "a5870f63-bf3c-4787-bc18-fab66da99f28",
+          "position": 4,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen"
+              }
+            }
+          ],
+          "length": 398733,
+          "title": "Lonely Town",
+          "number": "4"
+        },
+        {
+          "recording": {
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "title": "September Kisses",
+            "length": 212453,
+            "disambiguation": "",
+            "id": "01201b7e-6754-4362-81db-77eddcfd2eee",
+            "video": false,
+            "first-release-date": "2025-06-27"
+          },
+          "id": "b265c7f1-8d53-41f0-926e-5fd20e24e15b",
+          "position": 5,
+          "title": "September Kisses",
+          "number": "5",
+          "length": 212453,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ]
+        },
+        {
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "length": 203973,
+          "title": "Twilight Hours",
+          "number": "6",
+          "position": 6,
+          "id": "5a2a46a5-16f5-496f-b0fc-4315cce17cb4",
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "9911f68f-ccd0-4247-9a96-fd8b1a52623a",
+            "disambiguation": "",
+            "length": 203973,
+            "title": "Twilight Hours",
+            "artist-credit": [
+              {
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ]
+          }
+        },
+        {
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "title": "I’ll Stand by You",
+          "number": "7",
+          "length": 277613,
+          "recording": {
+            "title": "I’ll Stand by You",
+            "length": 277613,
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "6eb07184-29de-4ada-9098-6388451f268e",
+            "first-release-date": "2025-06-27"
+          },
+          "position": 7,
+          "id": "2da01a46-dfa5-4e36-8394-78481516c9b2"
+        },
+        {
+          "position": 8,
+          "id": "8c18e8ac-7888-41d4-96be-435e66ca2e7a",
+          "recording": {
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "disambiguation": "",
+                  "country": "US"
+                }
+              }
+            ],
+            "title": "High Sierra",
+            "length": 385306,
+            "first-release-date": "2025-06-27",
+            "id": "9d50fb1b-bade-4193-b9f5-c70a61e32bd4",
+            "video": false
+          },
+          "number": "8",
+          "title": "High Sierra",
+          "length": 385306,
+          "artist-credit": [
+            {
+              "artist": {
+                "type": "Person",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "title": "Sunliner",
+          "number": "9",
+          "length": 185266,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person"
+              }
+            }
+          ],
+          "recording": {
+            "artist-credit": [
+              {
+                "artist": {
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "disambiguation": "",
+                  "country": "US"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "title": "Sunliner",
+            "length": 185266,
+            "disambiguation": "",
+            "id": "f3e51281-6f20-4ea8-84cc-d020c7abb56d",
+            "video": false,
+            "first-release-date": "2025-06-27"
+          },
+          "id": "d6ebd98a-461b-4f2f-9f53-42206be3928a",
+          "position": 9
+        },
+        {
+          "length": 319840,
+          "title": "Another You",
+          "number": "10",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "id": "ade4c854-da7d-4d06-abaf-a9c35ae65c98",
+          "position": 10,
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "c51c7ed6-25c5-46c0-96b0-d8af61f05170",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "length": 319840,
+            "title": "Another You"
+          }
+        },
+        {
+          "recording": {
+            "video": false,
+            "id": "370414e2-522c-403d-80b2-1c99a6e1010f",
+            "first-release-date": "2025-06-27",
+            "title": "Dinner at Eight",
+            "length": 249573,
+            "artist-credit": [
+              {
+                "artist": {
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "disambiguation": ""
+          },
+          "position": 11,
+          "id": "e8bfc460-1e6e-444f-b970-434bcaa6c378",
+          "artist-credit": [
+            {
+              "artist": {
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "number": "11",
+          "title": "Dinner at Eight",
+          "length": 249573
+        },
+        {
+          "length": 216813,
+          "title": "Follow the Sun",
+          "number": "12",
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "position": 12,
+          "id": "26129ce8-cd26-48a0-8d9c-b9358875ef49",
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "456bfc94-22cc-4793-be4e-d20afabc7076",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "joinphrase": ""
+              }
+            ],
+            "length": 216813,
+            "title": "Follow the Sun"
+          }
+        }
+      ],
+      "id": "52c74a2a-31b0-390e-8c8a-e5cf185e706d",
+      "position": 6,
+      "discs": [
+        {
+          "id": "AGEXmb5HG2eLUXjgf48mEvg0tNw-",
+          "offset-count": 12,
+          "offsets": [
+            150,
+            23878,
+            45193,
+            68458,
+            98363,
+            114297,
+            129595,
+            150416,
+            179314,
+            193209,
+            217197,
+            235915
+          ],
+          "sectors": 252176
+        }
+      ],
+      "format-id": "9712d52a-4509-3d4b-a1a2-67c88c643e31"
+    },
+    {
+      "track-count": 10,
+      "format": "CD",
+      "track-offset": 0,
+      "title": "Perfect World",
+      "format-id": "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "discs": [
+        {
+          "id": "haB1Qa07j0P3M4fa9LWuBf8AXOI-",
+          "offsets": [
+            150,
+            16427,
+            32505,
+            53963,
+            71036,
+            91312,
+            105729,
+            129836,
+            152609,
+            168903
+          ],
+          "offset-count": 10,
+          "sectors": 185200
+        }
+      ],
+      "position": 7,
+      "id": "126981ae-dfa9-3612-972e-a973a9b44689",
+      "tracks": [
+        {
+          "recording": {
+            "disambiguation": "",
+            "title": "I’m Not Sleeping",
+            "length": 217026,
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person"
+                }
+              }
+            ],
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "e43840ed-29e1-4ad7-9843-96cc19e9350c"
+          },
+          "position": 1,
+          "id": "3a0d61b9-ab3f-4639-ae10-a84a77549b15",
+          "title": "I’m Not Sleeping",
+          "length": 217026,
+          "number": "1",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              }
+            }
+          ]
+        },
+        {
+          "id": "a03b8368-b628-49a1-ae1e-28e63821bf52",
+          "position": 2,
+          "recording": {
+            "id": "184793d4-5460-444a-b36a-4324e490dda8",
+            "video": false,
+            "first-release-date": "2025-06-27",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "title": "Idiot’s Delight",
+            "length": 214373,
+            "disambiguation": ""
+          },
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "title": "Idiot’s Delight",
+          "number": "2",
+          "length": 214373
+        },
+        {
+          "recording": {
+            "length": 286106,
+            "title": "Another Thin Line",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "type": "Person",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "82511a45-cf9c-475d-bc32-8003371182ea",
+            "first-release-date": "2025-06-27"
+          },
+          "position": 3,
+          "id": "c3ecc698-d1e6-42b0-894d-f6edeea30435",
+          "artist-credit": [
+            {
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ],
+          "title": "Another Thin Line",
+          "number": "3",
+          "length": 286106
+        },
+        {
+          "title": "The Great Depression",
+          "number": "4",
+          "length": 227640,
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "sort-name": "Springsteen, Bruce",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "recording": {
+            "first-release-date": "2025-06-27",
+            "id": "535d7853-50b3-4931-b472-0b7dca52728f",
+            "video": false,
+            "disambiguation": "",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen"
+                }
+              }
+            ],
+            "length": 227640,
+            "title": "The Great Depression"
+          },
+          "id": "c4e6d3b7-c874-4ef0-8815-38595c5437d4",
+          "position": 4
+        },
+        {
+          "id": "88af6153-b75e-420d-bc2e-6e86bb545aca",
+          "position": 5,
+          "recording": {
+            "title": "Blind Man",
+            "length": 270346,
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "disambiguation": "",
+            "video": false,
+            "id": "f139ab42-b86d-490d-880e-a391dc92a06a",
+            "first-release-date": "2025-06-27"
+          },
+          "number": "5",
+          "title": "Blind Man",
+          "length": 270346,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen"
+            }
+          ]
+        },
+        {
+          "position": 6,
+          "id": "3855d92a-3550-4b5b-b89e-9660a78a7b98",
+          "recording": {
+            "video": false,
+            "id": "970dcf62-940b-4f64-803f-e62f8429752f",
+            "first-release-date": "2025-04-03",
+            "length": 192226,
+            "title": "Rain in the River",
+            "artist-credit": [
+              {
+                "name": "Bruce Springsteen",
+                "artist": {
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "joinphrase": ""
+              }
+            ],
+            "disambiguation": ""
+          },
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "country": "US",
+                "disambiguation": "",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+              }
+            }
+          ],
+          "title": "Rain in the River",
+          "number": "6",
+          "length": 192226
+        },
+        {
+          "length": 321426,
+          "title": "If I Could Only Be Your Lover",
+          "number": "7",
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "name": "Bruce Springsteen",
+                "type": "Person",
+                "disambiguation": "",
+                "country": "US"
+              }
+            }
+          ],
+          "position": 7,
+          "id": "f58c5b8d-ae7d-46f2-b109-052d78bb54ef",
+          "recording": {
+            "disambiguation": "",
+            "title": "If I Could Only Be Your Lover",
+            "length": 321426,
+            "artist-credit": [
+              {
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "type": "Person",
+                  "sort-name": "Springsteen, Bruce",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "name": "Bruce Springsteen",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "first-release-date": "2025-06-27",
+            "video": false,
+            "id": "6caa7247-6b9b-4284-8e31-933f27409a61"
+          }
+        },
+        {
+          "title": "Cutting Knife",
+          "number": "8",
+          "length": 303640,
+          "artist-credit": [
+            {
+              "joinphrase": "",
+              "artist": {
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "country": "US",
+                "disambiguation": ""
+              },
+              "name": "Bruce Springsteen"
+            }
+          ],
+          "position": 8,
+          "id": "0f8dd69e-00c9-4ae6-b318-46542900a0f4",
+          "recording": {
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "disambiguation": "",
+                  "country": "US",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "type": "Person",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "title": "Cutting Knife",
+            "length": 303640,
+            "disambiguation": "",
+            "id": "649aa1cf-48f7-4cd5-bcc2-08e142db7879",
+            "video": false,
+            "first-release-date": "2025-06-27"
+          }
+        },
+        {
+          "position": 9,
+          "id": "55d6a72e-18ec-447b-ba20-b715c4be3234",
+          "recording": {
+            "id": "ea2a499d-aa7f-402d-9a85-a94953b2a749",
+            "video": false,
+            "first-release-date": "2025-06-27",
+            "artist-credit": [
+              {
+                "joinphrase": "",
+                "artist": {
+                  "country": "US",
+                  "disambiguation": "",
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+                },
+                "name": "Bruce Springsteen"
+              }
+            ],
+            "title": "You Lifted Me Up",
+            "length": 217253,
+            "disambiguation": ""
+          },
+          "title": "You Lifted Me Up",
+          "number": "9",
+          "length": 217253,
+          "artist-credit": [
+            {
+              "artist": {
+                "disambiguation": "",
+                "country": "US",
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "name": "Bruce Springsteen",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "sort-name": "Springsteen, Bruce",
+                "type": "Person"
+              },
+              "name": "Bruce Springsteen",
+              "joinphrase": ""
+            }
+          ]
+        },
+        {
+          "number": "10",
+          "title": "Perfect World",
+          "length": 217293,
+          "artist-credit": [
+            {
+              "name": "Bruce Springsteen",
+              "artist": {
+                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                "type": "Person",
+                "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                "name": "Bruce Springsteen",
+                "sort-name": "Springsteen, Bruce",
+                "disambiguation": "",
+                "country": "US"
+              },
+              "joinphrase": ""
+            }
+          ],
+          "id": "ab2b2e62-ebbb-4457-ab29-98788cecf235",
+          "position": 10,
+          "recording": {
+            "id": "ecdcfd77-073d-4559-88bf-39f107c69adf",
+            "video": false,
+            "first-release-date": "2025-06-27",
+            "artist-credit": [
+              {
+                "artist": {
+                  "name": "Bruce Springsteen",
+                  "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+                  "sort-name": "Springsteen, Bruce",
+                  "type": "Person",
+                  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+                  "country": "US",
+                  "disambiguation": ""
+                },
+                "name": "Bruce Springsteen",
+                "joinphrase": ""
+              }
+            ],
+            "length": 217293,
+            "title": "Perfect World",
+            "disambiguation": ""
+          }
+        }
+      ]
+    }
+  ],
+  "release-group": {
+    "id": "f731060c-05d4-439d-8351-59e5e5eb91a0",
+    "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+    "primary-type": "Album",
+    "artist-credit": [
+      {
+        "joinphrase": "",
+        "name": "Bruce Springsteen",
+        "artist": {
+          "country": "US",
+          "disambiguation": "",
+          "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+          "sort-name": "Springsteen, Bruce",
+          "name": "Bruce Springsteen",
+          "type": "Person",
+          "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+        }
+      }
+    ],
+    "first-release-date": "2025-06-27",
+    "title": "Tracks II: The Lost Albums",
+    "secondary-type-ids": [
+      "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+    ],
+    "secondary-types": [
+      "Compilation"
+    ],
+    "disambiguation": ""
+  },
+  "text-representation": {
+    "script": "Latn",
+    "language": "eng"
+  },
+  "packaging-id": "c1668fc7-8944-4a00-bc3e-46e8d861d211",
+  "barcode": "0194399501627",
+  "artist-credit": [
+    {
+      "joinphrase": "",
+      "name": "Bruce Springsteen",
+      "artist": {
+        "type": "Person",
+        "id": "70248960-cb53-4ea4-943a-edb18f7d336f",
+        "name": "Bruce Springsteen",
+        "sort-name": "Springsteen, Bruce",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
+        "country": "US",
+        "disambiguation": ""
+      }
+    }
+  ],
+  "asin": "B0F2LCMLBX",
+  "packaging": "Box",
+  "cover-art-archive": {
+    "darkened": false,
+    "artwork": true,
+    "count": 44,
+    "back": true,
+    "front": true
+  },
+  "label-info": [
+    {
+      "catalog-number": "19439950162",
+      "label": {
+        "type-id": "b6285b2a-3514-3d43-80df-fcf528824ded",
+        "type": "Imprint",
+        "id": "011d1192-6f65-45bd-85c4-0400dd45693e",
+        "sort-name": "Columbia",
+        "name": "Columbia",
+        "label-code": 162,
+        "disambiguation": "owned by Sony Music Entertainment, worldwide except JP; formerly owned by CBS between 1938–1990 within US/CA/MX"
+      }
+    },
+    {
+      "catalog-number": "19439950162",
+      "label": {
+        "label-code": 2361,
+        "disambiguation": "reissue division of Sony Music Entertainment",
+        "type-id": "88ee6ae7-f413-3490-a1d2-54f6a9f0838c",
+        "type": "Reissue Production",
+        "id": "45ffe1d8-92da-4750-9a4a-f42861f46e2c",
+        "name": "Legacy",
+        "sort-name": "Legacy"
+      }
+    },
+    {
+      "label": {
+        "type": "Imprint",
+        "sort-name": "Sony Music",
+        "id": "9e6b4d7f-4958-4db7-8504-d89e315836af",
+        "name": "Sony Music",
+        "type-id": "b6285b2a-3514-3d43-80df-fcf528824ded",
+        "disambiguation": "global brand, excluding JP, owned by Sony Music Entertainment",
+        "label-code": 10746
+      },
+      "catalog-number": "19439950162"
+    }
+  ],
+  "title": "Tracks II: The Lost Albums",
+  "disambiguation": "",
+  "date": "2025-06-27"
+}

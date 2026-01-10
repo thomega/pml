@@ -41,17 +41,17 @@ let query_release =
                  "recordings"; "release-groups"; "discids";
                  "url-rels"; "labels"; ] }
 
-let _get_discid discid =
+let get_discid discid =
   if is_discid discid then
     Query.(exec musicbrainz query_discid discid)
   else
     Error (Printf.sprintf "'%s' is not a valid discid!" discid)
 
-let _get_release release =
-  if is_uuid release then
-    Query.(exec musicbrainz query_release release)
+let get_release mbid =
+  if is_uuid mbid then
+    Query.(exec musicbrainz query_release mbid)
   else
-    Error (Printf.sprintf "'%s' is not a valid MBID!" release)
+    Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
 
 let _url_discid discid =
   if is_discid discid then
@@ -59,33 +59,39 @@ let _url_discid discid =
   else
     invalid_arg (Printf.sprintf "'%s' is not a valid discid!" discid)
 
-let _url_release release =
-  if is_uuid release then
-    Query.(url musicbrainz query_release release)
+let _url_release mbid =
+  if is_uuid mbid then
+    Query.(url musicbrainz query_release mbid)
   else
-    invalid_arg (Printf.sprintf "'%s' is not a valid MBID!" release)
+    invalid_arg (Printf.sprintf "'%s' is not a valid MBID!" mbid)
 
 module Discid_cache = Cache.Make (struct let name = "discid" end)
 module Release_cache = Cache.Make (struct let name = "release" end)
 module Releaseid_cache = Cache.Make (struct let name = "releaseid" end)
 
-let get_discid_cached ~root discid =
+let get_discid_from_cache ~root discid =
   if is_discid discid then
-    match Discid_cache.get ~root discid with
-    | Error _ as e -> e
-    | Ok (Some json) -> Ok json
-    | Ok None -> Error "not found / Curl disbled" (* get_discid discid *)
+    Discid_cache.get ~root discid
   else
     Error (Printf.sprintf "'%s' is not a valid discid!" discid)
 
-let get_release_cached ~root release =
-  if is_uuid release then
-    match Release_cache.get ~root release with
-    | Error _ as e -> e
-    | Ok (Some json) -> Ok json
-    | Ok None -> Error "not found / Curl disbled" (* get_release release *)
+let get_release_from_cache ~root mbid =
+  if is_uuid mbid then
+    Discid_cache.get ~root mbid
   else
-    Error (Printf.sprintf "'%s' is not a valid MBID!" release)
+    Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
+
+let get_discid_cached ~root discid =
+  match get_discid_from_cache ~root discid with
+  | Error _ as e -> e
+  | Ok (Some json) -> Ok json
+  | Ok None -> get_discid discid
+
+let get_release_cached ~root mbid =
+  match get_release_from_cache ~root mbid with
+  | Error _ as e -> e
+  | Ok (Some json) -> Ok json
+  | Ok None -> get_release mbid
 
 module type Raw =
   sig

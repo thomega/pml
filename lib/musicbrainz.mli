@@ -4,12 +4,26 @@ module Discid_cache : Cache.T
 module Release_cache : Cache.T
 (** For testing only.  Will be removed from the final API. *)
 
+val get_discid : string -> (string, string) result
+(** Return the JSON for the given discid, ignoring any cache. *)
+
+val get_release : string -> (string, string) result
+(** Return the JSON for the given release, ignoring any cache. *)
+
+val get_discid_from_cache : root:string -> string -> (string option, string) result
+(** Return the JSON for the given discid, using only the cache located at [root]
+    if possible. *)
+
+val get_release_from_cache : root:string -> string -> (string option, string) result
+(** Return the JSON for the given release, using only the cache located at [root]
+    if possible. *)
+
 val get_discid_cached : root:string -> string -> (string, string) result
-(** Return the JSON for the given discid, using the cache located at [root]
+(** Return the JSON for the given discid, preferring the cache located at [root]
     if possible. *)
 
 val get_release_cached : root:string -> string -> (string, string) result
-(** Return the JSON for the given release, using the cache located at [root]
+(** Return the JSON for the given release, preferring the cache located at [root]
     if possible. *)
 
 module type Raw =
