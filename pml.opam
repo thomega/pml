@@ -10,6 +10,8 @@ tags: ["music" "media"]
 depends: [
   "dune" {>= "3.20"}
   "ocaml" {>= "5.04.0"}
+  "cmdliner" {>= "1.3.0"}
+  "ppx_inline_test" {>= "0.14.1"}
   "odoc" {with-doc}
 ]
 build: [

@@ -1,9 +1,10 @@
 module type T =
   sig
+    val init : root:string -> (unit, string) result
     val get : root:string -> string -> (string option, string) result
     val remove : root:string -> string -> (unit, string) result
     val set : root:string -> string -> string -> (unit, string) result
-    val map : root:string -> (string -> (string, string) result) -> string-> (unit, string) result
+    val map : root:string -> string -> (string -> (string, string) result)-> (unit, string) result
   end
 
 module type Table =
@@ -33,6 +34,25 @@ module Make (Table : Table) : T =
       table ~root
       |> Result.map (fun path -> Filename.concat path key)
 
+    let init ~root =
+      let path = Filename.concat root Table.name in
+      if Sys.is_directory path then
+        Ok ()
+      else if Sys.file_exists path then
+        Error ("Cache().init: not a directory: " ^ path)
+      else if Sys.is_directory root then
+        try
+          Ok (Sys.mkdir path 0o700)
+        with
+        | exn -> Error (Printexc.to_string exn)
+      else if Sys.file_exists root then
+        Error ("Cache().init: not a directory: " ^ root)
+      else
+        try
+          Ok (Sys.mkdir root 0o700; Sys.mkdir path 0o700)
+        with
+        | exn -> Error (Printexc.to_string exn)
+        
     let get ~root key =
       let* name = filename ~root key in
       if Sys.file_exists name then
@@ -60,7 +80,7 @@ module Make (Table : Table) : T =
       with
       | exn -> Error (Printexc.to_string exn)
 
-    let map ~root f key =
+    let map ~root key f =
       let* name = filename ~root key in
       if Sys.file_exists name then
         try
@@ -74,3 +94,16 @@ module Make (Table : Table) : T =
         Error (Printf.sprintf "entry '%s' not found in table '%s'" key Table.name)
 
   end
+
+let%test_module _ =
+  (module struct
+
+     module C = Make (struct let name = "t" end)
+
+     let%test _ =
+       match C.init ~root:"r" with
+       | Error _ -> false
+       | Ok _ -> true
+
+   end)
+

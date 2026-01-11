@@ -3,8 +3,7 @@
   (public_name pml)
   (modules
     Musicbrainz Work Discid Query Cache)
-  (private_modules
-    )
+  (private_modules )
   ; (wrapped false)
   (inline_tests)
   (preprocess (pps ppx_inline_test))

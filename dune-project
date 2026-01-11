@@ -18,7 +18,10 @@
  (name pml)
  (synopsis "Physical Media Library")
  (description "Cataloging and ripping physical discs with interface to MusicBrainz")
- (depends (ocaml (>= 5.04.0)))
+ (depends
+   (ocaml (>= 5.04.0))
+   (cmdliner (>= 1.3.0))
+   (ppx_inline_test (>= 0.14.1)))
  (tags ("music" "media")))
 
 (package
