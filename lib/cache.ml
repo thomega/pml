@@ -14,17 +14,16 @@ module type Table =
 module Make (Table : Table) : T =
   struct
 
-    open Result
     open Result.Syntax
 
     let is_directory name =
       if Sys.file_exists name then
         if Sys.is_directory name then
-          ok name
+          Ok name
         else
-          error ("not a directory: " ^ name)
+          Error ("not a directory: " ^ name)
       else
-        error ("no such file or directory: " ^ name)
+        Error ("no such file or directory: " ^ name)
     
     let table ~root =
       let* root = is_directory root in
@@ -38,28 +37,28 @@ module Make (Table : Table) : T =
       let* name = filename ~root key in
       if Sys.file_exists name then
         try
-          ok (Some (In_channel.with_open_text name In_channel.input_all))
+          Ok (Some (In_channel.with_open_text name In_channel.input_all))
         with
-        | exn -> error (Printexc.to_string exn)
+        | exn -> Error (Printexc.to_string exn)
       else
-        ok None
+        Ok None
 
     let remove ~root key =
       let* name = filename ~root key in
       if Sys.file_exists name then
         try
-          ok (Sys.remove name)
+          Ok (Sys.remove name)
         with
-        | exn -> error (Printexc.to_string exn)
+        | exn -> Error (Printexc.to_string exn)
       else
-        ok ()
+        Ok ()
 
     let set ~root key text =
       let* name = filename ~root key in
       try
-        ok (Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc text))
+        Ok (Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc text))
       with
-      | exn -> error (Printexc.to_string exn)
+      | exn -> Error (Printexc.to_string exn)
 
     let map ~root f key =
       let* name = filename ~root key in
@@ -67,11 +66,11 @@ module Make (Table : Table) : T =
         try
           let text = In_channel.with_open_text name In_channel.input_all in
           let* text' = f text in
-          ok (if text' <> text then
+          Ok (if text' <> text then
                 Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc text'))
         with
-        | exn -> error (Printexc.to_string exn)
+        | exn -> Error (Printexc.to_string exn)
       else
-        error (Printf.sprintf "entry '%s' not found in table '%s'" key Table.name)
+        Error (Printf.sprintf "entry '%s' not found in table '%s'" key Table.name)
 
   end
