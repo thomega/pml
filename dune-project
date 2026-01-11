@@ -18,16 +18,14 @@
  (name pml)
  (synopsis "Physical Media Library")
  (description "Cataloging and ripping physical discs with interface to MusicBrainz")
- (depends ocaml)
- (tags
-  ("music" "media")))
+ (depends (ocaml (>= 5.04.0)))
+ (tags ("music" "media")))
 
 (package
  (name clibdiscid)
  (synopsis "Wrapper for MusicBrainz Discid functions")
  (description "Generated with Ctypes")
  (depends ocaml)
- (tags
-  ("media")))
+ (tags ("media")))
 
 (using ctypes 0.3)
