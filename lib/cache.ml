@@ -108,5 +108,11 @@ let%test_module _ =
        | Error _ -> false
        | Ok _ -> true
 
+     let%test _ =
+       match C.get ~root:"r" "a" with
+       | Error _ -> false
+       | Ok (Some _) -> false
+       | Ok None -> true
+
    end)
 
