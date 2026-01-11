@@ -101,18 +101,46 @@ module Make (Table : Table) : T =
 let%test_module _ =
   (module struct
 
+     open Result.Syntax
+
      module C = Make (struct let name = "t" end)
 
      let%test _ =
-       match C.init ~root:"r" with
-       | Error _ -> false
-       | Ok _ -> true
+       C.init ~root:"r" |> Result.is_ok
+
+     let%test _ =
+       C.get ~root:"rr" "a" |> Result.is_error
 
      let%test _ =
        match C.get ~root:"r" "a" with
-       | Error _ -> false
-       | Ok (Some _) -> false
        | Ok None -> true
+       | _ -> false
+
+     let%test _ =
+       match
+         let* _ = C.set ~root:"r" "a" "A" in
+         C.get ~root:"r" "a"
+       with
+       | Ok (Some "A") -> true
+       | _ -> false
+
+     let%test _ =
+       match
+         let* _ = C.set ~root:"r" "a" "A" in
+         let* _ = C.set ~root:"r" "a" "B" in
+         C.get ~root:"r" "a"
+       with
+       | Ok (Some "B") -> true
+       | _ -> false
+
+     let%test _ =
+       match
+         let* _ = C.set ~root:"r" "a" "A" in
+         let* _ = C.set ~root:"r" "b" "A" in
+         C.get ~root:"r" "a"
+       with
+       | Ok (Some "A") -> true
+       | _ -> false
 
    end)
 
