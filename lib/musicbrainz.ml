@@ -1,3 +1,5 @@
+open Result.Syntax
+
 (* A sequence of exactly 28 characters from the set [A-Za-z0-9._-]. *)
 
 (* [Re.alnum] contains accented characters! *)
@@ -82,16 +84,16 @@ let get_release_from_cache ~root mbid =
     Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
 
 let get_discid_cached ~root discid =
-  match get_discid_from_cache ~root discid with
-  | Error _ as e -> e
-  | Ok (Some json) -> Ok json
-  | Ok None -> get_discid discid
+  let* json_opt = get_discid_from_cache ~root discid in
+  match json_opt with
+  | Some json -> Ok json
+  | None -> get_discid discid
 
 let get_release_cached ~root mbid =
-  match get_release_from_cache ~root mbid with
-  | Error _ as e -> e
-  | Ok (Some json) -> Ok json
-  | Ok None -> get_release mbid
+  let* json_opt = get_release_from_cache ~root mbid in
+  match json_opt with
+  | Some json -> Ok json
+  | None -> get_release mbid
 
 module type Raw =
   sig
@@ -110,8 +112,8 @@ module Raw : Raw =
       |> Jsont.Object.finish
 
     let of_file name =
-      let text = In_channel.with_open_text name In_channel.input_all in
-      Jsont_bytesrw.decode_string jsont text
+      In_channel.with_open_text name In_channel.input_all
+      |> Jsont_bytesrw.decode_string jsont
 
     let print_json json = 
       match Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont json with
@@ -124,9 +126,8 @@ module Raw : Raw =
       | Error msg -> prerr_endline msg
 
     let normalize text =
-      match Jsont_bytesrw.decode_string jsont text with
-      | Error _ as e -> e
-      | Ok json -> Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont json
+      let* json = Jsont_bytesrw.decode_string jsont text in
+      Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont json
 
     let indent pfx = pfx ^ "  "
 

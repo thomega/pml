@@ -55,8 +55,10 @@ let exec api query key =
     Ok (Buffer.contents result)
   with
   | Curl.CurlException (curlcode, _code, _msg) ->
-     Curl.global_cleanup ();
-     match !error_response with
-     | "" -> Error (Curl.strerror curlcode)
-     | s -> Error s
+     begin
+       Curl.global_cleanup ();
+       match !error_response with
+       | "" -> Error (Curl.strerror curlcode)
+       | s -> Error s
+     end
 

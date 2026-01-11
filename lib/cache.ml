@@ -31,7 +31,7 @@ module Make (Table : Table) : T =
 
     let filename ~root key =
       table ~root
-      |>  Result.map (fun path -> Filename.concat path key)
+      |> Result.map (fun path -> Filename.concat path key)
 
     let get ~root key =
       let* name = filename ~root key in
