@@ -320,4 +320,15 @@ let%test_module _ =
        | Error "Z" -> true
        | _ -> false
 
+     let%test _ =
+       let root = fresh () in
+       match
+         let* _ = C.init ~root in
+         let* _ = C.set ~root "a" "A" in
+         let* _ = C.lookup ~root "a" (fun _ -> Error "Z") in
+         C.get ~root "a"
+       with
+       | Ok (Some "A") -> true
+       | _ -> false
+
    end)
