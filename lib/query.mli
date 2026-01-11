@@ -12,11 +12,15 @@ type query =
 
 val exec : api -> query -> string -> (string, string) result
 (** Perform a lookup for a key in the MusicBrainz database table
-    specified by the [query]. *)
+    specified by the [query].  If successful, the result is a
+    JSON string. *)
 
 val url : api -> query -> string -> string
 (** Return the URL corresponding to the above query.
     This can be pasted into a web browser for debugging. *)
+
+val curl : ?timeout:int -> user_agent:string -> string -> (string, string) result
+(** Query a url directly. For debugging. *)
 
 
 

@@ -200,6 +200,38 @@ module Query_Disc : Exit_Cmd =
 
 end
 
+module Curl : Exit_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "Test the curl interface." ] @ Common.man_footer
+
+    let url =
+      let doc = "The URL to query." in
+      Arg.(value & opt string "https://fritz.box" & info ["u"; "url"] ~doc)
+
+    let user_agent =
+      let doc = "The user agent string." in
+      Arg.(value & opt string "pml testing" & info ["U"; "User"] ~doc)
+
+    let timeout =
+      let doc = "Timeout for query." in
+      Arg.(value & opt int 0 & info ["t"; "timeout"] ~doc)
+
+    let curl ?timeout ~user_agent url =
+      match Pml.Query.curl ?timeout ~user_agent url with
+      | Ok s -> print_endline "Response:"; print_endline s; 0
+      | Error msg -> prerr_endline "Error:"; prerr_endline msg; 1
+
+    let cmd =
+      let open Cmd in
+      make (info "curl" ~man) @@
+        let+ timeout and+ user_agent and+ url in
+        curl ~timeout ~user_agent url
+
+end
+
 module Main : Exit_Cmd =
   struct
 
@@ -218,7 +250,8 @@ module Main : Exit_Cmd =
       group (info "pml" ~man)
         [ Query_Disc.cmd;
           Musicbrainz.cmd;
-          Cachetest.cmd]
+          Cachetest.cmd;
+          Curl.cmd]
 
   end
 

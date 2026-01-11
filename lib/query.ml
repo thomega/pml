@@ -37,16 +37,16 @@ let write_to buffer data =
   Buffer.add_string buffer data;
   String.length data
 
-let exec api query key =
+let curl ?timeout ~user_agent url =
   let result = Buffer.create 16384
   and error_response = ref "" in
   Curl.global_init Curl.CURLINIT_GLOBALALL;
   try
     let curl = Curl.init () in
-    Curl.set_url curl (url musicbrainz query key);
+    Curl.set_url curl url;
     Curl.set_followlocation curl true;
-    Option.iter (Curl.set_timeout curl) api.timeout;
-    Curl.set_useragent curl api.user_agent;
+    Option.iter (Curl.set_timeout curl) timeout;
+    Curl.set_useragent curl user_agent;
     Curl.set_errorbuffer curl error_response;
     Curl.set_writefunction curl (write_to result);
     Curl.perform curl;
@@ -62,3 +62,5 @@ let exec api query key =
        | s -> Error s
      end
 
+let exec api query key =
+  curl ?timeout:api.timeout ~user_agent:api.user_agent (url musicbrainz query key)
