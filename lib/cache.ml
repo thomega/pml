@@ -36,17 +36,20 @@ module Make (Table : Table) : T =
 
     let init ~root =
       let path = Filename.concat root Table.name in
-      if Sys.is_directory path then
-        Ok ()
-      else if Sys.file_exists path then
-        Error ("Cache().init: not a directory: " ^ path)
-      else if Sys.is_directory root then
-        try
-          Ok (Sys.mkdir path 0o700)
-        with
-        | exn -> Error (Printexc.to_string exn)
-      else if Sys.file_exists root then
-        Error ("Cache().init: not a directory: " ^ root)
+      if Sys.file_exists root then
+        if Sys.is_directory root then
+          if Sys.file_exists path then
+            if Sys.is_directory path then
+              Ok ()
+            else
+              Error ("Cache().init: not a directory: " ^ path)
+          else
+            try
+              Ok (Sys.mkdir path 0o700)
+            with
+            | exn -> Error (Printexc.to_string exn)
+        else
+          Error ("Cache().init: not a directory: " ^ root)
       else
         try
           Ok (Sys.mkdir root 0o700; Sys.mkdir path 0o700)
