@@ -90,21 +90,21 @@ let get_discid_from_cache ~root discid =
 
 let get_release_from_cache ~root mbid =
   if is_uuid mbid then
-    Discid_cache.get ~root mbid
+    Release_cache.get ~root mbid
   else
     Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
 
 let get_discid_cached ~root discid =
-  let* json_opt = get_discid_from_cache ~root discid in
-  match json_opt with
-  | Some json -> Ok json
-  | None -> get_discid discid
+  if is_discid discid then
+    Discid_cache.lookup ~root discid get_discid
+  else
+    Error (Printf.sprintf "'%s' is not a valid discid!" discid)
 
 let get_release_cached ~root mbid =
-  let* json_opt = get_release_from_cache ~root mbid in
-  match json_opt with
-  | Some json -> Ok json
-  | None -> get_release mbid
+  if is_uuid mbid then
+    Release_cache.lookup ~root mbid get_release
+  else
+    Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
 
 module type Raw =
   sig
