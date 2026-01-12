@@ -240,6 +240,24 @@ let%test_module _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
+         C.set ~root (-1) "A"
+       with
+       | Error "negative: -1" -> true
+       | _ -> false
+
+     let%test _ =
+       let root = fresh () in
+       match
+         let* _ = C.init ~root in
+         C.get ~root (-1)
+       with
+       | Error "negative: -1" -> true
+       | _ -> false
+
+     let%test _ =
+       let root = fresh () in
+       match
+         let* _ = C.init ~root in
          let* _ = C.set ~root 1 "A" in
          C.get ~root 1
        with
