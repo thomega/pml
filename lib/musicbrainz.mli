@@ -26,6 +26,9 @@ val get_release_cached : root:string -> string -> (string, string) result
 (** Return the JSON for the given release, preferring the cache located at [root]
     if possible. *)
 
+val get_cached_discids : root:string -> ((string * string) list, string) result
+val get_cached_releases : root:string -> ((string * string) list, string) result
+
 module type Raw =
   sig
 

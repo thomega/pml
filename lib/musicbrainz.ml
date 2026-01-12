@@ -123,6 +123,9 @@ let get_discid_cached ~root discid =
 let get_release_cached ~root mbid =
   Release_cache.lookup ~root mbid get_release_direct_unsafe
 
+let get_cached_discids = Discid_cache.to_alist
+let get_cached_releases = Release_cache.to_alist
+
 module type Raw =
   sig
     val normalize : string -> (string, string) result

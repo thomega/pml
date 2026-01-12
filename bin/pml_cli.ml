@@ -1,3 +1,5 @@
+let default_cache = "mb-cache"
+
 open Cmdliner
 open Cmdliner.Term.Syntax
 
@@ -25,11 +27,9 @@ module type Exit_Cmd =
     val cmd : int Cmd.t
   end
 
-let default_cache = "."
-
 let cache =
   let doc = Printf.sprintf "Path to the root directory of the local cache."
-  and env = Cmd.Env.info "PML_CACHE" in
+  and env = Cmd.Env.info "MUSICBRAINZ_CACHE" in
   Arg.(value & opt string default_cache & info ["c"; "cache"] ~docv:"path" ~doc ~env)
 
 module Cachetest : Exit_Cmd =
@@ -47,13 +47,39 @@ module Cachetest : Exit_Cmd =
       let doc = Printf.sprintf "Lookup by discid." in
       Arg.(value & opt (some string) None & info ["d"; "discid"] ~docv:"discid" ~doc)
 
+    let discid_list =
+      let doc = Printf.sprintf "List all cached discids." in
+      Arg.(value & flag & info ["D"; "list_discids"] ~doc)
+
     let release =
       let doc = Printf.sprintf "Lookup by release." in
       Arg.(value & opt (some string) None & info ["r"; "release"] ~docv:"release" ~doc)
 
-    let cache_tool ~cache ~normalize ?discid ?release () =
+    let release_list =
+      let doc = Printf.sprintf "List all cached releases." in
+      Arg.(value & flag & info ["R"; "list_releases"] ~doc)
+
+    let cache_tool ~cache ~normalize ?discid ?release ~discid_list ~release_list () =
       let module MB = Pml.Musicbrainz in
-      if normalize then
+      if discid_list then
+        match
+          print_endline "Cached discids:";
+          let open Result.Syntax in
+          let* discids = MB.get_cached_discids ~root:cache in
+          Ok (List.iter (fun (discid, _) -> print_endline discid) discids)
+        with
+        | Error msg -> prerr_endline msg; 1
+        | Ok _ -> 0
+      else if release_list then
+        match
+          print_endline "Cached releases:";
+          let open Result.Syntax in
+          let* releases = MB.get_cached_releases ~root:cache in
+          Ok (List.iter (fun (release, _) -> print_endline release) releases)
+        with
+        | Error msg -> prerr_endline msg; 1
+        | Ok _ -> 0
+      else if normalize then
         let rc_discid =
           match discid with
           | None -> 0
@@ -89,8 +115,8 @@ module Cachetest : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "cache" ~man) @@
-        let+ cache and+ normalize and+ discid and+ release in
-        cache_tool ~cache ~normalize ?discid ?release ()
+        let+ cache and+ normalize and+ discid and+ release and+ discid_list and+ release_list in
+        cache_tool ~cache ~normalize ?discid ?release ~discid_list ~release_list ()
 
   end
 
@@ -247,7 +273,7 @@ module Main : Exit_Cmd =
 
     let cmd =
       let open Cmd in
-      group (info "pml" ~man)
+      group (info "pml_cli" ~man)
         [ Query_Disc.cmd;
           Musicbrainz.cmd;
           Cachetest.cmd;
