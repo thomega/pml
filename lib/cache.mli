@@ -2,8 +2,10 @@ module type T =
   sig
 
     type key
-    (** While [key] will always be [string] in out application,
-        this adds additional type checks. *)
+    (** While [key] will always be [string] in our application,
+        this adds additional type checks for the implementation.
+        The required conversion functions can also perform runtime
+        checks of keys provided by applications. *)
 
     type value
     (** While [value] will almost always be [string] in out application,
@@ -42,7 +44,7 @@ module type T =
     of a file.
 
     The reason for using files is that we want to be able to inspect them easily later.
-    Therefore, we assume that *)
+    Therefore, the files are opened in text mode for reading and writing. *)
 
 module type Table =
   sig
@@ -54,14 +56,14 @@ module type Table =
     type key
     val key_of_string : string -> (key, string) result
     val key_to_string : key -> (string, string) result
-    (** This want to can enforce constraints on the keys and their
+    (** This allows to enforce constraints on the keys and their
         textual representations.  Therefore, we must allow for the
         case that the translation functions fail. *)
 
     type value
     val value_of_string : string -> (value, string) result
     val value_to_string : value -> (string, string) result
-    (** This want to can enforce constraints on the values and their
+    (** This allows to enforce constraints on the values and their
         textual representations.  Therefore, we must allow for the
         case that the translation functions fail. *)
 

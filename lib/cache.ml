@@ -61,14 +61,14 @@ module Make (Table : Table) : T with type key = Table.key and type value = Table
             if Sys.is_directory path then
               Ok ()
             else
-              Error ("Cache().init: not a directory: " ^ path)
+              Error ("Cache.init: not a directory: " ^ path)
           else
             try
               Ok (Sys.mkdir path 0o700)
             with
             | exn -> Error (Printexc.to_string exn)
         else
-          Error ("Cache().init: not a directory: " ^ root)
+          Error ("Cache.init: not a directory: " ^ root)
       else
         try
           Ok (Sys.mkdir root 0o700; Sys.mkdir path 0o700)
@@ -87,7 +87,7 @@ module Make (Table : Table) : T with type key = Table.key and type value = Table
       else
         Ok None
 
-    let lookup ~root key source =
+    let lookup ~root key direct =
       let* name = filename ~root key in
       if Sys.file_exists name then
         try
@@ -97,7 +97,7 @@ module Make (Table : Table) : T with type key = Table.key and type value = Table
         with
         | exn -> Error (Printexc.to_string exn)
       else
-        let* value = source key in
+        let* value = direct key in
         let* value' = value_to_string value in
         try
           OC.with_open_text name (fun oc -> OC.output_string oc value');
@@ -105,13 +105,13 @@ module Make (Table : Table) : T with type key = Table.key and type value = Table
         with
         | exn -> Error (Printexc.to_string exn)
 
-    let refresh ~root key source =
+    let refresh ~root key direct =
       let* name = filename ~root key in
       if Sys.file_exists name then
         try
           let value = IC.with_open_text name IC.input_all in
           let* value = value_of_string value
-          and* value' = source key in
+          and* value' = direct key in
           if value' <> value then
             let* value' = value_to_string value' in
             Ok (OC.with_open_text name (fun oc -> OC.output_string oc value'))
@@ -120,7 +120,7 @@ module Make (Table : Table) : T with type key = Table.key and type value = Table
         with
         | exn -> Error (Printexc.to_string exn)
       else
-        let* value = source key in
+        let* value = direct key in
         let* value = value_to_string value in
         try
           Ok (OC.with_open_text name (fun oc -> OC.output_string oc value))

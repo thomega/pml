@@ -16,6 +16,12 @@ let re_discid =
 let is_discid s =
   String.length s = 28 && Re.execp re_discid s
 
+let valid_discid discid =
+  if is_discid discid then
+    Ok discid
+  else
+    Error (Printf.sprintf "'%s' is not a valid discid" discid)
+
 (* A MBID/UUID: 8-4-4-4-12 hex digits [0-9a-fA-F] *)
 
 let hexrep n =
@@ -33,6 +39,12 @@ let re_uuid =
 let is_uuid s =
   Re.execp re_uuid s
 
+let valid_mbid mbid =
+  if is_uuid mbid then
+    Ok mbid
+  else
+    Error (Printf.sprintf "'%s' is not a valid MBID" mbid)
+
 let query_discid =
   Query.{ table = "discid";
           inc = [] }
@@ -43,15 +55,24 @@ let query_release =
                  "recordings"; "release-groups"; "discids";
                  "url-rels"; "labels"; ] }
 
-let get_discid discid =
+(* These versions don't check their argument.
+   It can be used in get_*_cached below,
+   because the argument has been checked. *)
+let get_discid_direct_unsafe discid =
+  Query.(exec musicbrainz query_discid discid)
+
+let get_release_direct_unsafe mbid =
+  Query.(exec musicbrainz query_release mbid)
+
+let get_discid_direct discid =
   if is_discid discid then
-    Query.(exec musicbrainz query_discid discid)
+    get_discid_direct_unsafe discid
   else
     Error (Printf.sprintf "'%s' is not a valid discid!" discid)
 
-let get_release mbid =
+let get_release_direct mbid =
   if is_uuid mbid then
-    Query.(exec musicbrainz query_release mbid)
+    get_release_direct_unsafe mbid
   else
     Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
 
@@ -67,44 +88,40 @@ let _url_release mbid =
   else
     invalid_arg (Printf.sprintf "'%s' is not a valid MBID!" mbid)
 
-module STable (N : sig val name : string end) =
+module Discid_table =
   struct
-    let name = N.name
+    let name = "discid"
     type key = string
-    let key_of_string = Result.ok
-    let key_to_string = Result.ok
+    let key_of_string = valid_discid
+    let key_to_string = valid_discid
     type value = string
     let value_of_string = Result.ok
     let value_to_string = Result.ok
   end
 
-module Discid_cache = Cache.Make (STable (struct let name = "discid" end))
-module Release_cache = Cache.Make (STable (struct let name = "release" end))
-module Releaseid_cache = Cache.Make (STable (struct let name = "releaseid" end))
+module Release_table =
+  struct
+    let name = "release"
+    type key = string
+    let key_of_string = valid_mbid
+    let key_to_string = valid_mbid
+    type value = string
+    let value_of_string = Result.ok
+    let value_to_string = Result.ok
+  end
 
-let get_discid_from_cache ~root discid =
-  if is_discid discid then
-    Discid_cache.get ~root discid
-  else
-    Error (Printf.sprintf "'%s' is not a valid discid!" discid)
+module Discid_cache = Cache.Make (Discid_table)
+module Release_cache = Cache.Make (Release_table)
+module Releaseid_cache = Cache.Make (Discid_table)
 
-let get_release_from_cache ~root mbid =
-  if is_uuid mbid then
-    Release_cache.get ~root mbid
-  else
-    Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
+let get_discid_from_cache = Discid_cache.get
+let get_release_from_cache = Release_cache.get
 
 let get_discid_cached ~root discid =
-  if is_discid discid then
-    Discid_cache.lookup ~root discid get_discid
-  else
-    Error (Printf.sprintf "'%s' is not a valid discid!" discid)
+  Discid_cache.lookup ~root discid get_discid_direct_unsafe
 
 let get_release_cached ~root mbid =
-  if is_uuid mbid then
-    Release_cache.lookup ~root mbid get_release
-  else
-    Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
+  Release_cache.lookup ~root mbid get_release_direct_unsafe
 
 module type Raw =
   sig

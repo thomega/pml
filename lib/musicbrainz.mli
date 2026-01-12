@@ -4,10 +4,10 @@ module Discid_cache : Cache.T with type key = string and type value = string
 module Release_cache : Cache.T with type key = string and type value = string
 (** For testing only.  Will be removed from the final API. *)
 
-val get_discid : string -> (string, string) result
+val get_discid_direct : string -> (string, string) result
 (** Return the JSON for the given discid, ignoring any cache. *)
 
-val get_release : string -> (string, string) result
+val get_release_direct : string -> (string, string) result
 (** Return the JSON for the given release, ignoring any cache. *)
 
 val get_discid_from_cache : root:string -> string -> (string option, string) result
