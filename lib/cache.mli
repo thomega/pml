@@ -41,7 +41,8 @@ module type T =
     must be [string]s, because the [key] is a filename and [value] is the raw contents
     of a file.
 
-    The reason for using files is that we want to be able to inspect them easily later.  *)
+    The reason for using files is that we want to be able to inspect them easily later.
+    Therefore, we assume that *)
 
 module type Table =
   sig
@@ -51,12 +52,18 @@ module type Table =
         subdirectory of the cache [root] directory. *)
 
     type key
-    val key_of_string : string -> key
-    val key_to_string : key -> string
+    val key_of_string : string -> (key, string) result
+    val key_to_string : key -> (string, string) result
+    (** This want to can enforce constraints on the keys and their
+        textual representations.  Therefore, we must allow for the
+        case that the translation functions fail. *)
 
     type value
-    val value_of_string : string -> value
-    val value_to_string : value -> string
+    val value_of_string : string -> (value, string) result
+    val value_to_string : value -> (string, string) result
+    (** This want to can enforce constraints on the values and their
+        textual representations.  Therefore, we must allow for the
+        case that the translation functions fail. *)
 
   end
 (** Specification of a cache table, [key] and [value] types and the required

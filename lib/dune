@@ -10,7 +10,10 @@
   ; (flags (:standard -I +unix))
   ; (ocamlc_flags (:standard))
   (ocamlopt_flags (:standard -inline 32))
-  (libraries clibdiscid curl jsont jsont.bytesrw re))
+  (libraries
+    clibdiscid
+    curl jsont jsont.bytesrw
+    re base64))
 
 (documentation
   (package pml)

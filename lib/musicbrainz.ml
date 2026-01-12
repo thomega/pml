@@ -71,11 +71,11 @@ module STable (N : sig val name : string end) =
   struct
     let name = N.name
     type key = string
-    let key_of_string = Fun.id
-    let key_to_string = Fun.id
+    let key_of_string = Result.ok
+    let key_to_string = Result.ok
     type value = string
-    let value_of_string = Fun.id
-    let value_to_string = Fun.id
+    let value_of_string = Result.ok
+    let value_to_string = Result.ok
   end
 
 module Discid_cache = Cache.Make (STable (struct let name = "discid" end))
