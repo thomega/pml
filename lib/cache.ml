@@ -188,9 +188,25 @@ let%test_module _ =
      module STable (N : sig val name : string end) = 
        struct
          let name = N.name
-         type key = string
-         let key_of_string = Result.ok
-         let key_to_string = Result.ok
+
+         type key = int (* only positive! *)
+
+         let key_of_string s =
+           match int_of_string_opt s with
+           | None -> Error ("not an integer: " ^ s)
+           | Some i ->
+              if i < 0 then
+                Error ("negative: " ^ s)
+              else
+                Ok i
+
+         let key_to_string i =
+           let s =string_of_int i in
+           if i < 0 then
+             Error ("negative: " ^ s)
+           else
+             Ok s
+
          type value = string
          let value_of_string = Result.ok
          let value_to_string = Result.ok
@@ -209,13 +225,13 @@ let%test_module _ =
 
      let%test _ =
        let root = fresh () in
-       C.get ~root "a" |> Result.is_error
+       C.get ~root 1 |> Result.is_error
 
      let%test _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         C.get ~root "a"
+         C.get ~root 1
        with
        | Ok None -> true
        | _ -> false
@@ -224,8 +240,8 @@ let%test_module _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.set ~root "a" "A" in
-         C.get ~root "a"
+         let* _ = C.set ~root 1 "A" in
+         C.get ~root 1
        with
        | Ok (Some "A") -> true
        | _ -> false
@@ -234,9 +250,9 @@ let%test_module _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.set ~root "a" "A" in
-         let* _ = C.set ~root "a" "B" in
-         C.get ~root "a"
+         let* _ = C.set ~root 1 "A" in
+         let* _ = C.set ~root 1 "B" in
+         C.get ~root 1
        with
        | Ok (Some "B") -> true
        | _ -> false
@@ -245,9 +261,9 @@ let%test_module _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.set ~root "a" "A" in
-         let* _ = C.set ~root "b" "A" in
-         C.get ~root "a"
+         let* _ = C.set ~root 1 "A" in
+         let* _ = C.set ~root 2 "A" in
+         C.get ~root 1
        with
        | Ok (Some "A") -> true
        | _ -> false
@@ -256,9 +272,9 @@ let%test_module _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.set ~root "a" "A" in
-         let* _ = C.remove ~root "a" in
-         C.get ~root "a"
+         let* _ = C.set ~root 1 "A" in
+         let* _ = C.remove ~root 1 in
+         C.get ~root 1
        with
        | Ok None -> true
        | _ -> false
@@ -267,9 +283,9 @@ let%test_module _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.set ~root "a" "A" in
-         let* _ = C.map ~root "a" (fun s -> Ok (s ^ s)) in
-         C.get ~root "a"
+         let* _ = C.set ~root 1 "A" in
+         let* _ = C.map ~root 1 (fun s -> Ok (s ^ s)) in
+         C.get ~root 1
        with
        | Ok (Some "AA") -> true
        | _ -> false
@@ -278,9 +294,9 @@ let%test_module _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.set ~root "a" "A" in
-         let* _ = C.map ~root "a" (fun _ -> Error "foo") in
-         C.get ~root "a"
+         let* _ = C.set ~root 1 "A" in
+         let* _ = C.map ~root 1 (fun _ -> Error "foo") in
+         C.get ~root 1
        with
        | Error "foo" -> true
        | _ -> false
@@ -301,63 +317,63 @@ let%test_module _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.set ~root "a" "A" in
+         let* _ = C.set ~root 1 "A" in
          C.to_alist ~root
        with
-       | Ok alist -> alists_equal alist [("a", "A")]
+       | Ok alist -> alists_equal alist [(1, "A")]
        | _ -> false
 
      let%test _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.set ~root "a" "A" in
-         let* _ = C.set ~root "b" "B" in
+         let* _ = C.set ~root 1 "A" in
+         let* _ = C.set ~root 2 "B" in
          C.to_alist ~root
        with
-       | Ok alist -> alists_equal alist [("a", "A"); ("b", "B")]
+       | Ok alist -> alists_equal alist [(1, "A"); (2, "B")]
        | _ -> false
 
      let%test _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.lookup ~root "a" (fun _ -> Ok "A") in
+         let* _ = C.lookup ~root 1 (fun _ -> Ok "A") in
          C.to_alist ~root
        with
-       | Ok alist -> alists_equal alist [("a", "A")]
+       | Ok alist -> alists_equal alist [(1, "A")]
        | _ -> false
 
      let%test _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.lookup ~root "a" (fun _ -> Ok "A") in
-         let* _ = C.lookup ~root "a" (fun _ -> failwith "") in
-         let* _ = C.lookup ~root "b" (fun _ -> Ok "B") in
+         let* _ = C.lookup ~root 1 (fun _ -> Ok "A") in
+         let* _ = C.lookup ~root 1 (fun _ -> failwith "") in
+         let* _ = C.lookup ~root 2 (fun _ -> Ok "B") in
          C.to_alist ~root
        with
-       | Ok alist -> alists_equal alist [("a", "A"); ("b", "B")]
+       | Ok alist -> alists_equal alist [(1, "A"); (2, "B")]
        | _ -> false
 
      let%test _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.lookup ~root "a" (fun _ -> Ok "A") in
-         let* _ = C.lookup ~root "a" (fun _ -> Ok "X") in
-         let* _ = C.lookup ~root "b" (fun _ -> Ok "B") in
+         let* _ = C.lookup ~root 1 (fun _ -> Ok "A") in
+         let* _ = C.lookup ~root 1 (fun _ -> Ok "X") in
+         let* _ = C.lookup ~root 2 (fun _ -> Ok "B") in
          C.to_alist ~root
        with
-       | Ok alist -> alists_equal alist [("a", "A"); ("b", "B")]
+       | Ok alist -> alists_equal alist [(1, "A"); (2, "B")]
        | _ -> false
 
      let%test _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.lookup ~root "a" (fun _ -> Error "Z") in
-         C.set ~root "a" "A"
+         let* _ = C.lookup ~root 1 (fun _ -> Error "Z") in
+         C.set ~root 1 "A"
        with
        | Error "Z" -> true
        | _ -> false
@@ -366,9 +382,9 @@ let%test_module _ =
        let root = fresh () in
        match
          let* _ = C.init ~root in
-         let* _ = C.set ~root "a" "A" in
-         let* _ = C.lookup ~root "a" (fun _ -> Error "Z") in
-         C.get ~root "a"
+         let* _ = C.set ~root 1 "A" in
+         let* _ = C.lookup ~root 1 (fun _ -> Error "Z") in
+         C.get ~root 1
        with
        | Ok (Some "A") -> true
        | _ -> false
