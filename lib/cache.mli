@@ -1,10 +1,14 @@
 module type T =
   sig
 
-    type key = string
-    type value = string
-    (** These type alias are only for documentation.
-        Making them abstract would cause too much hassle. *)
+    type key
+    (** While [key] will always be [string] in out application,
+        this adds additional type checks. *)
+
+    type value
+    (** While [value] will almost always be [string] in out application,
+        this adds additional type checks.  One could think of switching to
+        parsed JSON, but we need to store flat files anyway. *)
 
     val init : root:string -> (unit, string) result
     (** Initialize a cache. *)
@@ -30,7 +34,7 @@ module type T =
     val map : root:string -> key -> (value -> (value, string) result)-> (unit, string) result
     (** Change the contents of a file indexed by a key. *)
 
-    val to_alist : root:string -> ((string * string) list, string) result
+    val to_alist : root:string -> ((key * value) list, string) result
 
   end
 (** A filesystem based cache for maps from [key] to [value].  Both [key] and [value]
@@ -46,6 +50,16 @@ module type Table =
     (** Name of a table in the cache.  Currently, this is the name of a
         subdirectory of the cache [root] directory. *)
 
-  end
+    type key
+    val key_of_string : string -> key
+    val key_to_string : key -> string
 
-module Make (_ : Table) : T
+    type value
+    val value_of_string : string -> value
+    val value_to_string : value -> string
+
+  end
+(** Specification of a cache table, [key] and [value] types and the required
+    translation functions from and to strings. *)
+
+module Make (T : Table) : T with type key = T.key and type value = T.value

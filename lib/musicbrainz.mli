@@ -1,7 +1,7 @@
-module Discid_cache : Cache.T
+module Discid_cache : Cache.T with type key = string and type value = string
 (** For testing only.  Will be removed from the final API. *)
 
-module Release_cache : Cache.T
+module Release_cache : Cache.T with type key = string and type value = string
 (** For testing only.  Will be removed from the final API. *)
 
 val get_discid : string -> (string, string) result

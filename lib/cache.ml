@@ -1,7 +1,7 @@
 module type T =
   sig
-    type key = string
-    type value = string
+    type key
+    type value
     val init : root:string -> (unit, string) result
     val get : root:string -> key -> (value option, string) result
     val lookup : root:string -> key -> (key -> (value, string) result) -> (value, string) result
@@ -9,19 +9,25 @@ module type T =
     val remove : root:string -> key -> (unit, string) result
     val set : root:string -> key -> value -> (unit, string) result
     val map : root:string -> key -> (value -> (value, string) result)-> (unit, string) result
-    val to_alist : root:string -> ((string * string) list, string) result
+    val to_alist : root:string -> ((key * value) list, string) result
   end
 
 module type Table =
   sig
     val name : string
+    type key
+    val key_of_string : string -> key
+    val key_to_string : key -> string
+    type value
+    val value_of_string : string -> value
+    val value_to_string : value -> string
   end
 
-module Make (Table : Table) : T =
+module Make (Table : Table) : T with type key = Table.key and type value = Table.value =
   struct
 
-    type key = string
-    type value = string
+    type key = Table.key
+    type value = Table.value
 
     open Result.Syntax
 
@@ -39,6 +45,7 @@ module Make (Table : Table) : T =
       is_directory (Filename.concat root Table.name)
 
     let filename ~root key =
+      let key = Table.key_to_string key in
       table ~root
       |> Result.map (fun path -> Filename.concat path key)
 
@@ -68,7 +75,9 @@ module Make (Table : Table) : T =
       let* name = filename ~root key in
       if Sys.file_exists name then
         try
-          Ok (Some (In_channel.with_open_text name In_channel.input_all))
+          let value = In_channel.with_open_text name In_channel.input_all in
+          let value = Table.value_of_string value in
+          Ok (Some value)
         with
         | exn -> Error (Printexc.to_string exn)
       else
@@ -78,13 +87,16 @@ module Make (Table : Table) : T =
       let* name = filename ~root key in
       if Sys.file_exists name then
         try
-          Ok (In_channel.with_open_text name In_channel.input_all)
+          let value = In_channel.with_open_text name In_channel.input_all in
+          let value = Table.value_of_string value in
+          Ok value
         with
         | exn -> Error (Printexc.to_string exn)
       else
         let* value = source key in
         try
-          Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc value);
+          let value' = Table.value_to_string value in
+          Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc value');
           Ok value
         with
         | exn -> Error (Printexc.to_string exn)
@@ -95,13 +107,16 @@ module Make (Table : Table) : T =
         try
           let value = In_channel.with_open_text name In_channel.input_all in
           let* value' = source key in
+          let value = Table.value_of_string value in
           Ok (if value' <> value then
+                let value' = Table.value_to_string value' in
                 Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc value'))
         with
         | exn -> Error (Printexc.to_string exn)
       else
         let* value = source key in
         try
+          let value = Table.value_to_string value in
           Ok (Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc value))
         with
         | exn -> Error (Printexc.to_string exn)
@@ -118,6 +133,7 @@ module Make (Table : Table) : T =
         Ok ()
 
     let set ~root key value =
+      let value = Table.value_to_string value in
       let* name = filename ~root key in
       try
         Ok (Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc value))
@@ -128,13 +144,15 @@ module Make (Table : Table) : T =
       let* name = filename ~root key in
       if Sys.file_exists name then
         try
-          let value = In_channel.with_open_text name In_channel.input_all in
+          let value = Table.value_of_string (In_channel.with_open_text name In_channel.input_all) in
           let* value' = f value in
           Ok (if value' <> value then
+                let value' = Table.value_to_string value' in
                 Out_channel.with_open_text name (fun oc -> Out_channel.output_string oc value'))
         with
         | exn -> Error (Printexc.to_string exn)
       else
+        let key = Table.key_to_string key in
         Error (Printf.sprintf "entry '%s' not found in table '%s'" key Table.name)
 
     let to_alist ~root =
@@ -142,7 +160,9 @@ module Make (Table : Table) : T =
       try
         Array.to_list (Sys.readdir dir)
         |> List.map
-             (fun key -> (key, In_channel.with_open_text (Filename.concat dir key) In_channel.input_all))
+             (fun key ->
+               (Table.key_of_string key,
+                Table.value_of_string (In_channel.with_open_text (Filename.concat dir key) In_channel.input_all)))
         |> Result.ok
       with
       | exn -> Error (Printexc.to_string exn)
@@ -154,7 +174,18 @@ let%test_module _ =
 
      open Result.Syntax
 
-     module C = Make (struct let name = "t" end)
+     module STable (N : sig val name : string end) = 
+       struct
+         let name = N.name
+         type key = string
+         let key_of_string = Fun.id
+         let key_to_string = Fun.id
+         type value = string
+         let value_of_string = Fun.id
+         let value_to_string = Fun.id
+       end
+
+     module C = Make (STable (struct let name = "t" end))
 
      let n = ref 0
      let fresh () =

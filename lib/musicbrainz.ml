@@ -67,9 +67,20 @@ let _url_release mbid =
   else
     invalid_arg (Printf.sprintf "'%s' is not a valid MBID!" mbid)
 
-module Discid_cache = Cache.Make (struct let name = "discid" end)
-module Release_cache = Cache.Make (struct let name = "release" end)
-module Releaseid_cache = Cache.Make (struct let name = "releaseid" end)
+module STable (N : sig val name : string end) =
+  struct
+    let name = N.name
+    type key = string
+    let key_of_string = Fun.id
+    let key_to_string = Fun.id
+    type value = string
+    let value_of_string = Fun.id
+    let value_to_string = Fun.id
+  end
+
+module Discid_cache = Cache.Make (STable (struct let name = "discid" end))
+module Release_cache = Cache.Make (STable (struct let name = "release" end))
+module Releaseid_cache = Cache.Make (STable (struct let name = "releaseid" end))
 
 let get_discid_from_cache ~root discid =
   if is_discid discid then
