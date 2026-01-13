@@ -4,6 +4,12 @@ module Discid_cache : Cache.T with type key = string and type value = string
 module Release_cache : Cache.T with type key = string and type value = string
 (** For testing only.  Will be removed from the final API. *)
 
+val url_discid : string -> (string, string) result
+(** Return the URL for querying Musicbrainz for a discid. *)
+
+val url_release : string -> (string, string) result
+(** Return the URL for querying Musicbrainz for a release. *)
+
 val get_discid_direct : string -> (string, string) result
 (** Return the JSON for the given discid, ignoring any cache. *)
 

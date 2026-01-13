@@ -1,5 +1,78 @@
 open Result.Syntax
 
+module type Raw =
+  sig
+    val normalize : string -> (string, string) result
+    val of_file : string -> (Jsont.json, string) result
+    val print_file : string -> unit
+    val dump_schema_file : string -> unit
+  end
+
+module Raw : Raw =
+  struct
+
+    let jsont =
+      Jsont.Object.map Fun.id
+      |> Jsont.Object.keep_unknown Jsont.json_mems ~enc:Fun.id
+      |> Jsont.Object.finish
+
+    let of_file name =
+      In_channel.with_open_text name In_channel.input_all
+      |> Jsont_bytesrw.decode_string jsont
+
+    let print_json json =
+      match Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont json with
+      | Ok text -> print_endline text
+      | Error msg -> prerr_endline msg
+
+    let print_file name =
+      match of_file name with
+      | Ok json -> print_json json
+      | Error msg -> prerr_endline msg
+
+    let sort_members members =
+      List.sort (fun ((name1, _), _) ((name2, _), _) -> String.compare name1 name2) members
+
+    let map_members f members =
+      List.map (fun (name, json) -> (name, f json)) members
+
+    let rec sort_json = function
+      | Jsont.Object (members, meta) ->
+         Jsont.Object (sort_members (map_members sort_json members), meta)
+      | atom -> atom
+
+    let normalize text =
+      let* json = Jsont_bytesrw.decode_string jsont text in
+      Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont (sort_json json)
+
+    let indent pfx = pfx ^ "  "
+
+    let rec dump_schema_json pfx = function
+      | Jsont.Object (mem_list, _meta) ->
+         List.iter (dump_schema_mem pfx) mem_list
+      | Jsont.Array ([], _meta) -> ()
+      | Jsont.Array (json :: _ as json_list, _meta) ->
+         Printf.printf "%s%d*\n" pfx (List.length json_list);
+         dump_schema_json (indent pfx) json
+      | _ -> ()
+
+    and dump_schema_mem pfx ((name, _meta), json) =
+      Printf.printf "%s%s\n" pfx name;
+      dump_schema_json (indent pfx) json
+
+    let dump_schema json =
+      dump_schema_json "" json
+
+    let dump_schema json =
+      Printexc.print dump_schema json
+
+    let dump_schema_file name =
+      match of_file name with
+      | Ok json -> dump_schema json
+      | Error msg -> prerr_endline msg
+
+  end
+
 (* A sequence of exactly 28 characters from the set [A-Za-z0-9._-]. *)
 
 (* [Re.alnum] contains accented characters! *)
@@ -55,39 +128,6 @@ let query_release =
                  "recordings"; "release-groups"; "discids";
                  "url-rels"; "labels"; ] }
 
-(* These versions don't check their argument.
-   It can be used in get_*_cached below,
-   because the argument has been checked. *)
-let get_discid_direct_unsafe discid =
-  Query.(exec musicbrainz query_discid discid)
-
-let get_release_direct_unsafe mbid =
-  Query.(exec musicbrainz query_release mbid)
-
-let get_discid_direct discid =
-  if is_discid discid then
-    get_discid_direct_unsafe discid
-  else
-    Error (Printf.sprintf "'%s' is not a valid discid!" discid)
-
-let get_release_direct mbid =
-  if is_uuid mbid then
-    get_release_direct_unsafe mbid
-  else
-    Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
-
-let _url_discid discid =
-  if is_discid discid then
-    Query.(url musicbrainz query_discid discid)
-  else
-    invalid_arg (Printf.sprintf "'%s' is not a valid discid!" discid)
-
-let _url_release mbid =
-  if is_uuid mbid then
-    Query.(url musicbrainz query_release mbid)
-  else
-    invalid_arg (Printf.sprintf "'%s' is not a valid MBID!" mbid)
-
 module Discid_table =
   struct
     let name = "discid"
@@ -114,6 +154,41 @@ module Discid_cache = Cache.Make (Discid_table)
 module Release_cache = Cache.Make (Release_table)
 module Releaseid_cache = Cache.Make (Discid_table)
 
+(* These versions don't check their argument.
+   It can be used in get_*_cached below,
+   because the argument has been checked. *)
+let get_discid_direct_unsafe discid =
+  let* text = Query.(exec musicbrainz query_discid discid) in
+  Raw.normalize text
+
+let get_release_direct_unsafe mbid =
+  let* text = Query.(exec musicbrainz query_release mbid) in
+  Raw.normalize text
+
+let get_discid_direct discid =
+  if is_discid discid then
+    get_discid_direct_unsafe discid
+  else
+    Error (Printf.sprintf "'%s' is not a valid discid!" discid)
+
+let get_release_direct mbid =
+  if is_uuid mbid then
+    get_release_direct_unsafe mbid
+  else
+    Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
+
+let url_discid discid =
+  if is_discid discid then
+    Ok (Query.(url musicbrainz query_discid discid))
+  else
+    Error (Printf.sprintf "'%s' is not a valid discid!" discid)
+
+let url_release mbid =
+  if is_uuid mbid then
+    Ok (Query.(url musicbrainz query_release mbid))
+  else
+    Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
+
 let get_discid_from_cache = Discid_cache.get
 let get_release_from_cache = Release_cache.get
 
@@ -125,80 +200,6 @@ let get_release_cached ~root mbid =
 
 let get_cached_discids = Discid_cache.to_alist
 let get_cached_releases = Release_cache.to_alist
-
-module type Raw =
-  sig
-    val normalize : string -> (string, string) result
-    val of_file : string -> (Jsont.json, string) result
-    val print_file : string -> unit
-    val dump_schema_file : string -> unit
-  end
-
-module Raw : Raw =
-  struct
-
-    let jsont =
-      Jsont.Object.map Fun.id
-      |> Jsont.Object.keep_unknown Jsont.json_mems ~enc:Fun.id
-      |> Jsont.Object.finish
-
-    let of_file name =
-      In_channel.with_open_text name In_channel.input_all
-      |> Jsont_bytesrw.decode_string jsont
-
-    let print_json json = 
-      match Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont json with
-      | Ok text -> print_endline text
-      | Error msg -> prerr_endline msg
-
-    let print_file name =
-      match of_file name with
-      | Ok json -> print_json json
-      | Error msg -> prerr_endline msg
-
-    let sort_members members =
-      List.sort (fun ((name1, _), _) ((name2, _), _) -> String.compare name1 name2) members
-
-    let map_members f members = 
-      List.map (fun (name, json) -> (name, f json)) members
-
-    let rec sort_json = function
-      | Jsont.Object (members, meta) ->
-         Jsont.Object (sort_members (map_members sort_json members), meta)
-      | atom -> atom
-         
-    let normalize text =
-      let* json = Jsont_bytesrw.decode_string jsont text in
-      Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont (sort_json json)
-
-    let indent pfx = pfx ^ "  "
-
-    let rec dump_schema_json pfx = function
-      | Jsont.Object (mem_list, _meta) ->
-         List.iter (dump_schema_mem pfx) mem_list
-      | Jsont.Array ([], _meta) -> ()
-      | Jsont.Array (json :: _ as json_list, _meta) ->
-         Printf.printf "%s%d*\n" pfx (List.length json_list);
-         dump_schema_json (indent pfx) json
-      | _ -> ()
-
-    and dump_schema_mem pfx ((name, _meta), json) =
-      Printf.printf "%s%s\n" pfx name;
-      dump_schema_json (indent pfx) json
-
-    let dump_schema json =
-      dump_schema_json "" json
-
-    let dump_schema json =
-      Printexc.print dump_schema json
-
-    let dump_schema_file name =
-      match of_file name with
-      | Ok json -> dump_schema json
-      | Error msg -> prerr_endline msg
-
-  end
-
 
 let opt_list = function
   | Some l -> l
@@ -231,13 +232,6 @@ module Discid =
       |> Jsont.Object.finish
 
   end
-
-let _discid_of_file name =
-  let text = In_channel.with_open_text name In_channel.input_all in
-  Jsont_bytesrw.decode_string Discid.jsont text
-
-let _release_ids disc_id =
-  List.map (fun r -> r.Release_Short.id) disc_id.Discid.releases
 
 module Artist =
   struct
