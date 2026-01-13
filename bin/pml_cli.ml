@@ -178,6 +178,10 @@ module Query_Disc : Exit_Cmd =
       let doc = "Be more verbose." in
       Arg.(value & flag & info ["v"; "verbose"] ~doc)
 
+    let lookup =
+      let doc = "Lookup the discid as recognized by MusicBrainz." in
+      Arg.(value & flag & info ["l"; "lookup"] ~doc)
+
     let print_id =
       let doc = "Print the discid as recognized by MusicBrainz." in
       Arg.(value & flag & info ["i"; "id"] ~doc)
@@ -198,14 +202,22 @@ module Query_Disc : Exit_Cmd =
       let doc = Printf.sprintf "Choose CD-ROM device." in
       Arg.(value & opt string default_device & info ["d"; "device"] ~doc)
 
-    let query_disc ~device ~verbose ~print_id ~print_freedb ~print_toc =
+    let query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_freedb ~print_toc =
       if verbose then
         Printf.printf "querying %s ...\n" device;
       match Pml.Discid.get ~device () with
       | Result.Ok ids ->
          begin
-           if not print_id && not print_freedb && not print_toc then
+           if not lookup && not print_id && not print_freedb && not print_toc then
              Printf.printf "id = %s\nfreedb = %s\ntoc = %s\n" ids.id ids.freedb ids.toc
+           else if lookup then
+             begin match Pml.Musicbrainz.get_discid_cached ~root:cache ids.id with
+             | Error msg -> Printf.eprintf "error: %s\n" msg
+             | Ok json ->
+                Printf.printf
+                  "received %d bytes for %s in %s/discid\n"
+                  (String.length json) ids.id cache
+             end
            else if print_id then
              print_endline ids.id
            else if print_freedb then
@@ -221,8 +233,8 @@ module Query_Disc : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "disc" ~man) @@
-        let+ device and+ verbose and+ print_id and+ print_freedb and+ print_toc in
-        query_disc ~device ~verbose ~print_id ~print_freedb ~print_toc
+        let+ device and+ verbose and+ cache and+ lookup and+ print_id and+ print_freedb and+ print_toc in
+        query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_freedb ~print_toc
 
 end
 
