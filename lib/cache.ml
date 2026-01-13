@@ -319,6 +319,16 @@ let%test_module _ =
        | Error "foo" -> true
        | _ -> false
 
+     let%test _ =
+       let root = fresh () in
+       match
+         let* _ = C.init ~root in
+         let* _ = C.set ~root 1 "A" in
+         C.lookup ~root 1 (fun _ -> Ok "B")
+       with
+       | Ok "A" -> true
+       | _ -> false
+
      let alists_equal l1 l2 =
        (List.sort compare l1) = (List.sort compare l2)
 
