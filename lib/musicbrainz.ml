@@ -205,7 +205,7 @@ module Release_Short =
       |> Jsont.Object.finish
   end
 
-module Disc_Id =
+module Discid =
   struct
     type t =
       { _id : string;
@@ -223,10 +223,10 @@ module Disc_Id =
 
 let _discid_of_file name =
   let text = In_channel.with_open_text name In_channel.input_all in
-  Jsont_bytesrw.decode_string Disc_Id.jsont text
+  Jsont_bytesrw.decode_string Discid.jsont text
 
 let _release_ids disc_id =
-  List.map (fun r -> r.Release_Short.id) disc_id.Disc_Id.releases
+  List.map (fun r -> r.Release_Short.id) disc_id.Discid.releases
 
 module Artist =
   struct
@@ -377,7 +377,12 @@ let _media_of_file discid name =
   release_of_file name
   |> Result.map (fun release -> List.filter (contains_discid discid) release.Release.media)
 
-     
+let releases_of_discid ~root discid =
+  let* json = get_discid_cached ~root discid in
+  let* discid = Jsont_bytesrw.decode_string Discid.jsont json in
+  match discid.Discid.releases with
+  | [] -> Error "no releases"
+  | releases -> Ok (List.map (fun r -> r.Release_Short.id) releases)
 
 
 

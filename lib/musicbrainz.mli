@@ -53,6 +53,8 @@ module type Raw =
 
 module Raw : Raw
 
+val releases_of_discid : root:string -> string -> (string list, string) result
+
 module Artist : sig
   type t =
     { id : string; (** The MBID (i.e. UUID) of the artist.  While this is
