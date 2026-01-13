@@ -156,9 +156,20 @@ module Raw : Raw =
       | Ok json -> print_json json
       | Error msg -> prerr_endline msg
 
+    let sort_members members =
+      List.sort (fun ((name1, _), _) ((name2, _), _) -> String.compare name1 name2) members
+
+    let map_members f members = 
+      List.map (fun (name, json) -> (name, f json)) members
+
+    let rec sort_json = function
+      | Jsont.Object (members, meta) ->
+         Jsont.Object (sort_members (map_members sort_json members), meta)
+      | atom -> atom
+         
     let normalize text =
       let* json = Jsont_bytesrw.decode_string jsont text in
-      Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont json
+      Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont (sort_json json)
 
     let indent pfx = pfx ^ "  "
 
