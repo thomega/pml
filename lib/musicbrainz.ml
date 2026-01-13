@@ -154,6 +154,34 @@ module Discid_cache = Cache.Make (Discid_table)
 module Release_cache = Cache.Make (Release_table)
 module Releaseid_cache = Cache.Make (Discid_table)
 
+module MB_cache (Table : Cache.Table with type key = string and type value = string) =
+  struct
+
+    module C = Cache.Make (Table)
+
+    let query = query_discid
+    let is_valid_key = is_discid
+
+    (* This version deosn't check its argument.
+       It can be used in [get_cached] below,
+       because the argument has been checked. *)
+    let get_direct_unsafe key =
+      let* text = Query.(exec musicbrainz query key) in
+      Raw.normalize text
+
+    let _get_direct key =
+      if is_valid_key key then
+        get_direct_unsafe key
+      else
+        Error (Printf.sprintf "'%s' is not a valid key!" key)
+
+    let _get_from_cache = C.get
+
+    let _get_cached ~root key =
+      C.lookup ~root key get_direct_unsafe
+
+  end
+
 (* These versions don't check their argument.
    It can be used in get_*_cached below,
    because the argument has been checked. *)
