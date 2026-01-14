@@ -127,8 +127,17 @@ module Discid_table : Table =
     let re_discid =
       Re.(seq [start; alt [alphanum; set "._"] |> rep1; set "-" |> rep; stop] |> compile)
 
-    let is_discid s =
+    let _is_discid s =
       String.length s = 28 && Re.execp re_discid s
+
+    (* NB: The DTD at http://musicbrainz.org/development/mmd/ is stricter:
+       exactly one '-' at the end! *)
+
+    let re_discid =
+      Re.(seq [start; repn (alt [alphanum; set "._"]) 27 (Some 27); set "-"; stop] |> compile)
+
+    let is_discid s =
+      Re.execp re_discid s
 
     let valid_key discid =
       if is_discid discid then
@@ -368,7 +377,7 @@ module Medium =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         position : int option;
         title : string option;
-        discs : Disc.t list;
+        discs : Disc.t list; (** Is this relevant? *)
         tracks : Track.t list;
         ignored : Jsont.json }
     let make id position title discs tracks ignored =

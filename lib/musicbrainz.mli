@@ -128,7 +128,7 @@ module Medium : sig
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       position : int option;
       title : string option;
-      discs : Disc.t list;
+      discs : Disc.t list; (** Is this relevant for us?  There are no titles or credits. *)
       tracks : Track.t list;
       ignored : Jsont.json }
   end
