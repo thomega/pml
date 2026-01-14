@@ -78,6 +78,7 @@ module Release_cached : Cached
 (** Find information stored about a release: tracks, artists, etc. *)
 
 module Artist : sig
+
   type t =
     { id : string; (** The MBID (i.e. UUID) of the artist.  While this is
                        declared as optional in the DTD, we can safely assume
@@ -90,24 +91,269 @@ module Artist : sig
       disambiguation : string option; (** {e Is there an exhaustive list?} *)
       ignored : Jsont.json (** Currently ignored JSON elements. *)
     }
+(** {v
+     <define name="def_artist-element">
+         <element name="artist">
+             <optional>
+                 <attribute name="id">
+                     <data type="anyURI"/>
+                 </attribute>
+             </optional>
+             <optional>
+                 <attribute name="type">
+                     <data type="anyURI"/>
+                 </attribute>
+             </optional>
+             <optional>
+                 <attribute name="type-id">
+                     <ref name="def_uuid"/>
+                 </attribute>
+             </optional>
+             <ref name="def_artist-attribute_extension"/>
+
+             <optional>
+                 <element name="name">
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="sort-name">
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="gender">
+                     <attribute name="id">
+                         <ref name="def_uuid"/>
+                     </attribute>
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="country">
+                     <ref name="def_iso-3166-1-code"/>
+                 </element>
+             </optional>
+             <optional>
+                 <ref name="def_area-element"/>
+             </optional>
+             <optional>
+                 <element name="begin-area">
+                   <ref name="def_area-element_inner"/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="end-area">
+                   <ref name="def_area-element_inner"/>
+                 </element>
+             </optional>
+             <optional>
+               <ref name="def_annotation" />
+             </optional>
+             <optional>
+                 <element name="disambiguation">
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="ipi">
+                     <ref name="def_ipi"/>
+                 </element>
+             </optional>
+             <optional>
+               <ref name="def_ipi-list" />
+             </optional>
+             <optional>
+               <ref name="def_isni-list" />
+             </optional>
+             <optional>
+                 <element name="life-span">
+                     <optional>
+                         <element name="begin">
+                             <ref name="def_incomplete-date"/>
+                         </element>
+                     </optional>
+                     <optional>
+                         <element name="end">
+                             <ref name="def_incomplete-date"/>
+                         </element>
+                     </optional>
+                     <optional>
+                         <ref name="def_ended" />
+                     </optional>
+                 </element>
+             </optional>
+
+             <optional>
+                 <ref name="def_alias-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_recording-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_release-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_release-group-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_work-list"/>
+             </optional>
+             <zeroOrMore>
+                 <ref name="def_relation-list"/>
+             </zeroOrMore>
+             <optional>
+                 <ref name="def_tag-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_user-tag-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_genre-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_user-genre-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_rating"/>
+             </optional>
+             <optional>
+                 <ref name="def_user-rating"/>
+             </optional>
+
+             <ref name="def_artist-element_extension"/>
+         </element>
+     </define>
+     v} *)
+
 end
 
 module Artist_Credit : sig
+
   type t =
     { name : string option;
       artist : Artist.t option;
       ignored : Jsont.json }
+(** {v
+     <define name="def_artist-credit">
+         <element name="artist-credit">
+             <optional>
+                 <attribute name="id">
+                     <ref name="def_uuid"/>
+                 </attribute>
+             </optional>
+             <oneOrMore>
+                 <element name="name-credit">
+                     <optional>
+                         <attribute name="joinphrase">
+                             <text/>
+                         </attribute>
+                     </optional>
+                     <optional>
+                         <element name="name">
+                             <text/>
+                         </element>
+                     </optional>
+                     <ref name="def_artist-element"/>
+                 </element>
+             </oneOrMore>
+         </element>
+     </define>
+     v} *)
+
 end
 
 module Recording : sig
+
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       title : string option;
       artist_credit : Artist_Credit.t list;
       ignored : Jsont.json }
+(** {v
+     <define name="def_recording-element">
+         <element name="recording">
+             <optional>
+                 <attribute name="id">
+                     <data type="anyURI"/>
+                 </attribute>
+             </optional>
+             <ref name="def_recording-attribute_extension"/>
+
+             <optional>
+                 <element name="title">
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="length">
+                     <data type="nonNegativeInteger"/>
+                 </element>
+             </optional>
+             <optional>
+               <ref name="def_annotation" />
+             </optional>
+             <optional>
+                 <element name="disambiguation">
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <ref name="def_video"/>
+             </optional>
+             <optional>
+                 <ref name="def_artist-credit"/>
+             </optional>
+             <optional>
+                 <element name="first-release-date">
+                     <ref name="def_incomplete-date" />
+                 </element>
+             </optional>
+
+             <optional>
+                 <ref name="def_release-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_alias-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_puid-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_isrc-list"/>
+             </optional>
+             <zeroOrMore>
+                 <ref name="def_relation-list"/>
+             </zeroOrMore>
+
+             <optional>
+                 <ref name="def_tag-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_user-tag-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_genre-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_user-genre-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_rating"/>
+             </optional>
+             <optional>
+                 <ref name="def_user-rating"/>
+             </optional>
+
+             <ref name="def_recording-element_extension"/>
+         </element>
+     </define>
+     v} *)
+
 end
 
 module Track : sig
+
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       position : int option;
@@ -115,15 +361,78 @@ module Track : sig
       artist_credit : Artist_Credit.t list;
       recording : Recording.t option;
       ignored : Jsont.json }
+(** {v
+     <define name="def_track-data">
+         <optional>
+             <attribute name="id">
+                 <data type="anyURI"/>
+             </attribute>
+         </optional>
+         <optional>
+             <element name="position">
+                 <data type="nonNegativeInteger"/>
+             </element>
+         </optional>
+         <optional>
+             <element name="number">
+                 <text/>
+             </element>
+         </optional>
+         <optional>
+             <element name="title">
+                 <text/>
+             </element>
+         </optional>
+         <optional>
+             <element name="length">
+                 <data type="nonNegativeInteger"/>
+             </element>
+         </optional>
+         <optional>
+             <ref name="def_artist-credit"/>
+         </optional>
+         <optional>
+             <ref name="def_recording-element"/>
+         </optional>
+     </define>
+     v} *)
+
 end
 
 module Disc : sig
+
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       ignored : Jsont.json }
+(** {v
+     <define name="def_disc-element">
+         <element name="disc">
+             <attribute name="id">
+                 <data type="string">
+                     <param name="pattern">[a-zA-Z0-9._]{27}-</param>
+                 </data>
+             </attribute>
+             <ref name="def_disc-attribute_extension"/>
+             <optional>
+                 <element name="sectors">
+                     <data type="nonNegativeInteger"/>
+                 </element>
+             </optional>
+             <optional>
+                 <ref name="def_offset-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_release-list"/>
+             </optional>
+             <ref name="def_disc-element_extension"/>
+         </element>
+     </define>
+     v} *)
+
 end
 
 module Medium : sig
+
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       position : int option;
@@ -131,15 +440,184 @@ module Medium : sig
       discs : Disc.t list; (** Is this relevant for us?  There are no titles or credits. *)
       tracks : Track.t list;
       ignored : Jsont.json }
-  end
+(** {v
+     <define name="def_medium">
+         <element name="medium">
+             <optional>
+                 <attribute name="id">
+                     <ref name="def_uuid"/>
+                 </attribute>
+             </optional>
+             <optional>
+                 <element name="title">
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="position">
+                     <data type="nonNegativeInteger"/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="format">
+                     <attribute name="id">
+                         <ref name="def_uuid"/>
+                     </attribute>
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <ref name="def_disc-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_pregap-track"/>
+             </optional>
+             <ref name="def_track-list"/>
+             <optional>
+                 <ref name="def_data-track-list"/>
+             </optional>
+         </element>
+     </define>
+     v} *)
+
+end
 
 module Release : sig
+
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       title : string option;
       artist_credit : Artist_Credit.t list;
       media : Medium.t list }
-  end
+(** {v
+     <define name="def_release-element">
+         <element name="release">
+             <optional>
+                 <attribute name="id">
+                     <data type="anyURI"/>
+                 </attribute>
+             </optional>
+             <ref name="def_release-attribute_extension"/>
+
+             <optional>
+                 <element name="title">
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="status">
+                     <attribute name="id">
+                         <ref name="def_uuid"/>
+                     </attribute>
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="quality">
+                     <ref name="def_quality"/>
+                 </element>
+             </optional>
+             <optional>
+               <ref name="def_annotation" />
+             </optional>
+             <optional>
+                 <element name="disambiguation">
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="packaging">
+                     <attribute name="id">
+                         <ref name="def_uuid"/>
+                     </attribute>
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="text-representation">
+                     <optional>
+                         <element name="language">
+                             <ref name="def_iso-639"/>
+                         </element>
+                     </optional>
+                     <optional>
+                         <element name="script">
+                             <ref name="def_iso-15924"/>
+                         </element>
+                     </optional>
+                 </element>
+             </optional>
+             <optional>
+                 <ref name="def_artist-credit"/>
+             </optional>
+             <optional>
+                 <ref name="def_alias-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_release-group-element"/>
+             </optional>
+
+             <optional>
+                 <element name="date">
+                     <ref name="def_incomplete-date"/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="country">
+                     <ref name="def_iso-3166-1-code"/>
+                 </element>
+             </optional>
+             <optional>
+                 <ref name="def_release-event-list"/>
+             </optional>
+             <optional>
+                 <element name="barcode">
+                     <text/>
+                 </element>
+             </optional>
+             <optional>
+                 <element name="asin">
+                     <data type="string">
+                         <param name="pattern">[A-Z0-9]{10}</param>
+                     </data>
+                 </element>
+             </optional>
+             <optional>
+                 <ref name="def_cover-art-archive"/>
+             </optional>
+
+             <optional>
+                 <ref name="def_label-info-list"/>
+             </optional>
+
+             <optional>
+                 <ref name="def_medium-list"/>
+             </optional>
+             <zeroOrMore>
+                 <ref name="def_relation-list"/>
+             </zeroOrMore>
+             <optional>
+                 <ref name="def_tag-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_user-tag-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_genre-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_user-genre-list"/>
+             </optional>
+             <optional>
+                 <ref name="def_collection-list"/>
+             </optional>
+
+             <ref name="def_release-element_extension"/>
+         </element>
+     </define>
+     v} *)
+
+end
 
 val media_of_discid : root:string -> string -> (Medium.t list, string) result
 (** Find the release matching the diskid. *)
