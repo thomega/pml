@@ -16,16 +16,17 @@ module Release_table' : Table
 module type Cached_table =
   sig
 
-    val get_cached : root:string -> string -> (string, string) result
+    val get : root:string -> string -> (string, string) result
     (** Return the JSON for the given discid, preferring the cache located at [root]. *)
 
-    val get_from_cache : root:string -> string -> (string option, string) result
+    val local : root:string -> string -> (string option, string) result
     (** Return the JSON for the given key, using only the cache located at [root]. *)
 
-    val get_direct : string -> (string, string) result
+    val remote : string -> (string, string) result
     (** Return the JSON for the given key, ignoring any cache. *)
 
-    val get_cache : root:string -> ((string * string) list, string) result
+    val all_local : root:string -> ((string * string) list, string) result
+    (** Return the cached [key] JSON pairs. *)
 
     val url : string -> (string, string) result
     (** Return the URL for querying Musicbrainz for the entry corresponding to a key. *)

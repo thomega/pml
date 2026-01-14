@@ -169,10 +169,10 @@ module Release_table' : Table =
 
 module type Cached_table =
   sig
-    val get_cached : root:string -> string -> (string, string) result
-    val get_from_cache : root:string -> string -> (string option, string) result
-    val get_direct : string -> (string, string) result
-    val get_cache : root:string -> ((string * string) list, string) result
+    val get : root:string -> string -> (string, string) result
+    val local : root:string -> string -> (string option, string) result
+    val remote : string -> (string, string) result
+    val all_local : root:string -> ((string * string) list, string) result
     val url : string -> (string, string) result
   end
 
@@ -192,26 +192,26 @@ module Cached_table (Table : Table) : Cached_table =
         end)
 
     (* This version deosn't check its argument.
-       It can be used in [get_cached] below,
+       It can be used in [get] below,
        because the argument has been checked. *)
-    let get_direct_unsafe key =
+    let remote_unsafe key =
       let* text = Query.(exec musicbrainz Table.query key) in
       Raw.normalize text
 
-    let get_direct key =
+    let remote key =
       let* key = Table.valid_key key in
-        get_direct_unsafe key
+        remote_unsafe key
 
-    let get_from_cache = C.get
+    let local = C.get
 
-    let get_cached ~root key =
-      C.lookup ~root key get_direct_unsafe
+    let get ~root key =
+      C.lookup ~root key remote_unsafe
 
     let url key =
       let* key = Table.valid_key key in
       Ok (Query.(url musicbrainz Table.query key))
 
-    let get_cache = C.to_alist
+    let all_local = C.to_alist
 
   end
 
@@ -400,7 +400,7 @@ let _media_of_file discid name =
   |> Result.map (fun release -> List.filter (contains_discid discid) release.Release.media)
 
 let releases_of_discid ~root discid =
-  let* json = Discid_cached.get_cached ~root discid in
+  let* json = Discid_cached.get ~root discid in
   let* discid = Jsont_bytesrw.decode_string Discid.jsont json in
   match discid.Discid.releases with
   | [] -> Error "no releases"

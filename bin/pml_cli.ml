@@ -65,7 +65,7 @@ module Cachetest : Exit_Cmd =
         match
           print_endline "Cached discids:";
           let open Result.Syntax in
-          let* discids = MB.Discid_cached.get_cache ~root:cache in
+          let* discids = MB.Discid_cached.all_local ~root:cache in
           Ok (List.iter (fun (discid, _) -> print_endline discid) discids)
         with
         | Error msg -> prerr_endline msg; 1
@@ -74,7 +74,7 @@ module Cachetest : Exit_Cmd =
         match
           print_endline "Cached releases:";
           let open Result.Syntax in
-          let* releases = MB.Release_cached.get_cache ~root:cache in
+          let* releases = MB.Release_cached.all_local ~root:cache in
           Ok (List.iter (fun (release, _) -> print_endline release) releases)
         with
         | Error msg -> prerr_endline msg; 1
@@ -102,12 +102,12 @@ module Cachetest : Exit_Cmd =
         | None, None -> 0
         | Some _, Some _ -> 1
         | Some discid, None ->
-           begin match MB.Discid_cached.get_cached ~root:cache discid with
+           begin match MB.Discid_cached.get ~root:cache discid with
            | Error msg -> Printf.eprintf "error: %s\n" msg; 1
            | Ok json -> print_endline json; 0
            end
         | None, Some release ->
-           begin match MB.Release_cached.get_cached ~root:cache release with
+           begin match MB.Release_cached.get ~root:cache release with
            | Error msg -> Printf.eprintf "error: %s\n" msg; 1
            | Ok json -> print_endline json; 0
            end
@@ -204,7 +204,7 @@ module Query_Disc : Exit_Cmd =
            if not lookup && not print_id && not print_freedb && not print_toc then
              Printf.printf "id = %s\nfreedb = %s\ntoc = %s\n" ids.id ids.freedb ids.toc
            else if lookup then
-             begin match Pml.Musicbrainz.Discid_cached.get_cached ~root:cache ids.id with
+             begin match Pml.Musicbrainz.Discid_cached.get ~root:cache ids.id with
              | Error msg -> Printf.eprintf "error: %s\n" msg
              | Ok json ->
                 Printf.printf
