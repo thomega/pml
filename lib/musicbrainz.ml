@@ -73,51 +73,6 @@ module Raw : Raw =
 
   end
 
-(* A sequence of exactly 28 characters from the set [A-Za-z0-9._-]. *)
-
-(* [Re.alnum] contains accented characters! *)
-
-let alphanum =
-  Re.(alt [rg 'A' 'Z'; rg 'a' 'z'; rg '0' '9'])
-
-(* NB: '-' can appear only as padding at the end.  We must check
-   the length of the strong as well. *)
-
-let re_discid =
-  Re.(seq [start; alt [alphanum; set "._"] |> rep1; set "-" |> rep; stop] |> compile)
-
-let is_discid s =
-  String.length s = 28 && Re.execp re_discid s
-
-let valid_discid discid =
-  if is_discid discid then
-    Ok discid
-  else
-    Error (Printf.sprintf "'%s' is not a valid discid" discid)
-
-(* A MBID/UUID: 8-4-4-4-12 hex digits [0-9a-fA-F] *)
-
-let hexrep n =
-  Re.(repn xdigit n (Some n))
-
-let re_uuid =
-  Re.(seq [start;
-           hexrep 8; set "-";
-           hexrep 4; set "-";
-           hexrep 4; set "-";
-           hexrep 4; set "-";
-           hexrep 12;
-           stop] |> compile)
-
-let is_uuid s =
-  Re.execp re_uuid s
-
-let valid_mbid mbid =
-  if is_uuid mbid then
-    Ok mbid
-  else
-    Error (Printf.sprintf "'%s' is not a valid MBID" mbid)
-
 module type Table =
   sig
 
@@ -132,18 +87,66 @@ module type Table =
 
 module Discid_table : Table =
   struct
-    let valid_key = valid_discid
+
+    (* A sequence of exactly 28 characters from the set [A-Za-z0-9._-]. *)
+
+    (* [Re.alnum] contains accented characters! *)
+
+    let alphanum =
+      Re.(alt [rg 'A' 'Z'; rg 'a' 'z'; rg '0' '9'])
+
+    (* NB: '-' can appear only as padding at the end.  We must check
+       the length of the strong as well. *)
+
+    let re_discid =
+      Re.(seq [start; alt [alphanum; set "._"] |> rep1; set "-" |> rep; stop] |> compile)
+
+    let is_discid s =
+      String.length s = 28 && Re.execp re_discid s
+
+    let valid_key discid =
+      if is_discid discid then
+        Ok discid
+      else
+        Error (Printf.sprintf "'%s' is not a valid discid" discid)
+
     let query = Query.{ table = "discid"; inc = [] }
+
   end
 
 module Release_table : Table =
   struct
-    let valid_key = valid_mbid
+
+    (* A MBID/UUID: 8-4-4-4-12 hex digits [0-9a-fA-F] *)
+
+    let hexrep n =
+      Re.(repn xdigit n (Some n))
+
+    let re_uuid =
+      Re.(seq [start;
+               hexrep 8; set "-";
+               hexrep 4; set "-";
+               hexrep 4; set "-";
+               hexrep 4; set "-";
+               hexrep 12;
+               stop]
+          |> compile)
+
+    let is_uuid s =
+      Re.execp re_uuid s
+
+    let valid_key mbid =
+      if is_uuid mbid then
+        Ok (String.lowercase_ascii mbid)
+      else
+        Error (Printf.sprintf "'%s' is not a valid MBID" mbid)
+
     let query =
       Query.{ table = "release";
               inc = ["artists"; "artist-credits"; "recordings";
                      "release-groups"; "discids";
                      "url-rels"; "labels"; ] }
+
   end
 
 module type Cached_table =
