@@ -25,6 +25,8 @@ module type Cached_table =
     val get_direct : string -> (string, string) result
     (** Return the JSON for the given key, ignoring any cache. *)
 
+    val get_cache : root:string -> ((string * string) list, string) result
+
     val url : string -> (string, string) result
     (** Return the URL for querying Musicbrainz for the entry corresponding to a key. *)
 

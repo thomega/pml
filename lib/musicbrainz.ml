@@ -182,6 +182,7 @@ module type Cached_table =
     val get_cached : root:string -> string -> (string, string) result
     val get_from_cache : root:string -> string -> (string option, string) result
     val get_direct : string -> (string, string) result
+    val get_cache : root:string -> ((string * string) list, string) result
     val url : string -> (string, string) result
   end
 
@@ -219,6 +220,8 @@ module Cached_table (Table : Table) : Cached_table =
     let url key =
       let* key = Table.valid_key key in
       Ok (Query.(url musicbrainz Table.query key))
+
+    let get_cache = C.to_alist
 
   end
 
