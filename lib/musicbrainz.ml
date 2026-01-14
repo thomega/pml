@@ -120,17 +120,23 @@ let valid_mbid mbid =
 
 module type Table =
   sig
+
     val valid_key : string -> (string, string) result
+    (** Check validity of the key, to avoid unnecessary
+        lookups of invalid key. *)
+
     val query : Query.query
+    (** What to ask Musicbrainz. *)
+
   end
 
-module Discid_table' : Table =
+module Discid_table : Table =
   struct
     let valid_key = valid_discid
     let query = Query.{ table = "discid"; inc = [] }
   end
 
-module Release_table' : Table =
+module Release_table : Table =
   struct
     let valid_key = valid_mbid
     let query =
@@ -139,7 +145,6 @@ module Release_table' : Table =
                      "release-groups"; "discids";
                      "url-rels"; "labels"; ] }
   end
-
 
 module type Cached_table =
   sig
@@ -191,8 +196,8 @@ module Cached_table (Table : Table) : Cached_table =
     module Internal = C
   end
 
-module Discid_cached = Cached_table (Discid_table')
-module Release_cached = Cached_table (Release_table')
+module Discid_cached = Cached_table (Discid_table)
+module Release_cached = Cached_table (Release_table)
 
 let opt_list = function
   | Some l -> l

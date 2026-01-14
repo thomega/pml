@@ -1,17 +1,10 @@
-module type Table =
-  sig
-    val valid_key : string -> (string, string) result
-    val query : Query.query
-  end
-
-module Discid_table' : Table
-module Release_table' : Table
-
 module type Cached_table =
   sig
 
     val get : root:string -> string -> (string, string) result
-    (** Return the JSON for the given discid, preferring the cache located at [root]. *)
+    (** Return the JSON for the given key, preferring the cache located at [root].
+        If there is no local entry for the key, it will be created from the
+        result of the remote lookup. *)
 
     val local : root:string -> string -> (string option, string) result
     (** Return the JSON for the given key, using only the cache located at [root]. *)
