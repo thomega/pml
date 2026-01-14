@@ -118,16 +118,6 @@ let valid_mbid mbid =
   else
     Error (Printf.sprintf "'%s' is not a valid MBID" mbid)
 
-let query_discid =
-  Query.{ table = "discid";
-          inc = [] }
-
-let query_release =
-  Query.{ table = "release";
-          inc = ["artists"; "artist-credits";
-                 "recordings"; "release-groups"; "discids";
-                 "url-rels"; "labels"; ] }
-
 module Discid_table =
   struct
     let name = "discid"
@@ -227,53 +217,6 @@ module Cached_table (Table : Table) : Cached_table =
 
 module Discid_cached = Cached_table (Discid_table')
 module Release_cached = Cached_table (Release_table')
-
-(* These versions don't check their argument.
-   It can be used in get_*_cached below,
-   because the argument has been checked. *)
-let get_discid_direct_unsafe discid =
-  let* text = Query.(exec musicbrainz query_discid discid) in
-  Raw.normalize text
-
-let get_release_direct_unsafe mbid =
-  let* text = Query.(exec musicbrainz query_release mbid) in
-  Raw.normalize text
-
-let get_discid_direct discid =
-  if is_discid discid then
-    get_discid_direct_unsafe discid
-  else
-    Error (Printf.sprintf "'%s' is not a valid discid!" discid)
-
-let get_release_direct mbid =
-  if is_uuid mbid then
-    get_release_direct_unsafe mbid
-  else
-    Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
-
-let url_discid discid =
-  if is_discid discid then
-    Ok (Query.(url musicbrainz query_discid discid))
-  else
-    Error (Printf.sprintf "'%s' is not a valid discid!" discid)
-
-let url_release mbid =
-  if is_uuid mbid then
-    Ok (Query.(url musicbrainz query_release mbid))
-  else
-    Error (Printf.sprintf "'%s' is not a valid MBID!" mbid)
-
-let get_discid_from_cache = Discid_cache.get
-let get_release_from_cache = Release_cache.get
-
-let get_discid_cached ~root discid =
-  Discid_cache.lookup ~root discid get_discid_direct_unsafe
-
-let get_release_cached ~root mbid =
-  Release_cache.lookup ~root mbid get_release_direct_unsafe
-
-let get_cached_discids = Discid_cache.to_alist
-let get_cached_releases = Release_cache.to_alist
 
 let opt_list = function
   | Some l -> l
@@ -457,7 +400,7 @@ let _media_of_file discid name =
   |> Result.map (fun release -> List.filter (contains_discid discid) release.Release.media)
 
 let releases_of_discid ~root discid =
-  let* json = get_discid_cached ~root discid in
+  let* json = Discid_cached.get_cached ~root discid in
   let* discid = Jsont_bytesrw.decode_string Discid.jsont json in
   match discid.Discid.releases with
   | [] -> Error "no releases"

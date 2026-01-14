@@ -35,37 +35,6 @@ module type Cached_table =
 module Discid_cached : Cached_table
 module Release_cached : Cached_table
 
-val url_discid : string -> (string, string) result
-(** Return the URL for querying Musicbrainz for a discid. *)
-
-val url_release : string -> (string, string) result
-(** Return the URL for querying Musicbrainz for a release. *)
-
-val get_discid_direct : string -> (string, string) result
-(** Return the JSON for the given discid, ignoring any cache. *)
-
-val get_release_direct : string -> (string, string) result
-(** Return the JSON for the given release, ignoring any cache. *)
-
-val get_discid_from_cache : root:string -> string -> (string option, string) result
-(** Return the JSON for the given discid, using only the cache located at [root]
-    if possible. *)
-
-val get_release_from_cache : root:string -> string -> (string option, string) result
-(** Return the JSON for the given release, using only the cache located at [root]
-    if possible. *)
-
-val get_discid_cached : root:string -> string -> (string, string) result
-(** Return the JSON for the given discid, preferring the cache located at [root]
-    if possible. *)
-
-val get_release_cached : root:string -> string -> (string, string) result
-(** Return the JSON for the given release, preferring the cache located at [root]
-    if possible. *)
-
-val get_cached_discids : root:string -> ((string * string) list, string) result
-val get_cached_releases : root:string -> ((string * string) list, string) result
-
 module type Raw =
   sig
 
