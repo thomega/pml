@@ -154,33 +154,76 @@ module Discid_cache = Cache.Make (Discid_table)
 module Release_cache = Cache.Make (Release_table)
 module Releaseid_cache = Cache.Make (Discid_table)
 
-module MB_cache (Table : Cache.Table with type key = string and type value = string) =
+module type Table =
+  sig
+    val valid_key : string -> (string, string) result
+    val query : Query.query
+  end
+
+module Discid_table' : Table =
+  struct
+    let valid_key = valid_discid
+    let query = Query.{ table = "discid"; inc = [] }
+  end
+
+module Release_table' : Table =
+  struct
+    let valid_key = valid_mbid
+    let query =
+      Query.{ table = "release";
+              inc = ["artists"; "artist-credits"; "recordings";
+                     "release-groups"; "discids";
+                     "url-rels"; "labels"; ] }
+  end
+
+
+module type Cached_table =
+  sig
+    val get_cached : root:string -> string -> (string, string) result
+    val get_from_cache : root:string -> string -> (string option, string) result
+    val get_direct : string -> (string, string) result
+    val url : string -> (string, string) result
+  end
+
+module Cached_table (Table : Table) : Cached_table =
   struct
 
-    module C = Cache.Make (Table)
-
-    let query = query_discid
-    let is_valid_key = is_discid
+    module C =
+      Cache.Make
+        (struct
+          let name = Table.query.table
+          type key = string
+          let key_of_string = Table.valid_key
+          let key_to_string = Table.valid_key
+          type value = string
+          let value_of_string = Result.ok
+          let value_to_string = Result.ok
+        end)
 
     (* This version deosn't check its argument.
        It can be used in [get_cached] below,
        because the argument has been checked. *)
     let get_direct_unsafe key =
-      let* text = Query.(exec musicbrainz query key) in
+      let* text = Query.(exec musicbrainz Table.query key) in
       Raw.normalize text
 
-    let _get_direct key =
-      if is_valid_key key then
+    let get_direct key =
+      let* key = Table.valid_key key in
         get_direct_unsafe key
-      else
-        Error (Printf.sprintf "'%s' is not a valid key!" key)
 
-    let _get_from_cache = C.get
+    let get_from_cache = C.get
 
-    let _get_cached ~root key =
+    let get_cached ~root key =
       C.lookup ~root key get_direct_unsafe
 
+    let url key =
+      let* key = Table.valid_key key in
+      Ok (Query.(url musicbrainz Table.query key))
+
   end
+
+module Discid_cached = Cached_table (Discid_table')
+module Release_cached = Cached_table (Release_table')
 
 (* These versions don't check their argument.
    It can be used in get_*_cached below,
