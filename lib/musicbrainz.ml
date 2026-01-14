@@ -1,5 +1,31 @@
 open Result.Syntax
 
+module type Error =
+  sig
+    type t = { error : string; help : string option }
+    val get_error_opt : string -> string option
+  end
+
+module Error : Error =
+  struct
+
+    type t = { error : string; help : string option }
+
+    let make error help = { error; help }
+
+    let jsont =
+      Jsont.Object.map ~kind:"Error" make
+      |> Jsont.Object.mem "error" Jsont.string
+      |> Jsont.Object.opt_mem "help" Jsont.string
+      |> Jsont.Object.finish
+
+    let get_error_opt text =
+      match Jsont_bytesrw.decode_string jsont text with
+      | Error _ -> None
+      | Ok json -> Some json.error
+
+  end
+
 module type Raw =
   sig
     val normalize : string -> (string, string) result
@@ -149,7 +175,7 @@ module Release_table : Table =
 
   end
 
-module type Cached_table =
+module type Cached =
   sig
     val get : root:string -> string -> (string, string) result
     val local : root:string -> string -> (string option, string) result
@@ -159,7 +185,7 @@ module type Cached_table =
     module Internal : Cache.T with type key = string and type value = string
   end
 
-module Cached_table (Table : Table) : Cached_table =
+module Cached (Table : Table) : Cached =
   struct
 
     module C =
@@ -199,8 +225,7 @@ module Cached_table (Table : Table) : Cached_table =
     module Internal = C
   end
 
-module Discid_cached = Cached_table (Discid_table)
-module Release_cached = Cached_table (Release_table)
+module Discid_cached = Cached (Discid_table)
 
 let opt_list = function
   | Some l -> l
@@ -233,6 +258,15 @@ module Discid =
       |> Jsont.Object.finish
 
   end
+
+let releases_of_discid ~root discid =
+  let* json = Discid_cached.get ~root discid in
+  let* discid = Jsont_bytesrw.decode_string Discid.jsont json in
+  match discid.Discid.releases with
+  | [] -> Error "No Releases"
+  | releases -> Ok (List.map (fun r -> r.Release_Short.id) releases)
+
+module Release_cached = Cached (Release_table)
 
 module Artist =
   struct
@@ -318,9 +352,9 @@ module Disc =
   struct
     type t =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
-        _ignored : Jsont.json }
-    let make id _ignored =
-      { id; _ignored }
+        ignored : Jsont.json }
+    let make id ignored =
+      { id; ignored }
     let jsont =
       Jsont.Object.map ~kind:"Disc" make
       |> Jsont.Object.mem "id" Jsont.string
@@ -331,16 +365,16 @@ module Disc =
 module Medium =
   struct
     type t =
-      { _id : string (** While this is optional in the DTD, it should be there anyway. *);
-        _position : int option;
-        _title : string option;
+      { id : string (** While this is optional in the DTD, it should be there anyway. *);
+        position : int option;
+        title : string option;
         discs : Disc.t list;
-        _tracks : Track.t list;
-        _ignored : Jsont.json }
-    let make _id _position _title discs tracks _ignored =
+        tracks : Track.t list;
+        ignored : Jsont.json }
+    let make id position title discs tracks ignored =
       let discs = opt_list discs
-      and _tracks = opt_list tracks in
-      { _id; _position; _title; discs; _tracks; _ignored }
+      and tracks = opt_list tracks in
+      { id; position; title; discs; tracks; ignored }
     let jsont =
       Jsont.Object.map ~kind:"Medium" make
       |> Jsont.Object.mem "id" Jsont.string
@@ -355,14 +389,14 @@ module Medium =
 module Release =
   struct
     type t =
-      { _id : string (** While this is optional in the DTD, it should be there anyway. *);
-        _title : string option;
-        _artist_credit : Artist_Credit.t list;
+      { id : string (** While this is optional in the DTD, it should be there anyway. *);
+        title : string option;
+        artist_credit : Artist_Credit.t list;
         media : Medium.t list }
-    let make _id _title artist_credit media =
-      let _artist_credit = opt_list artist_credit
+    let make id title artist_credit media =
+      let artist_credit = opt_list artist_credit
       and media = opt_list media in
-      { _id; _title; _artist_credit; media }
+      { id; title; artist_credit; media }
     let jsont =
       Jsont.Object.map ~kind:"Release" make
       |> Jsont.Object.mem "id" Jsont.string
@@ -372,23 +406,18 @@ module Release =
       |> Jsont.Object.finish
   end
 
-let release_of_file name =
-  let text = In_channel.with_open_text name In_channel.input_all in
+let release_of_mbid ~root mbid =
+  let* text = Release_cached.get ~root mbid in
   Jsont_bytesrw.decode_string Release.jsont text
 
 let contains_discid discid medium =
   List.exists (fun disc -> discid = disc.Disc.id) medium.Medium.discs
 
-let _media_of_file discid name =
-  release_of_file name
-  |> Result.map (fun release -> List.filter (contains_discid discid) release.Release.media)
-
-let releases_of_discid ~root discid =
-  let* json = Discid_cached.get ~root discid in
-  let* discid = Jsont_bytesrw.decode_string Discid.jsont json in
-  match discid.Discid.releases with
-  | [] -> Error "no releases"
-  | releases -> Ok (List.map (fun r -> r.Release_Short.id) releases)
-
-
-
+let media_of_discid ~root discid =
+  let* releases = releases_of_discid ~root discid in
+  List.fold_left
+    (fun acc mbid ->
+      let* acc = acc
+      and* release = release_of_mbid ~root mbid in
+      Ok (List.filter (contains_discid discid) release.Release.media @ acc))
+    (Ok []) releases
