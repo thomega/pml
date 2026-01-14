@@ -118,32 +118,6 @@ let valid_mbid mbid =
   else
     Error (Printf.sprintf "'%s' is not a valid MBID" mbid)
 
-module Discid_table =
-  struct
-    let name = "discid"
-    type key = string
-    let key_of_string = valid_discid
-    let key_to_string = valid_discid
-    type value = string
-    let value_of_string = Result.ok
-    let value_to_string = Result.ok
-  end
-
-module Release_table =
-  struct
-    let name = "release"
-    type key = string
-    let key_of_string = valid_mbid
-    let key_to_string = valid_mbid
-    type value = string
-    let value_of_string = Result.ok
-    let value_to_string = Result.ok
-  end
-
-module Discid_cache = Cache.Make (Discid_table)
-module Release_cache = Cache.Make (Release_table)
-module Releaseid_cache = Cache.Make (Discid_table)
-
 module type Table =
   sig
     val valid_key : string -> (string, string) result
@@ -174,6 +148,7 @@ module type Cached_table =
     val remote : string -> (string, string) result
     val all_local : root:string -> ((string * string) list, string) result
     val url : string -> (string, string) result
+    module Internal : Cache.T with type key = string and type value = string
   end
 
 module Cached_table (Table : Table) : Cached_table =
@@ -213,6 +188,7 @@ module Cached_table (Table : Table) : Cached_table =
 
     let all_local = C.to_alist
 
+    module Internal = C
   end
 
 module Discid_cached = Cached_table (Discid_table')

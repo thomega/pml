@@ -1,9 +1,3 @@
-module Discid_cache : Cache.T with type key = string and type value = string
-(** For testing only.  Will be removed from the final API. *)
-
-module Release_cache : Cache.T with type key = string and type value = string
-(** For testing only.  Will be removed from the final API. *)
-
 module type Table =
   sig
     val valid_key : string -> (string, string) result
@@ -30,6 +24,10 @@ module type Cached_table =
 
     val url : string -> (string, string) result
     (** Return the URL for querying Musicbrainz for the entry corresponding to a key. *)
+
+    module Internal : Cache.T with type key = string and type value = string
+    (** Access the public interface of the [Cache.T] used to implement
+        This cached table.. *)
 
   end
 
