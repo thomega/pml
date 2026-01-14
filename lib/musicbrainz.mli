@@ -480,6 +480,8 @@ module Medium : sig
      </define>
      v} *)
 
+  val print : t -> unit
+
 end
 
 module Release : sig

@@ -160,6 +160,35 @@ module Musicbrainz : Exit_Cmd =
 
   end
 
+module Medium : Exit_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "Explore media." ] @ Common.man_footer
+
+    let discid =
+      let doc = Printf.sprintf "Disc to be examined." in
+      Arg.(value & opt (some string) None & info ["d"; "disc"; "discid"] ~docv:"id" ~doc)
+
+    let explore ~cache ?discid () =
+      ignore cache;
+      let module MB = Pml.Musicbrainz in
+      match discid with
+      | None -> 0
+      | Some id ->
+         match MB.media_of_discid ~root:cache id with
+         | Error msg -> prerr_endline msg; 1
+         | Ok media -> List.iter MB.Medium.print media; 0
+
+    let cmd =
+      let open Cmd in
+      make (info "medium" ~man) @@
+        let+ cache and+ discid in
+        explore ~cache ?discid ()
+
+  end
+
 module Query_Disc : Exit_Cmd =
   struct
 
@@ -281,6 +310,7 @@ module Main : Exit_Cmd =
       group (info "pml_cli" ~man)
         [ Query_Disc.cmd;
           Musicbrainz.cmd;
+          Medium.cmd;
           Cachetest.cmd;
           Curl.cmd]
 

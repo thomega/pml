@@ -374,16 +374,19 @@ module Disc =
 module Medium =
   struct
     type t =
+
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         position : int option;
         title : string option;
-        discs : Disc.t list; (** Is this relevant? *)
+        discs : Disc.t list;
         tracks : Track.t list;
         ignored : Jsont.json }
+
     let make id position title discs tracks ignored =
       let discs = opt_list discs
       and tracks = opt_list tracks in
       { id; position; title; discs; tracks; ignored }
+
     let jsont =
       Jsont.Object.map ~kind:"Medium" make
       |> Jsont.Object.mem "id" Jsont.string
@@ -393,6 +396,15 @@ module Medium =
       |> Jsont.Object.opt_mem "tracks" Jsont.(list Track.jsont)
       |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
+
+    let print m =
+      let open Printf in
+      printf "id = %s\n" m.id;
+      printf "#%03d: %s\n"
+        (match m.position with None -> 0 | Some i -> i)
+        (match m.title with None -> "???" | Some s -> s);
+      ()
+
   end
 
 module Release =
