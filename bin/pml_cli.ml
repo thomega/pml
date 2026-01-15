@@ -63,7 +63,6 @@ module Cachetest : Exit_Cmd =
       let module MB = Pml.Musicbrainz in
       if discid_list then
         match
-          print_endline "Cached discids:";
           let open Result.Syntax in
           let* discids = MB.Discid_cached.all_local ~root:cache in
           Ok (List.iter (fun (discid, _) -> print_endline discid) discids)
@@ -72,7 +71,6 @@ module Cachetest : Exit_Cmd =
         | Ok _ -> 0
       else if release_list then
         match
-          print_endline "Cached releases:";
           let open Result.Syntax in
           let* releases = MB.Release_cached.all_local ~root:cache in
           Ok (List.iter (fun (release, _) -> print_endline release) releases)

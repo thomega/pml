@@ -42,22 +42,11 @@ module Raw : Raw =
       |> Jsont.Object.keep_unknown Jsont.json_mems ~enc:Fun.id
       |> Jsont.Object.finish
 
-    let of_file name =
-      In_channel.with_open_text name In_channel.input_all
-      |> Jsont_bytesrw.decode_string jsont
-
-    let print_json json =
-      match Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont json with
-      | Ok text -> print_endline text
-      | Error msg -> prerr_endline msg
-
-    let print_file name =
-      match of_file name with
-      | Ok json -> print_json json
-      | Error msg -> prerr_endline msg
+    let compare_members ((name1, _), _) ((name2, _), _) =
+      String.compare name1 name2
 
     let sort_members members =
-      List.sort (fun ((name1, _), _) ((name2, _), _) -> String.compare name1 name2) members
+      List.sort compare_members members
 
     let map_members f members =
       List.map (fun (name, json) -> (name, f json)) members
@@ -65,7 +54,23 @@ module Raw : Raw =
     let rec sort_json = function
       | Jsont.Object (members, meta) ->
          Jsont.Object (sort_members (map_members sort_json members), meta)
+      | Jsont.Array (members, meta) ->
+         Jsont.Array (List.map sort_json members, meta)
       | atom -> atom
+
+    let of_file name =
+      In_channel.with_open_text name In_channel.input_all
+      |> Jsont_bytesrw.decode_string jsont
+
+    let print_json json =
+      match Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont (sort_json json) with
+      | Ok text -> print_endline text
+      | Error msg -> prerr_endline msg
+
+    let print_file name =
+      match of_file name with
+      | Ok json -> print_json json
+      | Error msg -> prerr_endline msg
 
     let normalize text =
       let* json = Jsont_bytesrw.decode_string jsont text in
