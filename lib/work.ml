@@ -39,7 +39,7 @@ module Partial =
   struct
     type t =
       { release : string;
-        disk : string;
+        disc : string;
         title : string;
         composers : Artist.t list;
         performers : Artist.t list;

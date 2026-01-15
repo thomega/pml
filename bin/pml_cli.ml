@@ -175,9 +175,9 @@ module Medium : Exit_Cmd =
       match discid with
       | None -> 0
       | Some id ->
-         match MB.media_of_discid ~root:cache id with
+         match MB.disc_of_discid ~root:cache id with
          | Error msg -> prerr_endline msg; 1
-         | Ok media -> List.iter MB.Medium.print media; 0
+         | Ok disc -> MB.print_disc disc; 0
 
     let cmd =
       let open Cmd in

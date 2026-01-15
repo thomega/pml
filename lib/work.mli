@@ -20,7 +20,7 @@ end
 module Partial : sig
   type t =
     { release : string; (** The Musicbrainz id of the release from which the data are taken. *)
-      disk : string; (** The diskid from which the audio was ripped. *)
+      disc : string; (** The discid from which the audio was ripped. *)
       title : string; (** The title of the whole work. This can not be empty. *)
       composers : Artist.t list; (** Composers of a work that is expected to be performed
                                      by others.  This will usually be left empty for
@@ -31,4 +31,4 @@ module Partial : sig
                              for the correct number of leading zeros in numbers in filenames. *)
     }
 end
-(** The part of a a musical work that fits on one disk. *)
+(** The part of a a musical work that fits on one disc. *)

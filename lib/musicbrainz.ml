@@ -291,10 +291,9 @@ module Artist =
         name : string option;
         sort_name : string option;
         artist_type : string option;
-        disambiguation : string option;
-        ignored : Jsont.json }
-    let make id name sort_name artist_type disambiguation ignored =
-      { id; name; sort_name; artist_type; disambiguation; ignored }
+        disambiguation : string option }
+    let make id name sort_name artist_type disambiguation =
+      { id; name; sort_name; artist_type; disambiguation }
     let jsont =
       Jsont.Object.map ~kind:"Artist" make
       |> Jsont.Object.mem "id" Jsont.string
@@ -302,7 +301,6 @@ module Artist =
       |> Jsont.Object.opt_mem "sort-name" Jsont.string
       |> Jsont.Object.opt_mem "type" Jsont.string
       |> Jsont.Object.opt_mem "disambiguation" Jsont.string
-      |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
   end
 
@@ -310,15 +308,13 @@ module Artist_Credit =
   struct
     type t =
       { name : string option;
-        artist : Artist.t option;
-        ignored : Jsont.json }
-    let make name artist ignored =
-      { name; artist; ignored }
+        artist : Artist.t option }
+    let make name artist =
+      { name; artist }
     let jsont =
       Jsont.Object.map ~kind:"Artist_Credit" make
       |> Jsont.Object.opt_mem "name" Jsont.string
       |> Jsont.Object.opt_mem "artist" Artist.jsont
-      |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
   end
 
@@ -327,17 +323,15 @@ module Recording =
     type t =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         title : string option;
-        artist_credit : Artist_Credit.t list;
-        ignored : Jsont.json }
-    let make id title artist_credit ignored =
+        artist_credit : Artist_Credit.t list }
+    let make id title artist_credit =
       let artist_credit = opt_list artist_credit in
-      { id; title; artist_credit; ignored }
+      { id; title; artist_credit }
     let jsont =
       Jsont.Object.map ~kind:"Recording" make
       |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.opt_mem "title" Jsont.string
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
-      |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
   end
 
@@ -348,11 +342,10 @@ module Track =
         position : int option;
         title : string option;
         artist_credit : Artist_Credit.t list;
-        recording : Recording.t option;
-        ignored : Jsont.json }
-    let make id position title artist_credit recording ignored =
+        recording : Recording.t option }
+    let make id position title artist_credit recording =
       let artist_credit = opt_list artist_credit in
-      { id; position; title; artist_credit; recording; ignored }
+      { id; position; title; artist_credit; recording }
     let jsont =
       Jsont.Object.map ~kind:"Track" make
       |> Jsont.Object.mem "id" Jsont.string
@@ -360,7 +353,6 @@ module Track =
       |> Jsont.Object.opt_mem "title" Jsont.string
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
       |> Jsont.Object.opt_mem "recording" Recording.jsont
-      |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
   end
 
@@ -368,13 +360,12 @@ module Disc =
   struct
     type t =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
-        ignored : Jsont.json }
-    let make id ignored =
-      { id; ignored }
+      }
+    let make id =
+      { id }
     let jsont =
       Jsont.Object.map ~kind:"Disc" make
       |> Jsont.Object.mem "id" Jsont.string
-      |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
   end
 
@@ -386,13 +377,12 @@ module Medium =
         position : int option;
         title : string option;
         discs : Disc.t list;
-        tracks : Track.t list;
-        ignored : Jsont.json }
+        tracks : Track.t list }
 
-    let make id position title discs tracks ignored =
+    let make id position title discs tracks =
       let discs = opt_list discs
       and tracks = opt_list tracks in
-      { id; position; title; discs; tracks; ignored }
+      { id; position; title; discs; tracks }
 
     let jsont =
       Jsont.Object.map ~kind:"Medium" make
@@ -401,15 +391,14 @@ module Medium =
       |> Jsont.Object.opt_mem "title" Jsont.string
       |> Jsont.Object.opt_mem "discs" Jsont.(list Disc.jsont)
       |> Jsont.Object.opt_mem "tracks" Jsont.(list Track.jsont)
-      |> Jsont.Object.keep_unknown Jsont.json_mems
       |> Jsont.Object.finish
 
     let print m =
       let open Printf in
-      printf "id = %s\n" m.id;
-      printf "#%03d: %s\n"
-        (match m.position with None -> 0 | Some i -> i)
-        (match m.title with None -> "???" | Some s -> s);
+      printf "medium: id = %s\n" m.id;
+      printf "        #%03d: %s\n"
+        (Option.value m.position ~default:(-1))
+        (Option.value m.title ~default:"(no title)");
       ()
 
   end
@@ -434,6 +423,11 @@ module Release =
       |> Jsont.Object.finish
   end
 
+type disc =
+  { medium : Medium.t;
+    title : string option;
+    artist_credit : Artist_Credit.t list }
+
 let release_of_mbid ~root mbid =
   let* text = Release_cached.get ~root mbid in
   Jsont_bytesrw.decode_string Release.jsont text
@@ -441,11 +435,26 @@ let release_of_mbid ~root mbid =
 let contains_discid discid medium =
   List.exists (fun disc -> discid = disc.Disc.id) medium.Medium.discs
 
-let media_of_discid ~root discid =
+let discs_of_discid ~root discid =
   let* releases = releases_of_discid ~root discid in
   List.fold_left
     (fun acc mbid ->
       let* acc = acc
       and* release = release_of_mbid ~root mbid in
-      Ok (List.filter (contains_discid discid) release.Release.media @ acc))
+      let title = release.Release.title
+      and artist_credit = release.Release.artist_credit
+      and media = List.filter (contains_discid discid) release.Release.media in
+      let discs = List.map (fun medium -> { medium; title; artist_credit}) media in
+      Ok (discs @ acc))
     (Ok []) releases
+
+let disc_of_discid ~root discid =
+  let* discs = discs_of_discid ~root discid in
+  match discs with
+  | [disc] -> Ok disc
+  | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
+  | _ -> Error (Printf.sprintf "multiple released discs for discid '%s'" discid)
+
+let print_disc disc =
+  Printf.printf "Release: %s\n" (Option.value disc.title ~default:"(no title)");
+  Medium.print disc.medium

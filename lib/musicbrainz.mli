@@ -127,7 +127,6 @@ module Artist : sig
                                      from ensemble names. *)
       artist_type : string option; (** {e Is there an exhaustive list?} *)
       disambiguation : string option; (** {e Is there an exhaustive list?} *)
-      ignored : Jsont.json (** Currently ignored JSON elements. *)
     }
 (** {v
      <define name="def_artist-element">
@@ -270,8 +269,7 @@ module Artist_Credit : sig
 
   type t =
     { name : string option;
-      artist : Artist.t option;
-      ignored : Jsont.json }
+      artist : Artist.t option }
 (** {v
      <define name="def_artist-credit">
          <element name="artist-credit">
@@ -306,8 +304,7 @@ module Recording : sig
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       title : string option;
-      artist_credit : Artist_Credit.t list;
-      ignored : Jsont.json }
+      artist_credit : Artist_Credit.t list }
 (** {v
      <define name="def_recording-element">
          <element name="recording">
@@ -397,8 +394,7 @@ module Track : sig
       position : int option;
       title : string option;
       artist_credit : Artist_Credit.t list;
-      recording : Recording.t option;
-      ignored : Jsont.json }
+      recording : Recording.t option }
 (** {v
      <define name="def_track-data">
          <optional>
@@ -441,7 +437,7 @@ module Disc : sig
 
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
-      ignored : Jsont.json }
+    }
 (** {v
      <define name="def_disc-element">
          <element name="disc">
@@ -476,8 +472,7 @@ module Medium : sig
       position : int option;
       title : string option;
       discs : Disc.t list; (** Is this relevant for us?  There are no titles or credits. *)
-      tracks : Track.t list;
-      ignored : Jsont.json }
+      tracks : Track.t list }
 (** {v
      <define name="def_medium">
          <element name="medium">
@@ -659,6 +654,14 @@ module Release : sig
 
 end
 
-val media_of_discid : root:string -> string -> (Medium.t list, string) result
-(** Find the release matching the diskid. *)
+type disc =
+  { medium : Medium.t;
+    title : string option;
+    artist_credit : Artist_Credit.t list }
+
+val disc_of_discid : root:string -> string -> (disc, string) result
+(** Find the released disc matching the discid. *)
+
+val print_disc : disc -> unit
+(** Exploration, WIP ... *)
 
