@@ -286,14 +286,45 @@ module Release_cached = Cached (Release_table)
 
 module Artist =
   struct
+
+    type artist_type =
+      | Person
+      | Group
+      | Orchestra
+      | Choir
+      | Character
+      | Other
+      | Extended of string
+
+    let artist_type_of_string = function
+      | "Person" -> Person
+      | "Group" -> Group
+      | "Orchestra" -> Orchestra
+      | "Choir" -> Choir
+      | "Character" -> Character
+      | "Other" -> Other
+      | s -> Extended s
+
+    let artist_type_to_string = function
+      | Person -> "Person"
+      | Group -> "Group"
+      | Orchestra -> "Orchestra"
+      | Choir -> "Choir"
+      | Character -> "Character"
+      | Other -> "Other"
+      | Extended s -> "?" ^ s ^ "?"
+
     type t =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         name : string option;
         sort_name : string option;
-        artist_type : string option;
+        artist_type : artist_type option;
         disambiguation : string option }
+
     let make id name sort_name artist_type disambiguation =
+      let artist_type = Option.map artist_type_of_string artist_type in
       { id; name; sort_name; artist_type; disambiguation }
+
     let jsont =
       Jsont.Object.map ~kind:"Artist" make
       |> Jsont.Object.mem "id" Jsont.string
@@ -302,20 +333,37 @@ module Artist =
       |> Jsont.Object.opt_mem "type" Jsont.string
       |> Jsont.Object.opt_mem "disambiguation" Jsont.string
       |> Jsont.Object.finish
+
+    let to_string a =
+      (Option.value a.sort_name ~default:(Option.value a.name ~default:"(anonymous)"))
+      ^ (match a.disambiguation with
+         | None | Some "" -> ""
+         | Some s -> " (" ^ s ^ ")")
+      ^ (Option.fold ~none:"" ~some:(fun t -> " [" ^ artist_type_to_string t ^ "]") a.artist_type)
+
   end
 
 module Artist_Credit =
   struct
+
     type t =
       { name : string option;
         artist : Artist.t option }
+
     let make name artist =
       { name; artist }
+
     let jsont =
       Jsont.Object.map ~kind:"Artist_Credit" make
       |> Jsont.Object.opt_mem "name" Jsont.string
       |> Jsont.Object.opt_mem "artist" Artist.jsont
       |> Jsont.Object.finish
+
+    let to_string c =
+      match c.artist with
+      | Some artist -> Artist.to_string artist
+      | None -> Option.value c.name ~default:"(anonymous)"
+
   end
 
 module Recording =
@@ -395,10 +443,11 @@ module Medium =
 
     let print m =
       let open Printf in
-      printf "medium: id = %s\n" m.id;
-      printf "        #%03d: %s\n"
-        (Option.value m.position ~default:(-1))
-        (Option.value m.title ~default:"(no title)");
+      printf "Disc %2d: %s\n"
+        (Option.value m.position ~default:0)
+        (match m.title with
+         | None | Some "" -> "[" ^ m.id ^ "]"
+         | Some s -> s);
       ()
 
   end
@@ -456,5 +505,12 @@ let disc_of_discid ~root discid =
   | _ -> Error (Printf.sprintf "multiple released discs for discid '%s'" discid)
 
 let print_disc disc =
-  Printf.printf "Release: %s\n" (Option.value disc.title ~default:"(no title)");
+  let open Printf in
+  printf "Release: %s\n" (Option.value disc.title ~default:"(no title)");
+  begin match disc.artist_credit with
+  | [] -> ()
+  | c :: clist ->
+     printf "Artists: %s\n" (Artist_Credit.to_string c);
+     List.iter (fun c -> printf "         %s\n" (Artist_Credit.to_string c)) clist
+  end;
   Medium.print disc.medium

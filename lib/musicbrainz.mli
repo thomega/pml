@@ -117,6 +117,18 @@ module Release_cached : Cached
 
 module Artist : sig
 
+  type artist_type =
+    | Person
+    | Group
+    | Orchestra
+    | Choir
+    | Character
+    | Other
+    | Extended of string
+
+  val artist_type_of_string : string -> artist_type
+  val artist_type_to_string : artist_type -> string
+
   type t =
     { id : string; (** The MBID (i.e. UUID) of the artist.  While this is
                        declared as optional in the DTD, we can safely assume
@@ -125,7 +137,7 @@ module Artist : sig
       sort_name : string option; (** The name in last name, first name order
                                      for persons and with articles removed
                                      from ensemble names. *)
-      artist_type : string option; (** {e Is there an exhaustive list?} *)
+      artist_type : artist_type option;
       disambiguation : string option; (** {e Is there an exhaustive list?} *)
     }
 (** {v
@@ -263,6 +275,8 @@ module Artist : sig
      </define>
      v} *)
 
+  val to_string : t -> string
+
 end
 
 module Artist_Credit : sig
@@ -296,6 +310,8 @@ module Artist_Credit : sig
          </element>
      </define>
      v} *)
+
+  val to_string : t -> string
 
 end
 
