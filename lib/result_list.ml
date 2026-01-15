@@ -1,0 +1,19 @@
+open Result.Syntax
+
+let rec map f = function
+  | Error _ as e -> e
+  | Ok [] -> Ok []
+  | Ok (a :: alist) ->
+     let* fa = f a
+     and* falist = map f (Ok alist) in
+     Ok (fa :: falist)
+
+let%test _ =
+  map (fun i -> Ok (10 * i)) (Ok []) = Ok []
+
+let%test _ =
+  map (fun i -> Ok (10 * i)) (Ok [1]) = Ok [10]
+
+let%test _ =
+  map (fun i -> Ok (10 * i)) (Ok [1; 2; 3]) = Ok [10; 20; 30]
+
