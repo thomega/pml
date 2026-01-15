@@ -5,7 +5,7 @@ module type Error =
     (** On Error, Musicbrainz returns and error message *)
 
     val get_error_opt : string -> string option
-    (** Check if the JSON contains an top level ["error"] element.
+    (** Check if the JSON contains a top level [error] element.
         Ignores parsing errors.  They must be handled subsequently. *)
 
   end
@@ -13,7 +13,7 @@ module type Error =
 
 module Error : Error
 (** Use [Error.get_error_opt] to test if the response contains
-    and ["error"] element with a message. *)
+    an [error] element with a message. *)
 
 module type Raw =
   sig
@@ -68,14 +68,52 @@ module type Cached =
     traffic when finetuning the tagging of tracks. *)
 
 module Discid_cached : Cached
-(** Find information stored about a disc, in particular the releases. *)
+(** Access information about a disc, in particular the MBIDs of the
+    releases containing the disc, by the [discid]. *)
+
+(** {v
+     <element name="disc">
+         <attribute name="id">
+             <data type="string">
+                 <param name="pattern">[a-zA-Z0-9._]{27}-</param>
+             </data>
+         </attribute>
+         ...    
+     </element>
+     v} *)
+
+(** The
+    {{: https://github.com/metabrainz/libmusicbrainz/blob/master/examples/cdlookup_c.c }old example}
+    in the MusicBrainz sources suggests that it is impossible to
+    get all information from a single [discid] lookup.  This is (no longer?)
+    correct: we could access all required information in one step by
+    adding [inc=artist-credits+recordings] to the request.   However,
+    this results in substational redundancy, whenever a release contains
+    many discs, as the information is repeated for every disc in the release.
+
+    Therefore, we continue to use the two step approach suggested by the example. *)
 
 val releases_of_discid : root:string -> string -> (string list, string) result
 (** There can be more than one release of a given disc.  Return
-    them as a list of MBID/UUID strings. *)
+    them as a list of MBID strings. *)
+
+val valid_mbid : string -> (string, string) result
+(** Check that a string is a MBID (i.e. UUID)
+    {v
+     <define name="def_uuid">
+         <data type="string">
+             <param name="pattern">[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}</param>
+         </data>
+     </define>
+     v}
+     Note that this does not reject upper case hexadecimals and
+     silently changes them to lowercase instead. *)
 
 module Release_cached : Cached
-(** Find information stored about a release: tracks, artists, etc. *)
+(** Access more detailled information about a release from its MBID: tracks, artists, etc. *)
+
+(** Note that we {e must not} replace [artist] elements by their MBID, since there can
+    be additional elements, in particular [disambiguation]. *)
 
 module Artist : sig
 

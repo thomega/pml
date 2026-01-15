@@ -154,32 +154,34 @@ module Discid_table : Table =
 
   end
 
+(* A MBID/UUID: 8-4-4-4-12 hex digits [0-9a-fA-F] *)
+
+let hexrep n =
+  Re.(repn xdigit n (Some n))
+
+let re_uuid =
+  Re.(seq [start;
+           hexrep 8; set "-";
+           hexrep 4; set "-";
+           hexrep 4; set "-";
+           hexrep 4; set "-";
+           hexrep 12;
+           stop]
+      |> compile)
+
+let is_uuid s =
+  Re.execp re_uuid s
+
+let valid_mbid mbid =
+  if is_uuid mbid then
+    Ok (String.lowercase_ascii mbid)
+  else
+    Error (Printf.sprintf "'%s' is not a valid MBID" mbid)
+
 module Release_table : Table =
   struct
 
-    (* A MBID/UUID: 8-4-4-4-12 hex digits [0-9a-fA-F] *)
-
-    let hexrep n =
-      Re.(repn xdigit n (Some n))
-
-    let re_uuid =
-      Re.(seq [start;
-               hexrep 8; set "-";
-               hexrep 4; set "-";
-               hexrep 4; set "-";
-               hexrep 4; set "-";
-               hexrep 12;
-               stop]
-          |> compile)
-
-    let is_uuid s =
-      Re.execp re_uuid s
-
-    let valid_key mbid =
-      if is_uuid mbid then
-        Ok (String.lowercase_ascii mbid)
-      else
-        Error (Printf.sprintf "'%s' is not a valid MBID" mbid)
+    let valid_key = valid_mbid
 
     let query =
       Query.{ table = "release";
