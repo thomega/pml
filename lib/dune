@@ -2,7 +2,7 @@
   (name pml)
   (public_name pml)
   (modules
-    Musicbrainz Work Discid Query Cache)
+    Musicbrainz Work Discid Query Cache Option_syntax)
   (private_modules )
   ; (wrapped false)
   (inline_tests)
