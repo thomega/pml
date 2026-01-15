@@ -1,3 +1,5 @@
+(** Query the MusicBrainz API. *)
+
 type api
 (** Options defining a web API. *)
 

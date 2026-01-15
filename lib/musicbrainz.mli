@@ -1,3 +1,5 @@
+(** Cache and process JSON responses of the MusicBrainz database. *)
+
 module type Error =
   sig
 

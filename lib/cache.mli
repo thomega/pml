@@ -1,3 +1,5 @@
+(** Cache JSON or other text strings indexed by key strings in a directory. *)
+
 module type T =
   sig
 

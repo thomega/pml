@@ -1,3 +1,5 @@
+(** WIP: tags and file system layout for musical works ripped from disc(s). *)
+
 module Artist : sig
   type t =
     { id : string;

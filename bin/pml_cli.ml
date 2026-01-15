@@ -206,10 +206,6 @@ module Query_Disc : Exit_Cmd =
       let doc = "Print the discid as recognized by MusicBrainz." in
       Arg.(value & flag & info ["i"; "id"] ~doc)
 
-    let print_freedb =
-      let doc = "Print the discid as recognized by FreeDB." in
-      Arg.(value & flag & info ["f"; "freedb"] ~doc)
-
     let print_toc =
       let doc = "Print the table of contents of the discid as used
                  for fuzzy searches on MusicBrainz." in
@@ -222,14 +218,14 @@ module Query_Disc : Exit_Cmd =
       let doc = Printf.sprintf "Choose CD-ROM device." in
       Arg.(value & opt string default_device & info ["d"; "device"] ~doc)
 
-    let query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_freedb ~print_toc =
+    let query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_toc =
       if verbose then
         Printf.printf "querying %s ...\n" device;
       match Pml.Discid.get ~device () with
       | Result.Ok ids ->
          begin
-           if not lookup && not print_id && not print_freedb && not print_toc then
-             Printf.printf "id = %s\nfreedb = %s\ntoc = %s\n" ids.id ids.freedb ids.toc
+           if not lookup && not print_id && not print_toc then
+             Printf.printf "id = %s\ntoc = %s\n" ids.id ids.toc
            else if lookup then
              begin match Pml.Musicbrainz.Discid_cached.get ~root:cache ids.id with
              | Error msg -> Printf.eprintf "error: %s\n" msg
@@ -240,8 +236,6 @@ module Query_Disc : Exit_Cmd =
              end
            else if print_id then
              print_endline ids.id
-           else if print_freedb then
-             print_endline ids.freedb
            else if print_toc then
              print_endline ids.toc
          end;
@@ -253,8 +247,8 @@ module Query_Disc : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "disc" ~man) @@
-        let+ device and+ verbose and+ cache and+ lookup and+ print_id and+ print_freedb and+ print_toc in
-        query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_freedb ~print_toc
+        let+ device and+ verbose and+ cache and+ lookup and+ print_id and+ print_toc in
+        query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_toc
 
 end
 

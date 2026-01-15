@@ -1,3 +1,5 @@
+(** Compute the disc identifier(s) used by thr MusicBrainz database. *)
+
 type t =
   { id : string; (** The disc identifier used by MusicBrainz.
                      It is a 28 character BASE64 string
@@ -11,7 +13,7 @@ type t =
 (** See the {{: https://musicbrainz.org/doc/Disc_ID_Calculation }MusicBrainz documentation}
     for details. *)
 
-val get : ?device:string -> unit -> (t, string) Result.t
+val get : ?device:string -> unit -> (t, string) result
 (** Get the disc identifiers from the CD in [device].
     The default for [device] is taken from [default_device ()]. *)
 
