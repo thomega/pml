@@ -486,15 +486,16 @@ let contains_discid discid medium =
 
 let discs_of_discid ~root discid =
   let* releases = releases_of_discid ~root discid in
-  Result_list.fold_left
-    (fun acc mbid ->
-      let* release = release_of_mbid ~root mbid in
-      let title = release.Release.title
-      and artist_credit = release.Release.artist_credit
-      and media = List.filter (contains_discid discid) release.Release.media in
-      let discs = List.map (fun medium -> { medium; title; artist_credit}) media in
-      Ok (discs @ acc))
-    [] releases
+  let* discs =
+    Result_list.map
+      (fun mbid ->
+        let* release = release_of_mbid ~root mbid in
+        let title = release.Release.title
+        and artist_credit = release.Release.artist_credit
+        and media = List.filter (contains_discid discid) release.Release.media in
+        Ok (List.map (fun medium -> { medium; title; artist_credit}) media))
+      releases in
+  Ok (List.concat discs)
 
 let disc_of_discid ~root discid =
   let* discs = discs_of_discid ~root discid in
