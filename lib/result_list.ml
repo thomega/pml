@@ -23,8 +23,7 @@ let tl err alist =
 let rec map f = function
   | [] -> Ok []
   | a :: alist ->
-     let* fa = f a
-     and* falist = map f alist in
+     let* fa = f a and* falist = map f alist in
      Ok (fa :: falist)
 
 let%test _ =
@@ -36,20 +35,21 @@ let%test _ =
 let%test _ =
   map (fun i -> Ok (10 * i)) [1; 2; 3] = Ok [10; 20; 30]
 
-let rec map' f alist =
-  let* alist in
-  match alist with
-  | [] -> Ok []
+let%test _ =
+  map (fun i -> if i = 2 then Error i else Ok (10 * i)) [1; 2; 3] = Error 2
+
+let%test _ =
+  map (fun i -> if i = 2 || i = 3 then Error i else Ok (10 * i)) [1; 2; 3] = Error 2
+
+let%test _ =
+  map (fun i -> if i = 7 then Error i else Ok (10 * i)) [1; 2; 3] = Ok [10; 20; 30]
+
+let rec fold_left' f acc = function
+  | [] -> acc
   | a :: alist ->
-     let* fa = f a
-     and* falist = map' f (Ok alist) in
-     Ok (fa :: falist)
+     let* acc in
+     let fa = f acc a in
+     fold_left' f fa alist
 
-let%test _ =
-  map' (fun i -> Ok (10 * i)) (Ok []) = Ok []
-
-let%test _ =
-  map' (fun i -> Ok (10 * i)) (Ok [1]) = Ok [10]
-
-let%test _ =
-  map' (fun i -> Ok (10 * i)) (Ok [1; 2; 3]) = Ok [10; 20; 30]
+let fold_left f acc alist =
+  fold_left' f (Ok acc) alist
