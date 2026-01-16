@@ -368,19 +368,37 @@ module Artist_Credit =
 
 module Recording =
   struct
+
     type t =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         title : string option;
         artist_credit : Artist_Credit.t list }
+
     let make id title artist_credit =
       let artist_credit = opt_list artist_credit in
       { id; title; artist_credit }
+
     let jsont =
       Jsont.Object.map ~kind:"Recording" make
       |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.opt_mem "title" Jsont.string
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
       |> Jsont.Object.finish
+
+    let print r =
+      let open Printf in
+      printf "      Rec.: %s\n"
+        (match r.title with
+         | None | Some "" -> "[" ^ r.id ^ "]"
+         | Some s -> s);
+      begin match r.artist_credit with
+      | [] -> ()
+      | c :: clist ->
+         printf "      Art.: %s\n" (Artist_Credit.to_string c);
+         List.iter (fun c -> printf "            %s\n" (Artist_Credit.to_string c)) clist
+      end;
+      ()
+
   end
 
 module Track =
@@ -408,7 +426,7 @@ module Track =
 
     let print n t =
       let open Printf in
-      printf "Trk  %2d.%02d: %s\n"
+      printf "  Trk%2d.%02d: %s\n"
         n
         (Option.value t.position ~default:0)
         (match t.title with
@@ -417,8 +435,12 @@ module Track =
       begin match t.artist_credit with
       | [] -> ()
       | c :: clist ->
-         printf "   Artists: %s\n" (Artist_Credit.to_string c);
+         printf "      Art.: %s\n" (Artist_Credit.to_string c);
          List.iter (fun c -> printf "            %s\n" (Artist_Credit.to_string c)) clist
+      end;
+      begin match t.recording with
+      | None -> ()
+      | Some r -> Recording.print r
       end;
       ()
 
