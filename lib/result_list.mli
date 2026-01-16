@@ -7,6 +7,8 @@ val tl : 'e -> ('a list, 'e) result -> ('a list, 'e) result
 
 val map : ('a -> ('b, 'e) result) -> 'a list -> ('b list, 'e) result
 (** Like [List.map] but with early exit error handling.
+    The returned error will be the one of the {e first}
+    element in the list causing an error.
     {e Not} tail recursive and not even tail-mod-cons,
     because we must inspect the results. *)
 
@@ -20,4 +22,9 @@ val map : ('a -> ('b, 'e) result) -> 'a list -> ('b list, 'e) result
      v} *)
 
 val fold_left : ('a -> 'b -> ('a, 'e) result) -> 'a -> 'b list -> ('a, 'e) result
-(** Like [List.fold_left] but with early exit error handling. *)
+(** Like [List.fold_left] but with error handling.  The returned error will be
+    the one of the {e first} element in the list causing an error. *)
+
+val fold_right : ('a -> 'b -> ('b, 'e) result) -> 'a list -> 'b -> ('b, 'e) result
+(** Like [List.fold_right] but with error handling.  The returned error will be
+    the one of the {e last} element in the list causing an error. *)
