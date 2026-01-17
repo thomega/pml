@@ -2,20 +2,20 @@
 
 module Artist : sig
   type t =
-    { id : string;
-      name : string;
-      sort_name : string option;
-      part : string option;
-      role : string option }
+    { name : string option (** The [sort_name] if available, accept [name] as substitute. *) ;
+      aliases : string list (** Other names. *);
+      artist_type : Musicbrainz.Artist.artist_type;
+      role : string option (** Conductor, singer, instrumentalist, etc. *);
+      id : string }
   val of_mb : Musicbrainz.Artist.t -> t
 end
 
 module Track : sig
   type t =
-    { id : string;
-      number : int;  (** Overall position of the track in the whole work, counting from 1. *)
+    { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
       title : string;
-      performers : Artist.t list }
+      performers : Artist.t list;
+      id : string }
   val of_mb : Musicbrainz.Track.t -> t
 end
 
