@@ -36,6 +36,17 @@ module Artist =
 
   end
 
+module All_tracks =
+  struct
+    type t =
+      { title : string;
+        composers : Artist.t list;
+        performers : Artist.t list;
+        tracks : int }
+    let of_mb () =
+      failwith "missing"
+  end
+
 module Track =
   struct
 
@@ -43,6 +54,7 @@ module Track =
       { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
         title : string;
         performers : Artist.t list;
+        inherited : All_tracks.t;
         id : string }
 
     let of_mb mb =
@@ -51,7 +63,8 @@ module Track =
       let number = 0 in
       let title = "" in
       let performers = [] in
-      { id; number; title; performers }
+      let inherited = All_tracks.of_mb () in
+      { id; number; title; performers; inherited }
 
   end
 

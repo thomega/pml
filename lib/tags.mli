@@ -10,11 +10,21 @@ module Artist : sig
   val of_mb : Musicbrainz.Artist.t -> t
 end
 
+module All_tracks : sig
+  type t =
+    { title : string;
+      composers : Artist.t list;
+      performers : Artist.t list;
+      tracks : int }
+  val of_mb : unit -> t
+end
+
 module Track : sig
   type t =
     { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
       title : string;
       performers : Artist.t list;
+      inherited : All_tracks.t;
       id : string }
   val of_mb : Musicbrainz.Track.t -> t
 end
