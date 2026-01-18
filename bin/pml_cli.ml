@@ -59,7 +59,16 @@ module Cachetest : Exit_Cmd =
       let doc = Printf.sprintf "List all cached releases." in
       Arg.(value & flag & info ["R"; "list_releases"] ~doc)
 
-    let cache_tool ~cache ~normalize ?discid ?release ~discid_list ~release_list () =
+    let artist =
+      let doc = Printf.sprintf "Lookup by artist." in
+      Arg.(value & opt (some string) None & info ["a"; "artist"] ~docv:"artist" ~doc)
+
+    let artist_list =
+      let doc = Printf.sprintf "List all cached artists." in
+      Arg.(value & flag & info ["A"; "list_artists"] ~doc)
+
+    let cache_tool ~cache ~normalize ?discid ?release ?artist
+          ~discid_list ~release_list ~artist_list () =
       let module MB = Pml.Musicbrainz in
       if discid_list then
         match
@@ -74,6 +83,14 @@ module Cachetest : Exit_Cmd =
           let open Result.Syntax in
           let* releases = MB.Release_cached.all_local ~root:cache in
           Ok (List.iter (fun (release, _) -> print_endline release) releases)
+        with
+        | Error msg -> prerr_endline msg; 1
+        | Ok _ -> 0
+      else if artist_list then
+        match
+          let open Result.Syntax in
+          let* artists = MB.Biography_cached.all_local ~root:cache in
+          Ok (List.iter (fun (artist, _) -> print_endline artist) artists)
         with
         | Error msg -> prerr_endline msg; 1
         | Ok _ -> 0
@@ -93,28 +110,43 @@ module Cachetest : Exit_Cmd =
              begin match MB.Release_cached.Internal.map ~root:cache release MB.Raw.normalize with
              | Error msg -> Printf.eprintf "error: %s\n" msg; 1
              | Ok () -> 0
+             end
+        and rc_artist =
+          match artist with
+          | None -> 0
+          | Some artist ->
+             begin match MB.Biography_cached.Internal.map ~root:cache artist MB.Raw.normalize with
+             | Error msg -> Printf.eprintf "error: %s\n" msg; 1
+             | Ok () -> 0
              end in
-        rc_discid + rc_release
+        rc_discid + rc_release + rc_artist
       else
-        match discid, release with
-        | None, None -> 0
-        | Some _, Some _ -> 1
-        | Some discid, None ->
+        match discid, release, artist with
+        | None, None, None -> 0
+        | Some discid, None, None ->
            begin match MB.Discid_cached.get ~root:cache discid with
            | Error msg -> Printf.eprintf "error: %s\n" msg; 1
            | Ok json -> print_endline json; 0
            end
-        | None, Some release ->
+        | None, Some release, None ->
            begin match MB.Release_cached.get ~root:cache release with
            | Error msg -> Printf.eprintf "error: %s\n" msg; 1
            | Ok json -> print_endline json; 0
            end
+        | None, None, Some artist ->
+           begin match MB.Biography_cached.get ~root:cache artist with
+           | Error msg -> Printf.eprintf "error: %s\n" msg; 1
+           | Ok json -> print_endline json; 0
+           end
+        | _ -> 1
 
     let cmd =
       let open Cmd in
       make (info "cache" ~man) @@
-        let+ cache and+ normalize and+ discid and+ release and+ discid_list and+ release_list in
-        cache_tool ~cache ~normalize ?discid ?release ~discid_list ~release_list ()
+        let+ cache and+ normalize and+ discid and+ release and+ artist
+           and+ discid_list and+ release_list and+ artist_list in
+        cache_tool ~cache ~normalize ?discid ?release ?artist
+          ~discid_list ~release_list ~artist_list ()
 
   end
 

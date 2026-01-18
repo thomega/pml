@@ -114,6 +114,10 @@ val valid_mbid : string -> (string, string) result
 module Release_cached : Cached
 (** Access more detailled information about a release from its MBID: tracks, artists, etc. *)
 
+module Biography_cached : Cached
+(** Access more detailled information about an artist: life span and aliases.
+    {b The lifespan can be used for distinguishing composers from performers!} *)
+
 (** Note that we {e must not} replace [artist] elements by their MBID, since there can
     be additional elements, in particular [disambiguation]. *)
 

@@ -185,9 +185,20 @@ module Release_table : Table =
 
     let query =
       Query.{ table = "release";
-              inc = ["artists"; "artist-credits"; "recordings";
-                     "release-groups"; "discids";
+              inc = ["artists"; "artist-credits"; "aliases";
+                     "recordings"; "release-groups"; "discids";
                      "url-rels"; "labels"; ] }
+
+  end
+
+module Biography_table : Table =
+  struct
+
+    let valid_key = valid_mbid
+
+    let query =
+      Query.{ table = "artist";
+              inc = ["aliases"] }
 
   end
 
@@ -283,6 +294,8 @@ let releases_of_discid ~root discid =
   | releases -> Ok (List.map (fun r -> r.Release_Short.id) releases)
 
 module Release_cached = Cached (Release_table)
+
+module Biography_cached = Cached (Biography_table)
 
 module Artist =
   struct
