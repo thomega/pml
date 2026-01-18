@@ -89,7 +89,7 @@ module Cachetest : Exit_Cmd =
       else if artist_list then
         match
           let open Result.Syntax in
-          let* artists = MB.Biography_cached.all_local ~root:cache in
+          let* artists = MB.Artist_cached.all_local ~root:cache in
           Ok (List.iter (fun (artist, _) -> print_endline artist) artists)
         with
         | Error msg -> prerr_endline msg; 1
@@ -115,7 +115,7 @@ module Cachetest : Exit_Cmd =
           match artist with
           | None -> 0
           | Some artist ->
-             begin match MB.Biography_cached.Internal.map ~root:cache artist MB.Raw.normalize with
+             begin match MB.Artist_cached.Internal.map ~root:cache artist MB.Raw.normalize with
              | Error msg -> Printf.eprintf "error: %s\n" msg; 1
              | Ok () -> 0
              end in
@@ -134,7 +134,7 @@ module Cachetest : Exit_Cmd =
            | Ok json -> print_endline json; 0
            end
         | None, None, Some artist ->
-           begin match MB.Biography_cached.get ~root:cache artist with
+           begin match MB.Artist_cached.get ~root:cache artist with
            | Error msg -> Printf.eprintf "error: %s\n" msg; 1
            | Ok json -> print_endline json; 0
            end

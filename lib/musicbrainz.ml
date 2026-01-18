@@ -191,7 +191,7 @@ module Release_table : Table =
 
   end
 
-module Biography_table : Table =
+module Artist_table : Table =
   struct
 
     let valid_key = valid_mbid
@@ -295,7 +295,108 @@ let releases_of_discid ~root discid =
 
 module Release_cached = Cached (Release_table)
 
-module Biography_cached = Cached (Biography_table)
+module Artist_cached = Cached (Artist_table)
+
+module Date =
+  struct
+
+    type t =
+      { year : int;
+        month : int option;
+        day : int option }
+
+    let of_string_opt s =
+      match Scanf.sscanf_opt s "%4d-%2d-%2d"
+              (fun year month day -> { year; month = Some month; day = Some day }) with
+      | Some _ as d -> d
+      | None ->
+         begin match Scanf.sscanf_opt s "%4d-%2d"
+              (fun year month -> { year; month = Some month; day = None }) with
+         | Some _ as d -> d
+         | None ->
+            Scanf.sscanf_opt s "%4d" (fun year -> { year; month = None; day = None })
+         end
+
+    let of_opt_string_opt s_opt =
+      match s_opt with
+      | None -> None
+      | Some s -> of_string_opt s
+
+    let compare_opt o1 o2 =
+      match o1, o2 with
+      | Some i1, Some i2 -> Int.compare i1 i2
+      | None, Some _ -> -1
+      | Some _, None -> 1
+      | None, None -> 0
+
+    let compare d1 d2 =
+      let c = Int.compare d1.year d2.year in
+      if c <> 0 then
+        c
+      else
+        let c = compare_opt d1.month d2.month in
+        if c <> 0 then
+          c
+        else
+          compare_opt d1.day d2.day
+
+    module Syntax =
+      struct
+        let ( = ) d1 d2 = compare d1 d2 = 0
+        let ( < ) d1 d2 = compare d1 d2 < 0
+        let ( <= ) d1 d2 = compare d1 d2 <= 0
+        let ( > ) d1 d2 = compare d1 d2 > 0
+        let ( >= ) d1 d2 = compare d1 d2 >= 0
+      end
+
+  end
+
+module Lifespan =
+  struct
+
+    type t =
+      { first : Date.t option;
+        last : Date.t option }
+
+    type relation =
+      | Before
+      | After
+      | Overlap
+
+    let relation ls1 ls2 =
+      let open Date.Syntax in
+      match ls1.first, ls1.last, ls2.first, ls2.last with
+      | Some first1, Some last1, Some first2, Some last2 ->
+         if last1 <= first2 then
+           Before
+         else if last2 <= first1 then
+           After
+         else
+           Overlap
+      | Some first1, None, _, Some last2 ->
+         if last2 <= first1 then
+           After
+         else
+           Overlap
+      | _, Some last1, Some first2, None  ->
+         if last1 <= first2 then
+           Before
+         else
+           Overlap
+      | _ -> Overlap
+
+    let make first last =
+      let first = Date.of_opt_string_opt first
+      and last = Date.of_opt_string_opt last in
+      { first; last }
+
+    let jsont =
+      Jsont.Object.map ~kind:"Lifespan" make
+      |> Jsont.Object.opt_mem "begin" Jsont.string
+      |> Jsont.Object.opt_mem "end" Jsont.string
+      |> Jsont.Object.finish
+
+  end
 
 module Artist =
   struct
@@ -332,11 +433,12 @@ module Artist =
         name : string option;
         sort_name : string option;
         artist_type : artist_type option;
+        lifespan : Lifespan.t option;
         disambiguation : string option }
 
-    let make id name sort_name artist_type disambiguation =
+    let make id name sort_name artist_type lifespan disambiguation =
       let artist_type = Option.map artist_type_of_string artist_type in
-      { id; name; sort_name; artist_type; disambiguation }
+      { id; name; sort_name; artist_type; lifespan; disambiguation }
 
     let jsont =
       Jsont.Object.map ~kind:"Artist" make
@@ -344,6 +446,7 @@ module Artist =
       |> Jsont.Object.opt_mem "name" Jsont.string
       |> Jsont.Object.opt_mem "sort-name" Jsont.string
       |> Jsont.Object.opt_mem "type" Jsont.string
+      |> Jsont.Object.opt_mem "life-span" Lifespan.jsont
       |> Jsont.Object.opt_mem "disambiguation" Jsont.string
       |> Jsont.Object.finish
 

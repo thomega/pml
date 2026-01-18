@@ -114,12 +114,58 @@ val valid_mbid : string -> (string, string) result
 module Release_cached : Cached
 (** Access more detailled information about a release from its MBID: tracks, artists, etc. *)
 
-module Biography_cached : Cached
+module Artist_cached : Cached
 (** Access more detailled information about an artist: life span and aliases.
     {b The lifespan can be used for distinguishing composers from performers!} *)
 
+module Date : sig
+
+  type t
+
+  val of_opt_string_opt : string option -> t option
+
+  val compare : t -> t -> int
+
+  module Syntax : sig
+    val ( = ) : t -> t -> bool
+    val ( < ) : t -> t -> bool
+    val ( <= ) : t -> t -> bool
+    val ( > ) : t -> t -> bool
+    val ( >= ) : t -> t -> bool
+  end
+
+end
+(** A date with varying precision in format ["YYYY-MM-DD"]. *)
+
+(** {v
+     <define name="def_incomplete-date">
+         <data type="string">
+             <param name="pattern">[0-9]{4}(-[0-9]{2})?(-[0-9]{2})?</param>
+         </data>
+     </define>
+     v} *)
+
+module Lifespan : sig
+
+  type t
+
+  type relation =
+    | Before
+    | After
+    | Overlap
+  (** if intervals are disjoint, we can assign composer
+      and performer roles unambigously. *)
+
+  val relation : t -> t -> relation
+  (** Check if intervals are disjoint. *)
+
+end
+
 (** Note that we {e must not} replace [artist] elements by their MBID, since there can
-    be additional elements, in particular [disambiguation]. *)
+    be additional elements, in particular [disambiguation].
+
+    {e Is this really true?  Isn't [disambiguation] unique and can be gotten from
+       looking up the [artist]?} *)
 
 module Artist : sig
 
@@ -144,6 +190,7 @@ module Artist : sig
                                      for persons and with articles removed
                                      from ensemble names. *)
       artist_type : artist_type option;
+      lifespan : Lifespan.t option;
       disambiguation : string option; (** {e Is there an exhaustive list?} *)
     }
 (** {v
