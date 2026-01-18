@@ -153,7 +153,7 @@ module Lifespan : sig
     | Before
     | After
     | Overlap
-  (** if intervals are disjoint, we can assign composer
+  (** If intervals are disjoint, we can assign composer
       and performer roles unambigously. *)
 
   val relation : t -> t -> relation
@@ -328,6 +328,8 @@ module Artist : sig
      </define>
      v} *)
 
+  val id : t -> string
+
   val to_string : t -> string
 
 end
@@ -363,6 +365,8 @@ module Artist_Credit : sig
          </element>
      </define>
      v} *)
+
+  val artists : t -> string list
 
   val to_string : t -> string
 
@@ -454,6 +458,8 @@ module Recording : sig
      </define>
      v} *)
 
+  val artists : t -> string list
+
 end
 
 module Track : sig
@@ -499,6 +505,8 @@ module Track : sig
          </optional>
      </define>
      v} *)
+
+  val artists : t -> string list
 
 end
 
@@ -581,6 +589,8 @@ module Medium : sig
          </element>
      </define>
      v} *)
+
+  val artists : t -> string list
 
   val print : t -> unit
 
@@ -730,6 +740,8 @@ type disc =
 
 val disc_of_discid : root:string -> string -> (disc, string) result
 (** Find the released disc matching the discid. *)
+
+val artists_on_disc : disc -> string list
 
 val print_disc : disc -> unit
 (** Exploration, WIP ... *)

@@ -450,6 +450,8 @@ module Artist =
       |> Jsont.Object.opt_mem "disambiguation" Jsont.string
       |> Jsont.Object.finish
 
+    let id a = a.id
+
     let to_string a =
       (Option.value a.sort_name ~default:(Option.value a.name ~default:"(anonymous)"))
       ^ (match a.disambiguation with
@@ -474,6 +476,10 @@ module Artist_Credit =
       |> Jsont.Object.opt_mem "name" Jsont.string
       |> Jsont.Object.opt_mem "artist" Artist.jsont
       |> Jsont.Object.finish
+
+    let artists c =
+      Option.to_list c.artist
+      |> List.map Artist.to_string
 
     let to_string c =
       match c.artist with
@@ -500,6 +506,9 @@ module Recording =
       |> Jsont.Object.opt_mem "title" Jsont.string
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
       |> Jsont.Object.finish
+
+    let artists c =
+      List.concat_map Artist_Credit.artists c.artist_credit
 
     let print r =
       let open Printf in
@@ -539,6 +548,10 @@ module Track =
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
       |> Jsont.Object.opt_mem "recording" Recording.jsont
       |> Jsont.Object.finish
+
+    let artists t =
+      List.concat_map Recording.artists (Option.to_list t.recording)
+      @ List.concat_map Artist_Credit.artists t.artist_credit
 
     let print n t =
       let open Printf in
@@ -598,6 +611,9 @@ module Medium =
       |> Jsont.Object.opt_mem "discs" Jsont.(list Disc.jsont)
       |> Jsont.Object.opt_mem "tracks" Jsont.(list Track.jsont)
       |> Jsont.Object.finish
+
+    let artists m =
+      List.concat_map Track.artists m.tracks
 
     let print m =
       let open Printf in
@@ -663,6 +679,10 @@ let disc_of_discid ~root discid =
   | [disc] -> Ok disc
   | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
   | _ -> Error (Printf.sprintf "multiple released discs for discid '%s'" discid)
+
+let artists_on_disc d =
+  List.concat_map Artist_Credit.artists d.artist_credit
+    @ Medium.artists d.medium
 
 let print_disc disc =
   let open Printf in
