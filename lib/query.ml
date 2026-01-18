@@ -37,7 +37,13 @@ let write_to buffer data =
   Buffer.add_string buffer data;
   String.length data
 
+let last_curl = ref 0.0
+let curl_interval = 2.0
+
 let curl ?timeout ~user_agent url =
+  let wait = !last_curl -. Unix.time () +. curl_interval in
+  if wait >= 0. then
+    Unix.sleepf wait;
   let result = Buffer.create 16384
   and error_response = ref "" in
   Curl.global_init Curl.CURLINIT_GLOBALALL;
@@ -52,11 +58,13 @@ let curl ?timeout ~user_agent url =
     Curl.perform curl;
     Curl.cleanup curl;
     Curl.global_cleanup ();
+    last_curl := Unix.time ();
     Ok (Buffer.contents result)
   with
   | Curl.CurlException (curlcode, _code, _msg) ->
      begin
        Curl.global_cleanup ();
+       last_curl := Unix.time ();
        match !error_response with
        | "" -> Error (Curl.strerror curlcode)
        | s -> Error s
