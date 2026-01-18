@@ -37,13 +37,21 @@ let write_to buffer data =
   Buffer.add_string buffer data;
   String.length data
 
+(* We can live with an explicit state here, because
+   [libcurl] is stateful anyway. *)
 let last_curl = ref 0.0
 let curl_interval = 2.0
 
 let curl ?timeout ~user_agent url =
   let wait = !last_curl -. Unix.time () +. curl_interval in
-  if wait >= 0. then
-    Unix.sleepf wait;
+  if wait > 0. then
+    begin
+      Printf.printf "sleeping for %g seconds to pacify the MusicBrainz servers... " wait;
+      flush stdout;
+      Unix.sleepf wait;
+      Printf.printf "done.\n";
+      flush stdout
+    end;
   let result = Buffer.create 16384
   and error_response = ref "" in
   Curl.global_init Curl.CURLINIT_GLOBALALL;
