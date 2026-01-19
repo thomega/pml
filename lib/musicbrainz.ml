@@ -318,6 +318,16 @@ module Date =
         month : int option;
         day : int option }
 
+    let to_string t =
+      match t.month, t.day with
+      | None, None -> Printf.sprintf "%04d" t.year
+      | Some month, None -> Printf.sprintf "%04d-%02d" t.year month
+      | Some month, Some day -> Printf.sprintf "%04d-%02d-%02d" t.year month day
+      | None, Some day -> Printf.sprintf "%04d-??-%02d" t.year day
+
+    let year_to_string t =
+      Printf.sprintf "%4d" t.year
+
     let of_string_opt s =
       match Scanf.sscanf_opt s "%4d-%2d-%2d"
               (fun year month day -> { year; month = Some month; day = Some day }) with
@@ -368,8 +378,16 @@ module Lifespan =
   struct
 
     type t =
-      { first : Date.t option;
-        last : Date.t option }
+      | Alive of Date.t
+      | Dead of Date.t * Date.t
+      | Dead' of Date.t
+      | Limbo
+
+    let to_string = function
+      | Alive born -> "*" ^ Date.year_to_string born
+      | Dead (born, died) -> "*" ^ Date.year_to_string born ^ ", +" ^ Date.year_to_string died
+      | Dead' died -> "+" ^ Date.year_to_string died
+      | Limbo -> "*/+?"
 
     type relation =
       | Before
@@ -377,34 +395,6 @@ module Lifespan =
       | Overlap
 
     let relation ls1 ls2 =
-      let open Date.Syntax in
-      match ls1.first, ls1.last, ls2.first, ls2.last with
-      | Some first1, Some last1, Some first2, Some last2 ->
-         if last1 <= first2 then
-           Before
-         else if last2 <= first1 then
-           After
-         else
-           Overlap
-      | Some first1, None, _, Some last2 ->
-         if last2 <= first1 then
-           After
-         else
-           Overlap
-      | _, Some last1, Some first2, None  ->
-         if last1 <= first2 then
-           Before
-         else
-           Overlap
-      | _ -> Overlap
-
-    type t' =
-      | Alive of Date.t
-      | Dead of Date.t * Date.t
-      | Dead' of Date.t
-      | Limbo
-
-    let relation' ls1 ls2 =
       let open Date.Syntax in
       match ls1, ls2 with
       | Dead (b1, d1), Dead (b2, d2) ->
@@ -438,9 +428,12 @@ module Lifespan =
 
     (* We have to deal with both optional and nullable strings. *)
     let make first last =
-      let first = Date.of_opt_string_opt (Option.join first)
-      and last = Date.of_opt_string_opt (Option.join last) in
-      { first; last }
+      match Date.of_opt_string_opt (Option.join first),
+            Date.of_opt_string_opt (Option.join last) with
+      | Some born, Some died -> Dead (born, died)
+      | Some born, None -> Alive born
+      | None, Some died -> Dead' died
+      | None, None -> Limbo
 
     let jsont =
       Jsont.Object.map ~kind:"Lifespan" make
@@ -518,7 +511,8 @@ module Artist =
       ^ (match a.disambiguation with
          | None | Some "" -> ""
          | Some s -> " (" ^ s ^ ")")
-      ^ (Option.fold ~none:"" ~some:(fun t -> " [" ^ artist_type_to_string t ^ "]") a.artist_type)
+      ^ (Option.fold ~none:"" ~some:(fun t -> " {" ^ artist_type_to_string t ^ "}") a.artist_type)
+      ^ (Option.fold ~none:"" ~some:(fun ls -> " [" ^ Lifespan.to_string ls ^ "]") a.lifespan)
 
   end
 

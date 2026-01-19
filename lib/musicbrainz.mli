@@ -127,6 +127,8 @@ module Date : sig
 
   type t
 
+  val to_string : t -> string
+  val year_to_string : t -> string
   val of_opt_string_opt : string option -> t option
 
   val compare : t -> t -> int
@@ -152,24 +154,20 @@ end
 
 module Lifespan : sig
 
-  type t
+  type t =
+    | Alive of Date.t (** Known to be alive since. *)
+    | Dead of Date.t * Date.t (** Known to be have lived from/to. *)
+    | Dead' of Date.t (** Known to have lived until. *)
+    | Limbo (** Nothing known. *)
 
-  type t' =
-    | Alive of Date.t
-    | Dead of Date.t * Date.t
-    | Dead' of Date.t
-    | Limbo
-
-  type relation =
-    | Before
-    | After
-    | Overlap
+  type relation = Before | After | Overlap
   (** If intervals are disjoint, we can assign composer
       and performer roles unambigously. *)
 
   val relation : t -> t -> relation
-  val relation' : t' -> t' -> relation
   (** Check if intervals are disjoint. *)
+
+  val to_string : t -> string
 
 end
 
