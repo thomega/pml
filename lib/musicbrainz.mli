@@ -749,6 +749,7 @@ val disc_of_discid : root:string -> string -> (disc, string) result
 (** Find the released disc matching the discid. *)
 
 val artists_on_disc : disc -> string list
+val artists_on_disc' : disc -> SSet.t
 
 val print_disc : disc -> unit
 (** Exploration, WIP ... *)

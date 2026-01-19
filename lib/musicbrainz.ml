@@ -709,6 +709,13 @@ let artists_on_disc d =
   List.concat_map Artist_Credit.artists d.artist_credit
     @ Medium.artists d.medium
 
+let artists_on_disc' d =
+  SSet.union
+    (Medium.artists' d.medium)
+    (List.fold_left
+       (fun acc c -> SSet.union acc (Artist_Credit.artists' c))
+       SSet.empty d.artist_credit)
+
 let print_disc disc =
   let open Printf in
   printf "Release: %s\n" (Option.value disc.title ~default:"(no title)");
