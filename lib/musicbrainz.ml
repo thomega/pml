@@ -400,6 +400,9 @@ module Lifespan =
 
 module SSet = Set.Make (String)
 
+let sset_union_list sets =
+  List.fold_left (fun acc s -> SSet.union s acc) SSet.empty sets
+
 module Artist =
   struct
 
@@ -511,7 +514,7 @@ module Recording =
       |> Jsont.Object.finish
 
     let artists r =
-      List.fold_left (fun acc c -> SSet.union acc (Artist_Credit.artists c)) SSet.empty r.artist_credit
+      List.map Artist_Credit.artists r.artist_credit |> sset_union_list
 
     let print r =
       let open Printf in
@@ -554,9 +557,7 @@ module Track =
 
     let artists t =
       let artist_credits =
-        List.fold_left
-          (fun acc c -> SSet.union acc (Artist_Credit.artists c))
-          SSet.empty t.artist_credit in
+        List.map Artist_Credit.artists t.artist_credit |> sset_union_list in
       match t.recording with
       | None -> artist_credits
       | Some recording -> SSet.union (Recording.artists recording) artist_credits
@@ -621,9 +622,7 @@ module Medium =
       |> Jsont.Object.finish
 
     let artists m =
-      List.fold_left
-        (fun acc t -> SSet.union acc (Track.artists t))
-        SSet.empty m.tracks
+      List.map Track.artists m.tracks |> sset_union_list
 
     let print m =
       let open Printf in
@@ -693,9 +692,7 @@ let disc_of_discid ~root discid =
 let artists_on_disc d =
   SSet.union
     (Medium.artists d.medium)
-    (List.fold_left
-       (fun acc c -> SSet.union acc (Artist_Credit.artists c))
-       SSet.empty d.artist_credit)
+    (List.map Artist_Credit.artists d.artist_credit |> sset_union_list)
 
 let print_disc disc =
   let open Printf in
