@@ -451,6 +451,82 @@ let sset_union_list sets =
 module Artist =
   struct
 
+    type voice =
+      | Soprano
+      | Mezzo
+      | Alto
+      | Counter
+      | Tenor
+      | Bariton
+      | Bass
+   (* | Voice of string option *)
+
+    let voice_to_string = function
+      | Soprano -> "S."
+      | Mezzo -> "Mez."
+      | Alto -> "A."
+      | Counter -> "Ct."
+      | Tenor -> "T."
+      | Bariton -> "Bar."
+      | Bass -> "B."
+
+    type instrument =
+      | Piano
+      | Violin
+      | Viola
+      | Guitar
+   (* | Instrument of string option *)
+
+    let instrument_to_string = function
+      | Piano -> "p."
+      | Violin -> "vln."
+      | Viola -> "vla."
+      | Guitar -> "gtr."
+
+    type role =
+      | Composer
+      | Conductor
+      | Singer of voice
+      | Player of instrument
+
+    let role_to_string = function
+      | Composer -> "comp."
+      | Conductor -> "cond."
+      | Singer voice -> voice_to_string voice
+      | Player instrument -> instrument_to_string instrument
+
+    module RSet = Set.Make (struct type t = role let compare = compare end)
+
+    let string_role_alist =
+      [("composer", Composer);
+       ("conductor", Conductor);
+       ("soprano", Singer Soprano);
+       ("mezzo", Singer Mezzo);
+       ("alto", Singer Alto);
+       ("counter tenor", Singer Counter);
+       ("tenor", Singer Tenor);
+       ("baritone", Singer Bariton);
+       ("bass", Singer Bass);
+       ("pianist", Player Piano);
+       ("violinist", Player Violin);
+       ("viola player", Player Viola);
+       ("guitarist", Player Guitar)]
+
+    let re_word s =
+      Re.(seq [bow; str s; eow] |> no_case |> compile)
+
+    let re_role_alist =
+      List.map (fun (s, r) -> (re_word s, r)) string_role_alist
+          
+    let roles_of_string s =
+      List.fold_left
+        (fun set (re, role) ->
+          if Re.execp re s then
+            RSet.add role set
+          else
+            set)
+        RSet.empty re_role_alist
+
     type artist_type =
       | Person
       | Group
@@ -484,11 +560,16 @@ module Artist =
         sort_name : string option;
         artist_type : artist_type option;
         lifespan : Lifespan.t option;
+        roles : RSet.t;
         disambiguation : string option }
 
     let make id name sort_name artist_type lifespan disambiguation =
-      let artist_type = Option.map artist_type_of_string artist_type in
-      { id; name; sort_name; artist_type; lifespan; disambiguation }
+      let artist_type = Option.map artist_type_of_string artist_type
+      and roles =
+        match disambiguation with
+        | None -> RSet.empty
+        | Some disambiguation -> roles_of_string disambiguation in
+      { id; name; sort_name; artist_type; lifespan; roles; disambiguation }
 
     let jsont =
       Jsont.Object.map ~kind:"Artist" make
@@ -507,10 +588,15 @@ module Artist =
       | None -> Error (Printf.sprintf "Artist ID '%s' not found!" a.id)
 
     let to_string a =
+      let roles =
+        RSet.elements a.roles
+        |> List.map role_to_string
+        |> String.concat "/"  in
       (Option.value a.sort_name ~default:(Option.value a.name ~default:"(anonymous)"))
+      ^ " (" ^ roles
       ^ (match a.disambiguation with
-         | None | Some "" -> ""
-         | Some s -> " (" ^ s ^ ")")
+         | None -> ""
+         | Some s -> ", '" ^ s) ^ "')"
       ^ (Option.fold ~none:"" ~some:(fun t -> " {" ^ artist_type_to_string t ^ "}") a.artist_type)
       ^ (Option.fold ~none:"" ~some:(fun ls -> " [" ^ Lifespan.to_string ls ^ "]") a.lifespan)
 

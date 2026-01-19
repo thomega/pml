@@ -193,6 +193,33 @@ module Artist : sig
   val artist_type_of_string : string -> artist_type
   val artist_type_to_string : artist_type -> string
 
+  type voice =
+    | Soprano
+    | Mezzo
+    | Alto
+    | Counter
+    | Tenor
+    | Bariton
+    | Bass
+ (* | Voice of string option *)
+
+  type instrument =
+    | Piano
+    | Violin
+    | Viola
+    | Guitar
+ (* | Instrument of string option *)
+
+  type role =
+    | Composer
+    | Conductor
+    | Singer of voice
+    | Player of instrument
+
+  val role_to_string : role -> string
+
+  module RSet : Set.S with type elt = role
+
   type t =
     { id : string; (** The MBID (i.e. UUID) of the artist.  While this is
                        declared as optional in the DTD, we can safely assume
@@ -203,6 +230,7 @@ module Artist : sig
                                      from ensemble names. *)
       artist_type : artist_type option;
       lifespan : Lifespan.t option;
+      roles : RSet.t;
       disambiguation : string option; (** {e Is there an exhaustive list?} *)
     }
 (** {v
