@@ -506,16 +506,11 @@ module Artist_Credit =
       | Some artist -> Artist.id artist
       
     let update_artists map c =
-      match
-        begin match c.artist with
-        | Some artist ->
-           let* artist = Artist.update map artist in
-           Ok (Some artist) 
-        | None -> Ok None
-        end
-      with
-      | Ok artist -> Ok { c with artist }
-      | Error _ as e -> e
+      match c.artist with
+      | Some artist ->
+         let* artist = Artist.update map artist in
+         Ok { c with artist = Some artist }
+      | None -> Ok c
 
     let to_string c =
       match c.artist with
