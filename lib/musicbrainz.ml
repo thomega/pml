@@ -209,6 +209,9 @@ module type Cached =
     val remote : string -> (string, string) result
     val all_local : root:string -> ((string * string) list, string) result
     val url : string -> (string, string) result
+    module M : Map.S with type key = string
+    val map_of_ids : root:string -> (string -> ('a, string) result) ->
+                     string list -> ('a M.t, string) result
     module Internal : Cache.T with type key = string and type value = string
   end
 
@@ -236,7 +239,7 @@ module Cached (Table : Table) : Cached =
 
     let remote key =
       let* key = Table.valid_key key in
-        remote_unsafe key
+      remote_unsafe key
 
     let local = C.get
 
@@ -248,6 +251,16 @@ module Cached (Table : Table) : Cached =
       Ok (Query.(url musicbrainz Table.query key))
 
     let all_local = C.to_alist
+
+    module M = Map.Make (String)
+
+    let map_of_ids ~root value_of_string keys =
+      Result_list.fold_left
+        (fun map key ->
+          let* text = get ~root key in
+          let* value = value_of_string text in
+          Ok (M.add key value map))
+        M.empty keys
 
     module Internal = C
   end
@@ -703,4 +716,16 @@ let print_disc disc =
      printf "Artists: %s\n" (Artist_Credit.to_string c);
      List.iter (fun c -> printf "         %s\n" (Artist_Credit.to_string c)) clist
   end;
-  Medium.print disc.medium
+  Medium.print disc.medium;
+  let artists = artists_on_disc disc |> SSet.elements in
+  let* artists =
+    Artist_cached.map_of_ids
+      ~root:"mb-cache"
+      (Jsont_bytesrw.decode_string Artist.jsont)
+      artists in
+  Ok artists
+
+let print_disc disc =
+  match print_disc disc with
+  | Error msg -> prerr_endline "<Error>"; prerr_endline msg; prerr_endline "</Error>" 
+  | Ok map -> Artist_cached.M.iter (fun id _ -> prerr_endline id) map

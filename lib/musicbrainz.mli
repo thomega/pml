@@ -61,6 +61,11 @@ module type Cached =
     val url : string -> (string, string) result
     (** Return the URL for querying Musicbrainz for the entry corresponding to a key. *)
 
+    module M : Map.S with type key = string
+
+    val map_of_ids : root:string -> (string -> ('a, string) result) ->
+                     string list -> ('a M.t, string) result
+
     module Internal : Cache.T with type key = string and type value = string
     (** Access the public interface of the [Cache.T] used to implement
         this cached table. *)
