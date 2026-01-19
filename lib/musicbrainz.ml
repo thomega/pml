@@ -497,6 +497,9 @@ module Artist =
 
     module Role_Set = Set.Make (struct type t = role let compare = compare end)
 
+    let roles_to_string roles =
+      Role_Set.elements roles |> List.map role_to_string |> String.concat "/"
+
     let string_role_alist =
       [("composer", Composer);
        ("conductor", Conductor);
@@ -528,7 +531,7 @@ module Artist =
         Role_Set.empty re_role_alist
 
     type artist_type =
-      | Person
+      | Person of Role_Set.t
       | Group
       | Orchestra
       | Choir
@@ -536,8 +539,8 @@ module Artist =
       | Other
       | Unknown of string
 
-    let artist_type_of_string = function
-      | "Person" -> Person
+    let artist_type_of_string roles = function
+      | "Person" -> Person roles
       | "Group" -> Group
       | "Orchestra" -> Orchestra
       | "Choir" -> Choir
@@ -546,7 +549,7 @@ module Artist =
       | s -> Unknown s
 
     let artist_type_to_string = function
-      | Person -> "Person"
+      | Person roles -> roles_to_string roles
       | Group -> "Group"
       | Orchestra -> "Orchestra"
       | Choir -> "Choir"
@@ -560,16 +563,15 @@ module Artist =
         sort_name : string option;
         artist_type : artist_type option;
         lifespan : Lifespan.t option;
-        roles : Role_Set.t;
         disambiguation : string option }
 
     let make id name sort_name artist_type lifespan disambiguation =
-      let artist_type = Option.map artist_type_of_string artist_type
-      and roles =
+      let roles =
         match disambiguation with
         | None -> Role_Set.empty
         | Some disambiguation -> roles_of_string disambiguation in
-      { id; name; sort_name; artist_type; lifespan; roles; disambiguation }
+      let artist_type = Option.map (artist_type_of_string roles) artist_type in
+      { id; name; sort_name; artist_type; lifespan; disambiguation }
 
     let jsont =
       Jsont.Object.map ~kind:"Artist" make
@@ -588,15 +590,10 @@ module Artist =
       | None -> Error (Printf.sprintf "Artist ID '%s' not found!" a.id)
 
     let to_string a =
-      let roles =
-        Role_Set.elements a.roles
-        |> List.map role_to_string
-        |> String.concat "/"  in
       (Option.value a.sort_name ~default:(Option.value a.name ~default:"(anonymous)"))
-      ^ " (" ^ roles
       ^ (match a.disambiguation with
          | None -> ""
-         | Some s -> ", '" ^ s) ^ "')"
+         | Some s -> " (" ^ s) ^ ")"
       ^ (Option.fold ~none:"" ~some:(fun t -> " {" ^ artist_type_to_string t ^ "}") a.artist_type)
       ^ (Option.fold ~none:"" ~some:(fun ls -> " [" ^ Lifespan.to_string ls ^ "]") a.lifespan)
 

@@ -198,20 +198,6 @@ module MBID_Set : Set.S with type elt = string
 
 module Artist : sig
 
-  type artist_type =
-    | Person
-    | Group
-    | Orchestra
-    | Choir
-    | Character
-    | Other
-    | Unknown of string
-  (** As documented by {{: https://musicbrainz.org/doc/Artist }MusicBrainz}.
-      For us, only [Person], [Group], [Orchestra] and [Choir] should be relevant. *)
-
-  val artist_type_of_string : string -> artist_type
-  val artist_type_to_string : artist_type -> string
-
   type voice =
     | Soprano
     | Mezzo
@@ -245,6 +231,20 @@ module Artist : sig
 
   module Role_Set : Set.S with type elt = role
 
+  type artist_type =
+    | Person of Role_Set.t
+    | Group
+    | Orchestra
+    | Choir
+    | Character
+    | Other
+    | Unknown of string
+  (** As documented by {{: https://musicbrainz.org/doc/Artist }MusicBrainz}.
+      For us, only [Person], [Group], [Orchestra] and [Choir] should be relevant. *)
+
+  val artist_type_of_string : Role_Set.t -> string -> artist_type
+  val artist_type_to_string : artist_type -> string
+
   type t =
     { id : string; (** The MBID (i.e. UUID) of the artist.  While this is
                        declared as optional in the DTD, we can safely assume
@@ -255,8 +255,7 @@ module Artist : sig
                                      from ensemble names. *)
       artist_type : artist_type option;
       lifespan : Lifespan.t option;
-      roles : Role_Set.t;
-      disambiguation : string option; (** Keeping it around, but [roles] should suffice. *)
+      disambiguation : string option; (** Keeping it around, but [artist_type] should suffice. *)
     }
 (** {v
      <define name="def_artist-element">

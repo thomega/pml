@@ -4,7 +4,6 @@ module Artist : sig
   type t =
     { name : string (** The [sort_name] if available, accept [name] as substitute. *) ;
       artist_type : Musicbrainz.Artist.artist_type;
-      roles : Musicbrainz.Artist.Role_Set.t (** Conductor, singer, instrumentalist, etc. *);
       id : string }
   val of_mb : Musicbrainz.Artist.t -> t
 end
