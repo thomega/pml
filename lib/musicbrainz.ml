@@ -398,6 +398,44 @@ module Lifespan =
            Overlap
       | _ -> Overlap
 
+    type t' =
+      | Alive of Date.t
+      | Dead of Date.t * Date.t
+      | Dead' of Date.t
+      | Limbo
+
+    let relation' ls1 ls2 =
+      let open Date.Syntax in
+      match ls1, ls2 with
+      | Dead (b1, d1), Dead (b2, d2) ->
+         if d1 <= b2 then
+           Before
+         else if d2 <= b1 then
+           After
+         else
+           Overlap
+      | (Dead (_, d1) | Dead' d1), Alive b2 ->
+         if d1 <= b2 then
+           Before
+         else
+           Overlap
+      | Alive b1, (Dead (_, d2) | Dead' d2) ->
+         if d2 <= b1 then
+           After
+         else
+           Overlap
+      | Dead' d1, Dead (b2, _) ->
+         if d1 <= b2 then
+           Before
+         else
+           Overlap
+      | Dead (b1, _), Dead' d2 ->
+         if d2 <= b1 then
+           After
+         else
+           Overlap
+      | Limbo, _ | _, Limbo | Alive _, Alive _ | Dead' _, Dead' _ -> Overlap
+
     (* We have to deal with both optional and nullable strings. *)
     let make first last =
       let first = Date.of_opt_string_opt (Option.join first)

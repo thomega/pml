@@ -154,6 +154,12 @@ module Lifespan : sig
 
   type t
 
+  type t' =
+    | Alive of Date.t
+    | Dead of Date.t * Date.t
+    | Dead' of Date.t
+    | Limbo
+
   type relation =
     | Before
     | After
@@ -162,6 +168,7 @@ module Lifespan : sig
       and performer roles unambigously. *)
 
   val relation : t -> t -> relation
+  val relation' : t' -> t' -> relation
   (** Check if intervals are disjoint. *)
 
 end
