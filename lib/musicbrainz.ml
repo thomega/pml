@@ -398,15 +398,16 @@ module Lifespan =
            Overlap
       | _ -> Overlap
 
+    (* We have to deal with both optional and nullable strings. *)
     let make first last =
-      let first = Date.of_opt_string_opt first
-      and last = Date.of_opt_string_opt last in
+      let first = Date.of_opt_string_opt (Option.join first)
+      and last = Date.of_opt_string_opt (Option.join last) in
       { first; last }
 
     let jsont =
       Jsont.Object.map ~kind:"Lifespan" make
-      |> Jsont.Object.opt_mem "begin" Jsont.string
-      |> Jsont.Object.opt_mem "end" Jsont.string
+      |> Jsont.Object.opt_mem "begin" (Jsont.option Jsont.string)
+      |> Jsont.Object.opt_mem "end" (Jsont.option Jsont.string)
       |> Jsont.Object.finish
 
   end
@@ -707,7 +708,7 @@ let artists_on_disc d =
     (Medium.artists d.medium)
     (List.map Artist_Credit.artists d.artist_credit |> sset_union_list)
 
-let print_disc disc =
+let print_disc ~root disc =
   let open Printf in
   printf "Release: %s\n" (Option.value disc.title ~default:"(no title)");
   begin match disc.artist_credit with
@@ -719,13 +720,10 @@ let print_disc disc =
   Medium.print disc.medium;
   let artists = artists_on_disc disc |> SSet.elements in
   let* artists =
-    Artist_cached.map_of_ids
-      ~root:"mb-cache"
-      (Jsont_bytesrw.decode_string Artist.jsont)
-      artists in
+    Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) artists in
   Ok artists
 
-let print_disc disc =
-  match print_disc disc with
-  | Error msg -> prerr_endline "<Error>"; prerr_endline msg; prerr_endline "</Error>" 
-  | Ok map -> Artist_cached.M.iter (fun id _ -> prerr_endline id) map
+let print_disc ~root disc =
+  match print_disc ~root disc with
+  | Error msg -> prerr_endline msg
+  | Ok map -> Artist_cached.M.iter (fun id _ -> print_endline id) map

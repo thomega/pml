@@ -209,7 +209,7 @@ module Medium : Exit_Cmd =
       | Some id ->
          match MB.disc_of_discid ~root:cache id with
          | Error msg -> prerr_endline msg; 1
-         | Ok disc -> MB.print_disc disc; 0
+         | Ok disc -> MB.print_disc ~root:cache disc; 0
 
     let cmd =
       let open Cmd in
