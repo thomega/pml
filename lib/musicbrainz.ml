@@ -495,7 +495,7 @@ module Artist =
       | Singer voice -> voice_to_string voice
       | Player instrument -> instrument_to_string instrument
 
-    module RSet = Set.Make (struct type t = role let compare = compare end)
+    module Role_Set = Set.Make (struct type t = role let compare = compare end)
 
     let string_role_alist =
       [("composer", Composer);
@@ -522,10 +522,10 @@ module Artist =
       List.fold_left
         (fun set (re, role) ->
           if Re.execp re s then
-            RSet.add role set
+            Role_Set.add role set
           else
             set)
-        RSet.empty re_role_alist
+        Role_Set.empty re_role_alist
 
     type artist_type =
       | Person
@@ -560,14 +560,14 @@ module Artist =
         sort_name : string option;
         artist_type : artist_type option;
         lifespan : Lifespan.t option;
-        roles : RSet.t;
+        roles : Role_Set.t;
         disambiguation : string option }
 
     let make id name sort_name artist_type lifespan disambiguation =
       let artist_type = Option.map artist_type_of_string artist_type
       and roles =
         match disambiguation with
-        | None -> RSet.empty
+        | None -> Role_Set.empty
         | Some disambiguation -> roles_of_string disambiguation in
       { id; name; sort_name; artist_type; lifespan; roles; disambiguation }
 
@@ -589,7 +589,7 @@ module Artist =
 
     let to_string a =
       let roles =
-        RSet.elements a.roles
+        Role_Set.elements a.roles
         |> List.map role_to_string
         |> String.concat "/"  in
       (Option.value a.sort_name ~default:(Option.value a.name ~default:"(anonymous)"))

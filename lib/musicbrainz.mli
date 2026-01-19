@@ -243,7 +243,7 @@ module Artist : sig
 
   val role_to_string : role -> string
 
-  module RSet : Set.S with type elt = role
+  module Role_Set : Set.S with type elt = role
 
   type t =
     { id : string; (** The MBID (i.e. UUID) of the artist.  While this is
@@ -255,7 +255,7 @@ module Artist : sig
                                      from ensemble names. *)
       artist_type : artist_type option;
       lifespan : Lifespan.t option;
-      roles : RSet.t;
+      roles : Role_Set.t;
       disambiguation : string option; (** Keeping it around, but [roles] should suffice. *)
     }
 (** {v

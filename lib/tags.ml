@@ -4,10 +4,9 @@ module Artist =
     module MB = Musicbrainz.Artist
 
     type t =
-      { name : string option;
-        aliases : string list;
+      { name : string;
         artist_type : MB.artist_type;
-        role : string option;
+        roles : MB.Role_Set.t;
         id : string }
 
     let sort_name_of_name name =
@@ -15,24 +14,16 @@ module Artist =
 
     let of_mb mb =
       let id = mb.MB.id in
-      let name, aliases =
+      let name =
         match mb.MB.sort_name, mb.MB.name with
-        | Some _ as sort_name, Some name -> (sort_name, [name])
-        | Some _ as sort_name, None -> (sort_name, [])
-        | None, Some name ->
-           let sort_name = sort_name_of_name name in
-           let aliases =
-             if sort_name = name then
-               []
-             else
-               [name] in
-           (Some sort_name, aliases)
-        | None, None -> (None, []) in
+        | Some sort_name, Some _name -> sort_name
+        | Some sort_name, None -> sort_name
+        | None, Some name -> sort_name_of_name name
+        | None, None -> "(anonymous)" in
       let artist_type =
         Option.value mb.MB.artist_type ~default:MB.Person in
-      let role =
-        None in
-      { id; name; aliases; artist_type; role }
+      let roles = mb.MB.roles in
+      { id; name; artist_type; roles }
 
   end
 
