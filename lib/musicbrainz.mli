@@ -161,6 +161,8 @@ module Lifespan : sig
 
 end
 
+module SSet : Set.S with type elt = string
+
 (** Note that we {e must not} replace [artist] elements by their MBID, since there can
     be additional elements, in particular [disambiguation].
 
@@ -329,6 +331,7 @@ module Artist : sig
      v} *)
 
   val id : t -> string
+  val id' : t -> SSet.t
 
   val to_string : t -> string
 
@@ -367,6 +370,7 @@ module Artist_Credit : sig
      v} *)
 
   val artists : t -> string list
+  val artists' : t -> SSet.t
 
   val to_string : t -> string
 
@@ -459,6 +463,7 @@ module Recording : sig
      v} *)
 
   val artists : t -> string list
+  val artists' : t -> SSet.t
 
 end
 
@@ -507,6 +512,7 @@ module Track : sig
      v} *)
 
   val artists : t -> string list
+  val artists' : t -> SSet.t
 
 end
 
@@ -591,6 +597,7 @@ module Medium : sig
      v} *)
 
   val artists : t -> string list
+  val artists' : t -> SSet.t
 
   val print : t -> unit
 

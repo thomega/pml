@@ -398,6 +398,8 @@ module Lifespan =
 
   end
 
+module SSet = Set.Make (String)
+
 module Artist =
   struct
 
@@ -451,6 +453,7 @@ module Artist =
       |> Jsont.Object.finish
 
     let id a = a.id
+    let id' a = SSet.singleton a.id
 
     let to_string a =
       (Option.value a.sort_name ~default:(Option.value a.name ~default:"(anonymous)"))
@@ -481,6 +484,11 @@ module Artist_Credit =
       Option.to_list c.artist
       |> List.map Artist.to_string
 
+    let artists' c =
+      match c.artist with
+      | None -> SSet.empty
+      | Some artist -> Artist.id' artist
+      
     let to_string c =
       match c.artist with
       | Some artist -> Artist.to_string artist
@@ -509,6 +517,9 @@ module Recording =
 
     let artists c =
       List.concat_map Artist_Credit.artists c.artist_credit
+
+    let artists' r =
+      List.fold_left (fun acc c -> SSet.union acc (Artist_Credit.artists' c)) SSet.empty r.artist_credit
 
     let print r =
       let open Printf in
@@ -552,6 +563,15 @@ module Track =
     let artists t =
       List.concat_map Recording.artists (Option.to_list t.recording)
       @ List.concat_map Artist_Credit.artists t.artist_credit
+
+    let artists' t =
+      let artist_credits =
+        List.fold_left
+          (fun acc c -> SSet.union acc (Artist_Credit.artists' c))
+          SSet.empty t.artist_credit in
+      match t.recording with
+      | None -> artist_credits
+      | Some recording -> SSet.union (Recording.artists' recording) artist_credits
 
     let print n t =
       let open Printf in
@@ -614,6 +634,11 @@ module Medium =
 
     let artists m =
       List.concat_map Track.artists m.tracks
+
+    let artists' m =
+      List.fold_left
+        (fun acc t -> SSet.union acc (Track.artists' t))
+        SSet.empty m.tracks
 
     let print m =
       let open Printf in
