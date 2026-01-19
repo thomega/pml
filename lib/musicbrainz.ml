@@ -541,6 +541,11 @@ module Recording =
     let artist_ids r =
       List.map Artist_Credit.artist_ids r.artist_credit |> sset_union_list
 
+    let update_artists map r =
+      let* artist_credit =
+        Result_list.map (Artist_Credit.update_artists map) r.artist_credit in
+      Ok { r with artist_credit }
+
     let print r =
       let open Printf in
       printf "      Rec.: %s\n"
@@ -607,6 +612,16 @@ module Track =
       end;
       ()
 
+    let update_artists map t =
+      let* artist_credit =
+        Result_list.map (Artist_Credit.update_artists map) t.artist_credit in
+      match t.recording with
+      | Some recording ->
+         let* recording = Recording.update_artists map recording in
+         Ok { t with artist_credit; recording = Some recording }
+      | None ->
+         Ok { t with artist_credit }
+
   end
 
 module Disc =
@@ -648,6 +663,11 @@ module Medium =
 
     let artist_ids m =
       List.map Track.artist_ids m.tracks |> sset_union_list
+
+    let update_artists map m =
+      let* tracks =
+        Result_list.map (Track.update_artists map) m.tracks in
+      Ok { m with tracks }
 
     let print m =
       let open Printf in
@@ -719,6 +739,12 @@ let artist_ids_on_disc d =
     (Medium.artist_ids d.medium)
     (List.map Artist_Credit.artist_ids d.artist_credit |> sset_union_list)
 
+let update_artists_on_disc map d =
+  let* medium = Medium.update_artists map d.medium
+  and* artist_credit =
+    Result_list.map (Artist_Credit.update_artists map) d.artist_credit in
+  Ok { d with artist_credit; medium }
+
 let print_disc ~root disc =
   let open Printf in
   printf "Release: %s\n" (Option.value disc.title ~default:"(no title)");
@@ -730,9 +756,14 @@ let print_disc ~root disc =
   end;
   Medium.print disc.medium;
   let ids = artist_ids_on_disc disc |> SSet.elements in
-  Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) ids
+  let* artist_map =
+    Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) ids in
+  let* disc = update_artists_on_disc artist_map disc in
+  Ok (artist_map, disc)
 
 let print_disc ~root disc =
   match print_disc ~root disc with
   | Error msg -> prerr_endline msg
-  | Ok map -> Artist_cached.M.iter (fun id _ -> print_endline id) map
+  | Ok (map, disc) ->
+     Artist_cached.M.iter (fun id _ -> print_endline id) map;
+     print_disc ~root disc |> ignore
