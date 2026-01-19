@@ -470,6 +470,10 @@ module Artist =
       |> Jsont.Object.finish
 
     let id a = SSet.singleton a.id
+    let update map a =
+      match Artist_cached.M.find_opt a.id map with
+      | Some a -> Ok a
+      | None -> Error (Printf.sprintf "Artist ID '%s' not found!" a.id)
 
     let to_string a =
       (Option.value a.sort_name ~default:(Option.value a.name ~default:"(anonymous)"))
@@ -496,11 +500,23 @@ module Artist_Credit =
       |> Jsont.Object.opt_mem "artist" Artist.jsont
       |> Jsont.Object.finish
 
-    let artists c =
+    let artist_ids c =
       match c.artist with
       | None -> SSet.empty
       | Some artist -> Artist.id artist
       
+    let update_artists map c =
+      match
+        begin match c.artist with
+        | Some artist ->
+           let* artist = Artist.update map artist in
+           Ok (Some artist) 
+        | None -> Ok None
+        end
+      with
+      | Ok artist -> Ok { c with artist }
+      | Error _ as e -> e
+
     let to_string c =
       match c.artist with
       | Some artist -> Artist.to_string artist
@@ -527,8 +543,8 @@ module Recording =
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
       |> Jsont.Object.finish
 
-    let artists r =
-      List.map Artist_Credit.artists r.artist_credit |> sset_union_list
+    let artist_ids r =
+      List.map Artist_Credit.artist_ids r.artist_credit |> sset_union_list
 
     let print r =
       let open Printf in
@@ -569,12 +585,12 @@ module Track =
       |> Jsont.Object.opt_mem "recording" Recording.jsont
       |> Jsont.Object.finish
 
-    let artists t =
+    let artist_ids t =
       let artist_credits =
-        List.map Artist_Credit.artists t.artist_credit |> sset_union_list in
+        List.map Artist_Credit.artist_ids t.artist_credit |> sset_union_list in
       match t.recording with
       | None -> artist_credits
-      | Some recording -> SSet.union (Recording.artists recording) artist_credits
+      | Some recording -> SSet.union (Recording.artist_ids recording) artist_credits
 
     let print n t =
       let open Printf in
@@ -635,8 +651,8 @@ module Medium =
       |> Jsont.Object.opt_mem "tracks" Jsont.(list Track.jsont)
       |> Jsont.Object.finish
 
-    let artists m =
-      List.map Track.artists m.tracks |> sset_union_list
+    let artist_ids m =
+      List.map Track.artist_ids m.tracks |> sset_union_list
 
     let print m =
       let open Printf in
@@ -703,10 +719,10 @@ let disc_of_discid ~root discid =
   | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
   | _ -> Error (Printf.sprintf "multiple released discs for discid '%s'" discid)
 
-let artists_on_disc d =
+let artist_ids_on_disc d =
   SSet.union
-    (Medium.artists d.medium)
-    (List.map Artist_Credit.artists d.artist_credit |> sset_union_list)
+    (Medium.artist_ids d.medium)
+    (List.map Artist_Credit.artist_ids d.artist_credit |> sset_union_list)
 
 let print_disc ~root disc =
   let open Printf in
@@ -718,10 +734,8 @@ let print_disc ~root disc =
      List.iter (fun c -> printf "         %s\n" (Artist_Credit.to_string c)) clist
   end;
   Medium.print disc.medium;
-  let artists = artists_on_disc disc |> SSet.elements in
-  let* artists =
-    Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) artists in
-  Ok artists
+  let ids = artist_ids_on_disc disc |> SSet.elements in
+  Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) ids
 
 let print_disc ~root disc =
   match print_disc ~root disc with

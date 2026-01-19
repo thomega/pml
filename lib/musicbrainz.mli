@@ -336,6 +336,7 @@ module Artist : sig
      v} *)
 
   val id : t -> SSet.t
+  val update : t Artist_cached.M.t -> t -> (t, string) result
 
   val to_string : t -> string
 
@@ -373,7 +374,8 @@ module Artist_Credit : sig
      </define>
      v} *)
 
-  val artists : t -> SSet.t
+  val artist_ids : t -> SSet.t
+  val update_artists : Artist.t Artist_cached.M.t -> t -> (t, string) result
 
   val to_string : t -> string
 
@@ -465,7 +467,7 @@ module Recording : sig
      </define>
      v} *)
 
-  val artists : t -> SSet.t
+  val artist_ids : t -> SSet.t
 
 end
 
@@ -513,7 +515,7 @@ module Track : sig
      </define>
      v} *)
 
-  val artists : t -> SSet.t
+  val artist_ids : t -> SSet.t
 
 end
 
@@ -597,7 +599,7 @@ module Medium : sig
      </define>
      v} *)
 
-  val artists : t -> SSet.t
+  val artist_ids : t -> SSet.t
 
   val print : t -> unit
 
@@ -748,7 +750,7 @@ type disc =
 val disc_of_discid : root:string -> string -> (disc, string) result
 (** Find the released disc matching the discid. *)
 
-val artists_on_disc : disc -> SSet.t
+val artist_ids_on_disc : disc -> SSet.t
 
 val print_disc : root:string -> disc -> unit
 (** Exploration, WIP ... *)
