@@ -126,6 +126,13 @@ module Artist_cached : Cached
 module Date : sig
 
   type t
+(** {v
+     <define name="def_incomplete-date">
+         <data type="string">
+             <param name="pattern">[0-9]{4}(-[0-9]{2})?(-[0-9]{2})?</param>
+         </data>
+     </define>
+     v} *)
 
   val to_string : t -> string
   val year_to_string : t -> string
@@ -144,14 +151,6 @@ module Date : sig
 end
 (** A date with varying precision in format ["YYYY-MM-DD"]. *)
 
-(** {v
-     <define name="def_incomplete-date">
-         <data type="string">
-             <param name="pattern">[0-9]{4}(-[0-9]{2})?(-[0-9]{2})?</param>
-         </data>
-     </define>
-     v} *)
-
 module Lifespan : sig
 
   type t =
@@ -159,6 +158,24 @@ module Lifespan : sig
     | Dead of Date.t * Date.t (** Known to be have lived from/to. *)
     | Dead' of Date.t (** Known to have lived until. *)
     | Limbo (** Nothing known. *)
+(** We ignore the [ended] element.
+    {v
+     <element name="life-span">
+         <optional>
+             <element name="begin">
+                 <ref name="def_incomplete-date"/>
+             </element>
+         </optional>
+         <optional>
+             <element name="end">
+                 <ref name="def_incomplete-date"/>
+             </element>
+         </optional>
+         <optional>
+             <ref name="def_ended" />
+         </optional>
+     </element>
+     v} *)
 
   type relation = Before | After | Overlap
   (** If intervals are disjoint, we can assign composer
@@ -171,7 +188,7 @@ module Lifespan : sig
 
 end
 
-module SSet : Set.S with type elt = string
+module MBID_Set : Set.S with type elt = string
 
 (** Note that we {e must not} replace [artist] elements by their MBID, since there can
     be additional elements, in particular [disambiguation].
@@ -188,7 +205,9 @@ module Artist : sig
     | Choir
     | Character
     | Other
-    | Extended of string
+    | Unknown of string
+  (** As documented by {{: https://musicbrainz.org/doc/Artist }MusicBrainz}.
+      For us, only [Person], [Group], [Orchestra] and [Choir] should be relevant. *)
 
   val artist_type_of_string : string -> artist_type
   val artist_type_to_string : artist_type -> string
@@ -202,6 +221,8 @@ module Artist : sig
     | Bariton
     | Bass
  (* | Voice of string option *)
+  (** Not documented by MusicBrainz and therefore not exhaustive.
+      We guess this by {i grepping} the [disambiguation] comment. *)
 
   type instrument =
     | Piano
@@ -209,12 +230,16 @@ module Artist : sig
     | Viola
     | Guitar
  (* | Instrument of string option *)
+  (** Not documented by MusicBrainz and certainly not exhaustive.
+      We guess this by {i grepping} the [disambiguation] comment. *)
 
   type role =
     | Composer
     | Conductor
     | Singer of voice
     | Player of instrument
+  (** Not documented by MusicBrainz and therefore not exhaustive.
+      We guess this by {i grepping} the [disambiguation] comment. *)
 
   val role_to_string : role -> string
 
@@ -231,7 +256,7 @@ module Artist : sig
       artist_type : artist_type option;
       lifespan : Lifespan.t option;
       roles : RSet.t;
-      disambiguation : string option; (** {e Is there an exhaustive list?} *)
+      disambiguation : string option; (** Keeping it around, but [roles] should suffice. *)
     }
 (** {v
      <define name="def_artist-element">
@@ -368,10 +393,18 @@ module Artist : sig
      </define>
      v} *)
 
-  val id : t -> SSet.t
+  val id : t -> MBID_Set.t
+  (** Wrap the MBID in a set so that we can easily form sets without
+      duplicates. *)
+
   val update : t Artist_cached.M.t -> t -> (t, string) result
+  (** Find the artist with the same MBID in the dictionary.
+      This is used to replace the artist record without
+      lifespan included in releases by the artist record with
+      liefspan.  *)
 
   val to_string : t -> string
+  (** Exploration, debugging, etc. *)
 
 end
 
@@ -380,7 +413,9 @@ module Artist_Credit : sig
   type t =
     { name : string option;
       artist : Artist.t option }
-(** {v
+(** Essentially an indirection with the opportunity to give a
+    shorter name for the artist.
+    {v
      <define name="def_artist-credit">
          <element name="artist-credit">
              <optional>
@@ -407,10 +442,14 @@ module Artist_Credit : sig
      </define>
      v} *)
 
-  val artist_ids : t -> SSet.t
-  val update_artists : Artist.t Artist_cached.M.t -> t -> (t, string) result
+  val artist_id : t -> MBID_Set.t
+  (** Extract the artist's MBID inside the artist credit. *)
+
+  val update_artist : Artist.t Artist_cached.M.t -> t -> (t, string) result
+  (** Do a [Artist.update] inside, if applicable. *)
 
   val to_string : t -> string
+  (** Exploration, debugging, etc. *)
 
 end
 
@@ -500,8 +539,11 @@ module Recording : sig
      </define>
      v} *)
 
-  val artist_ids : t -> SSet.t
+  val artist_ids : t -> MBID_Set.t
+  (** Extract the MBID of all credited artists. *)
+
   val update_artists : Artist.t Artist_cached.M.t -> t -> (t, string) result
+  (** Do a [Artist.update] on all credited artists. *)
 
 end
 
@@ -549,8 +591,11 @@ module Track : sig
      </define>
      v} *)
 
-  val artist_ids : t -> SSet.t
+  val artist_ids : t -> MBID_Set.t
+  (** Extract the MBID of all credited artists. *)
+
   val update_artists : Artist.t Artist_cached.M.t -> t -> (t, string) result
+  (** Do a [Artist.update] on all credited artists. *)
 
 end
 
@@ -592,7 +637,7 @@ module Medium : sig
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       position : int option;
       title : string option;
-      discs : Disc.t list; (** Is this relevant for us?  There are no titles or credits. *)
+      discs : Disc.t list;
       tracks : Track.t list }
 (** {v
      <define name="def_medium">
@@ -634,8 +679,11 @@ module Medium : sig
      </define>
      v} *)
 
-  val artist_ids : t -> SSet.t
+  val artist_ids : t -> MBID_Set.t
+  (** Extract the MBID of all credited artists. *)
+
   val update_artists : Artist.t Artist_cached.M.t -> t -> (t, string) result
+  (** Do a [Artist.update] on all credited artists. *)
 
   val print : t -> unit
 
@@ -786,8 +834,11 @@ type disc =
 val disc_of_discid : root:string -> string -> (disc, string) result
 (** Find the released disc matching the discid. *)
 
-val artist_ids_on_disc : disc -> SSet.t
+val artist_ids_on_disc : disc -> MBID_Set.t
+(** Extract the MBID of all credited artists. *)
+
 val update_artists_on_disc : Artist.t Artist_cached.M.t -> disc -> (disc, string) result
+  (** Do a [Artist.update] on all credited artists. *)
 
 val print_disc : root:string -> disc -> unit
 (** Exploration, WIP ... *)

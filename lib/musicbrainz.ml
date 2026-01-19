@@ -437,16 +437,16 @@ module Lifespan =
 
     let jsont =
       Jsont.Object.map ~kind:"Lifespan" make
-      |> Jsont.Object.opt_mem "begin" (Jsont.option Jsont.string)
-      |> Jsont.Object.opt_mem "end" (Jsont.option Jsont.string)
+      |> Jsont.Object.opt_mem "begin" Jsont.(option string)
+      |> Jsont.Object.opt_mem "end" Jsont.(option string)
       |> Jsont.Object.finish
 
   end
 
-module SSet = Set.Make (String)
+module MBID_Set = Set.Make (String)
 
 let sset_union_list sets =
-  List.fold_left (fun acc s -> SSet.union s acc) SSet.empty sets
+  List.fold_left (fun acc s -> MBID_Set.union s acc) MBID_Set.empty sets
 
 module Artist =
   struct
@@ -534,7 +534,7 @@ module Artist =
       | Choir
       | Character
       | Other
-      | Extended of string
+      | Unknown of string
 
     let artist_type_of_string = function
       | "Person" -> Person
@@ -543,7 +543,7 @@ module Artist =
       | "Choir" -> Choir
       | "Character" -> Character
       | "Other" -> Other
-      | s -> Extended s
+      | s -> Unknown s
 
     let artist_type_to_string = function
       | Person -> "Person"
@@ -552,7 +552,7 @@ module Artist =
       | Choir -> "Choir"
       | Character -> "Character"
       | Other -> "Other"
-      | Extended s -> "?" ^ s ^ "?"
+      | Unknown s -> "?" ^ s ^ "?"
 
     type t =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
@@ -581,7 +581,7 @@ module Artist =
       |> Jsont.Object.opt_mem "disambiguation" Jsont.string
       |> Jsont.Object.finish
 
-    let id a = SSet.singleton a.id
+    let id a = MBID_Set.singleton a.id
     let update map a =
       match Artist_cached.M.find_opt a.id map with
       | Some a -> Ok a
@@ -618,12 +618,12 @@ module Artist_Credit =
       |> Jsont.Object.opt_mem "artist" Artist.jsont
       |> Jsont.Object.finish
 
-    let artist_ids c =
+    let artist_id c =
       match c.artist with
-      | None -> SSet.empty
+      | None -> MBID_Set.empty
       | Some artist -> Artist.id artist
       
-    let update_artists map c =
+    let update_artist map c =
       match c.artist with
       | Some artist ->
          let* artist = Artist.update map artist in
@@ -657,11 +657,11 @@ module Recording =
       |> Jsont.Object.finish
 
     let artist_ids r =
-      List.map Artist_Credit.artist_ids r.artist_credit |> sset_union_list
+      List.map Artist_Credit.artist_id r.artist_credit |> sset_union_list
 
     let update_artists map r =
       let* artist_credit =
-        Result_list.map (Artist_Credit.update_artists map) r.artist_credit in
+        Result_list.map (Artist_Credit.update_artist map) r.artist_credit in
       Ok { r with artist_credit }
 
     let print r =
@@ -705,10 +705,10 @@ module Track =
 
     let artist_ids t =
       let artist_credits =
-        List.map Artist_Credit.artist_ids t.artist_credit |> sset_union_list in
+        List.map Artist_Credit.artist_id t.artist_credit |> sset_union_list in
       match t.recording with
       | None -> artist_credits
-      | Some recording -> SSet.union (Recording.artist_ids recording) artist_credits
+      | Some recording -> MBID_Set.union (Recording.artist_ids recording) artist_credits
 
     let print n t =
       let open Printf in
@@ -732,7 +732,7 @@ module Track =
 
     let update_artists map t =
       let* artist_credit =
-        Result_list.map (Artist_Credit.update_artists map) t.artist_credit in
+        Result_list.map (Artist_Credit.update_artist map) t.artist_credit in
       match t.recording with
       | Some recording ->
          let* recording = Recording.update_artists map recording in
@@ -853,14 +853,14 @@ let disc_of_discid ~root discid =
   | _ -> Error (Printf.sprintf "multiple released discs for discid '%s'" discid)
 
 let artist_ids_on_disc d =
-  SSet.union
+  MBID_Set.union
     (Medium.artist_ids d.medium)
-    (List.map Artist_Credit.artist_ids d.artist_credit |> sset_union_list)
+    (List.map Artist_Credit.artist_id d.artist_credit |> sset_union_list)
 
 let update_artists_on_disc map d =
   let* medium = Medium.update_artists map d.medium
   and* artist_credit =
-    Result_list.map (Artist_Credit.update_artists map) d.artist_credit in
+    Result_list.map (Artist_Credit.update_artist map) d.artist_credit in
   Ok { d with artist_credit; medium }
 
 let print_disc ~root disc =
@@ -873,7 +873,7 @@ let print_disc ~root disc =
      List.iter (fun c -> printf "         %s\n" (Artist_Credit.to_string c)) clist
   end;
   Medium.print disc.medium;
-  let ids = artist_ids_on_disc disc |> SSet.elements in
+  let ids = artist_ids_on_disc disc |> MBID_Set.elements in
   let* artist_map =
     Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) ids in
   let* disc = update_artists_on_disc artist_map disc in
