@@ -448,7 +448,7 @@ module MBID_Set = Set.Make (String)
 let sset_union_list sets =
   List.fold_left (fun acc s -> MBID_Set.union s acc) MBID_Set.empty sets
 
-module Artist =
+module Artist_type =
   struct
 
     type voice =
@@ -497,6 +497,8 @@ module Artist =
 
     module Role_Set = Set.Make (struct type t = role let compare = compare end)
 
+    let no_role = Role_Set.empty
+
     let roles_to_string roles =
       Role_Set.elements roles |> List.map role_to_string |> String.concat "/"
 
@@ -528,9 +530,9 @@ module Artist =
             Role_Set.add role set
           else
             set)
-        Role_Set.empty re_role_alist
+        no_role re_role_alist
 
-    type artist_type =
+    type t =
       | Person of Role_Set.t
       | Group
       | Orchestra
@@ -539,7 +541,7 @@ module Artist =
       | Other
       | Unknown of string
 
-    let artist_type_of_string roles = function
+    let of_string roles = function
       | "Person" -> Person roles
       | "Group" -> Group
       | "Orchestra" -> Orchestra
@@ -548,7 +550,7 @@ module Artist =
       | "Other" -> Other
       | s -> Unknown s
 
-    let artist_type_to_string = function
+    let to_string = function
       | Person roles -> roles_to_string roles
       | Group -> "Group"
       | Orchestra -> "Orchestra"
@@ -557,20 +559,25 @@ module Artist =
       | Other -> "Other"
       | Unknown s -> "?" ^ s ^ "?"
 
+  end
+
+module Artist =
+  struct
+
     type t =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         name : string option;
         sort_name : string option;
-        artist_type : artist_type option;
+        artist_type : Artist_type.t option;
         lifespan : Lifespan.t option;
         disambiguation : string option }
 
     let make id name sort_name artist_type lifespan disambiguation =
       let roles =
         match disambiguation with
-        | None -> Role_Set.empty
-        | Some disambiguation -> roles_of_string disambiguation in
-      let artist_type = Option.map (artist_type_of_string roles) artist_type in
+        | None -> Artist_type.no_role
+        | Some disambiguation -> Artist_type.roles_of_string disambiguation in
+      let artist_type = Option.map (Artist_type.of_string roles) artist_type in
       { id; name; sort_name; artist_type; lifespan; disambiguation }
 
     let jsont =
@@ -594,7 +601,7 @@ module Artist =
       ^ (match a.disambiguation with
          | None -> ""
          | Some s -> " (" ^ s) ^ ")"
-      ^ (Option.fold ~none:"" ~some:(fun t -> " {" ^ artist_type_to_string t ^ "}") a.artist_type)
+      ^ (Option.fold ~none:"" ~some:(fun t -> " {" ^ Artist_type.to_string t ^ "}") a.artist_type)
       ^ (Option.fold ~none:"" ~some:(fun ls -> " [" ^ Lifespan.to_string ls ^ "]") a.lifespan)
 
   end

@@ -2,10 +2,11 @@ module Artist =
   struct
 
     module MB = Musicbrainz.Artist
+    module AT = Musicbrainz.Artist_type
 
     type t =
       { name : string;
-        artist_type : MB.artist_type;
+        artist_type : AT.t;
         id : string }
 
     let sort_name_of_name name =
@@ -20,7 +21,7 @@ module Artist =
         | None, Some name -> sort_name_of_name name
         | None, None -> "(anonymous)" in
       let artist_type =
-        Option.value mb.MB.artist_type ~default:(MB.Person MB.Role_Set.empty) in
+        Option.value mb.MB.artist_type ~default:(AT.Person AT.Role_Set.empty) in
       { id; name; artist_type }
 
   end

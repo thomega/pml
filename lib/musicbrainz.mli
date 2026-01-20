@@ -196,7 +196,7 @@ module MBID_Set : Set.S with type elt = string
     {e Is this really true?  Isn't [disambiguation] unique and can be gotten from
        looking up the [artist]?} *)
 
-module Artist : sig
+module Artist_type : sig
 
   type voice =
     | Soprano
@@ -231,7 +231,7 @@ module Artist : sig
 
   module Role_Set : Set.S with type elt = role
 
-  type artist_type =
+  type t =
     | Person of Role_Set.t
     | Group
     | Orchestra
@@ -242,8 +242,12 @@ module Artist : sig
   (** As documented by {{: https://musicbrainz.org/doc/Artist }MusicBrainz}.
       For us, only [Person], [Group], [Orchestra] and [Choir] should be relevant. *)
 
-  val artist_type_of_string : Role_Set.t -> string -> artist_type
-  val artist_type_to_string : artist_type -> string
+  val of_string : Role_Set.t -> string -> t
+  val to_string : t -> string
+
+end
+
+module Artist : sig
 
   type t =
     { id : string; (** The MBID (i.e. UUID) of the artist.  While this is
@@ -253,7 +257,7 @@ module Artist : sig
       sort_name : string option; (** The name in last name, first name order
                                      for persons and with articles removed
                                      from ensemble names. *)
-      artist_type : artist_type option;
+      artist_type : Artist_type.t option;
       lifespan : Lifespan.t option;
       disambiguation : string option; (** Keeping it around, but [artist_type] should suffice. *)
     }
