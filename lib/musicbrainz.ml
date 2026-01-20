@@ -443,11 +443,6 @@ module Lifespan =
 
   end
 
-module MBID_Set = Set.Make (String)
-
-let sset_union_list sets =
-  List.fold_left (fun acc s -> MBID_Set.union s acc) MBID_Set.empty sets
-
 module Artist_type =
   struct
 
@@ -461,14 +456,14 @@ module Artist_type =
       | Bass
    (* | Voice of string option *)
 
-    let voice_to_string = function
-      | Soprano -> "S."
-      | Mezzo -> "Mez."
-      | Alto -> "A."
-      | Counter -> "Ct."
-      | Tenor -> "T."
-      | Bariton -> "Bar."
-      | Bass -> "B."
+    let voice_to_rank_and_string = function
+      | Soprano -> (1, "S.")
+      | Mezzo -> (2, "Mez.")
+      | Alto -> (3, "A.")
+      | Counter -> (4, "Ct.")
+      | Tenor -> (5, "T.")
+      | Bariton -> (6, "Bar.")
+      | Bass -> (7, "B.")
 
     type instrument =
       | Piano
@@ -477,11 +472,11 @@ module Artist_type =
       | Guitar
    (* | Instrument of string option *)
 
-    let instrument_to_string = function
-      | Piano -> "p."
-      | Violin -> "vln."
-      | Viola -> "vla."
-      | Guitar -> "gtr."
+    let instrument_to_rank_and_string = function
+      | Piano -> (1, "p.")
+      | Violin -> (2, "vln.")
+      | Viola -> (3, "vla.")
+      | Guitar -> (4, "gtr.")
 
     type role =
       | Composer
@@ -489,18 +484,33 @@ module Artist_type =
       | Singer of voice
       | Player of instrument
 
-    let role_to_string = function
-      | Composer -> "comp."
-      | Conductor -> "cond."
-      | Singer voice -> voice_to_string voice
-      | Player instrument -> instrument_to_string instrument
+    let role_to_rank_and_string = function
+      | Composer -> ([1], "comp.")
+      | Conductor -> ([2], "cond.")
+      | Singer voice ->
+         let r, s = voice_to_rank_and_string voice in
+         ([3; r], s)
+      | Player instrument ->
+         let r, s = instrument_to_rank_and_string instrument in
+         ([4; r], s)
 
-    module Role_Set = Set.Make (struct type t = role let compare = compare end)
+    let role_to_rank r =
+      role_to_rank_and_string r |> fst
 
-    let no_role = Role_Set.empty
+    let role_to_string r =
+      role_to_rank_and_string r |> snd
+
+    let compare_roles r1 r2 =
+      List.compare Int.compare (role_to_rank r1) (role_to_rank r2)
+
+    module Roles = Set.Make (struct type t = role let compare = compare_roles end)
+
+    let no_role = Roles.empty
 
     let roles_to_string roles =
-      Role_Set.elements roles |> List.map role_to_string |> String.concat "/"
+      Roles.elements roles
+      |> List.map role_to_string
+      |> String.concat "/"
 
     let string_role_alist =
       [("composer", Composer);
@@ -527,13 +537,13 @@ module Artist_type =
       List.fold_left
         (fun set (re, role) ->
           if Re.execp re s then
-            Role_Set.add role set
+            Roles.add role set
           else
             set)
         no_role re_role_alist
 
     type t =
-      | Person of Role_Set.t
+      | Person of Roles.t
       | Group
       | Orchestra
       | Choir
@@ -550,16 +560,36 @@ module Artist_type =
       | "Other" -> Other
       | s -> Unknown s
 
-    let to_string = function
-      | Person roles -> roles_to_string roles
-      | Group -> "Group"
-      | Orchestra -> "Orchestra"
-      | Choir -> "Choir"
-      | Character -> "Character"
-      | Other -> "Other"
-      | Unknown s -> "?" ^ s ^ "?"
+    let to_rank_and_string = function
+      | Person roles ->
+         begin match Roles.min_elt_opt roles with
+         | None -> ([1; 0], "Person")
+         | Some role ->
+            let r, _ = role_to_rank_and_string role in
+            (1 :: r, roles_to_string roles)
+         end
+      | Group -> ([2], "Group")
+      | Orchestra -> ([3], "Orchestra")
+      | Choir -> ([4], "Choir")
+      | Character -> ([5], "Character")
+      | Other -> ([6], "Other")
+      | Unknown s -> ([7], "?" ^ s ^ "?")
+
+    let to_rank artist_type =
+      to_rank_and_string artist_type |> fst
+
+    let to_string artist_type =
+      to_rank_and_string artist_type |> snd
+
+    let compare t1 t2 =
+      List.compare Int.compare (to_rank t1) (to_rank t2)
 
   end
+
+module MBID_Set = Set.Make (String)
+
+let mbid_union sets =
+  List.fold_left (fun acc s -> MBID_Set.union s acc) MBID_Set.empty sets
 
 module Artist =
   struct
@@ -661,7 +691,7 @@ module Recording =
       |> Jsont.Object.finish
 
     let artist_ids r =
-      List.map Artist_Credit.artist_id r.artist_credits |> sset_union_list
+      List.map Artist_Credit.artist_id r.artist_credits |> mbid_union
 
     let update_artists map r =
       let* artist_credits =
@@ -709,7 +739,7 @@ module Track =
 
     let artist_ids t =
       let artist_credits =
-        List.map Artist_Credit.artist_id t.artist_credits |> sset_union_list in
+        List.map Artist_Credit.artist_id t.artist_credits |> mbid_union in
       match t.recording with
       | None -> artist_credits
       | Some recording -> MBID_Set.union (Recording.artist_ids recording) artist_credits
@@ -784,7 +814,7 @@ module Medium =
       |> Jsont.Object.finish
 
     let artist_ids m =
-      List.map Track.artist_ids m.tracks |> sset_union_list
+      List.map Track.artist_ids m.tracks |> mbid_union
 
     let update_artists map m =
       let* tracks =
@@ -859,7 +889,7 @@ let disc_of_discid ~root discid =
 let artist_ids_on_disc d =
   MBID_Set.union
     (Medium.artist_ids d.medium)
-    (List.map Artist_Credit.artist_id d.artist_credits |> sset_union_list)
+    (List.map Artist_Credit.artist_id d.artist_credits |> mbid_union)
 
 let update_artists_on_disc map d =
   let* medium = Medium.update_artists map d.medium

@@ -229,10 +229,10 @@ module Artist_type : sig
 
   val role_to_string : role -> string
 
-  module Role_Set : Set.S with type elt = role
+  module Roles : Set.S with type elt = role
 
   type t =
-    | Person of Role_Set.t
+    | Person of Roles.t
     | Group
     | Orchestra
     | Choir
@@ -242,7 +242,8 @@ module Artist_type : sig
   (** As documented by {{: https://musicbrainz.org/doc/Artist }MusicBrainz}.
       For us, only [Person], [Group], [Orchestra] and [Choir] should be relevant. *)
 
-  val of_string : Role_Set.t -> string -> t
+  val compare : t -> t -> int
+  val of_string : Roles.t -> string -> t
   val to_string : t -> string
 
 end
@@ -280,7 +281,6 @@ module Artist : sig
                  </attribute>
              </optional>
              <ref name="def_artist-attribute_extension"/>
-
              <optional>
                  <element name="name">
                      <text/>
@@ -353,7 +353,6 @@ module Artist : sig
                      </optional>
                  </element>
              </optional>
-
              <optional>
                  <ref name="def_alias-list"/>
              </optional>
@@ -390,7 +389,6 @@ module Artist : sig
              <optional>
                  <ref name="def_user-rating"/>
              </optional>
-
              <ref name="def_artist-element_extension"/>
          </element>
      </define>
@@ -471,7 +469,6 @@ module Recording : sig
                  </attribute>
              </optional>
              <ref name="def_recording-attribute_extension"/>
-
              <optional>
                  <element name="title">
                      <text/>
@@ -501,7 +498,6 @@ module Recording : sig
                      <ref name="def_incomplete-date" />
                  </element>
              </optional>
-
              <optional>
                  <ref name="def_release-list"/>
              </optional>
@@ -517,7 +513,6 @@ module Recording : sig
              <zeroOrMore>
                  <ref name="def_relation-list"/>
              </zeroOrMore>
-
              <optional>
                  <ref name="def_tag-list"/>
              </optional>
@@ -536,7 +531,6 @@ module Recording : sig
              <optional>
                  <ref name="def_user-rating"/>
              </optional>
-
              <ref name="def_recording-element_extension"/>
          </element>
      </define>
@@ -708,7 +702,6 @@ module Release : sig
                  </attribute>
              </optional>
              <ref name="def_release-attribute_extension"/>
-
              <optional>
                  <element name="title">
                      <text/>
@@ -766,7 +759,6 @@ module Release : sig
              <optional>
                  <ref name="def_release-group-element"/>
              </optional>
-
              <optional>
                  <element name="date">
                      <ref name="def_incomplete-date"/>
@@ -795,11 +787,9 @@ module Release : sig
              <optional>
                  <ref name="def_cover-art-archive"/>
              </optional>
-
              <optional>
                  <ref name="def_label-info-list"/>
              </optional>
-
              <optional>
                  <ref name="def_medium-list"/>
              </optional>
@@ -821,7 +811,6 @@ module Release : sig
              <optional>
                  <ref name="def_collection-list"/>
              </optional>
-
              <ref name="def_release-element_extension"/>
          </element>
      </define>

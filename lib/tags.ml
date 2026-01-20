@@ -21,7 +21,7 @@ module Artist =
         | None, Some name -> sort_name_of_name name
         | None, None -> "(anonymous)" in
       let artist_type =
-        Option.value mb.MB.artist_type ~default:(AT.Person AT.Role_Set.empty) in
+        Option.value mb.MB.artist_type ~default:(AT.Person AT.Roles.empty) in
       { id; name; artist_type }
 
   end
