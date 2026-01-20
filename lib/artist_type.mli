@@ -49,3 +49,5 @@ val compare : t -> t -> int
 val of_string : Roles.t -> string -> t
 val to_string : t -> string
 
+val is_composer : t -> bool
+val is_conductor : t -> bool

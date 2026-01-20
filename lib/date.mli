@@ -9,6 +9,8 @@ type t
      </define>
      v} *)
 
+val of_year : ?month:int -> ?day:int -> int -> t
+
 val to_string : t -> string
 val year_to_string : t -> string
 val of_opt_string_opt : string option -> t option

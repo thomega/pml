@@ -146,3 +146,11 @@ let to_string artist_type =
 
 let compare t1 t2 =
   List.compare Int.compare (to_rank t1) (to_rank t2)
+
+let has_role role = function
+  | Person roles -> Roles.mem role roles
+  | _ -> false
+
+let is_composer = has_role Composer
+let is_conductor = has_role Conductor
+

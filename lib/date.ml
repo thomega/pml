@@ -3,6 +3,9 @@ type t =
     month : int option;
     day : int option }
 
+let of_year ?month ?day year =
+  { year; day; month }
+
 let to_string t =
   match t.month, t.day with
   | None, None -> Printf.sprintf "%04d" t.year

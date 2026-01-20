@@ -47,6 +47,11 @@ let relation ls1 ls2 =
        Overlap
   | Limbo, _ | _, Limbo | Alive _, Alive _ | Dead' _, Dead' _ -> Overlap
 
+let not_performer ?(cutoff=1910) lifespan =
+  match relation lifespan (Alive (Date.of_year cutoff)) with
+  | Before -> true
+  | After | Overlap -> false
+
 (* We have to deal with both optional and nullable strings. *)
 let make first last =
   match Date.of_opt_string_opt (Option.join first),

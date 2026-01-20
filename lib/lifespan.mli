@@ -32,5 +32,9 @@ type relation = Before | After | Overlap
 val relation : t -> t -> relation
 (** Check if intervals are disjoint. *)
 
+val not_performer : ?cutoff:int -> t -> bool
+(** If they have died before that year (the default is 1910),
+    the artist can not be a performer and should be a composer. *) 
+
 val jsont : t Jsont.t
 val to_string : t -> string
