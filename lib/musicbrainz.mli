@@ -461,7 +461,7 @@ module Recording : sig
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       title : string option;
-      artist_credit : Artist_Credit.t list }
+      artist_credits : Artist_Credit.t list }
 (** {v
      <define name="def_recording-element">
          <element name="recording">
@@ -556,7 +556,7 @@ module Track : sig
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       position : int option;
       title : string option;
-      artist_credit : Artist_Credit.t list;
+      artist_credits : Artist_Credit.t list;
       recording : Recording.t option }
 (** {v
      <define name="def_track-data">
@@ -697,7 +697,7 @@ module Release : sig
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       title : string option;
-      artist_credit : Artist_Credit.t list;
+      artist_credits : Artist_Credit.t list;
       media : Medium.t list }
 (** {v
      <define name="def_release-element">
@@ -832,7 +832,7 @@ end
 type disc =
   { medium : Medium.t;
     title : string option;
-    artist_credit : Artist_Credit.t list }
+    artist_credits : Artist_Credit.t list }
 
 val disc_of_discid : root:string -> string -> (disc, string) result
 (** Find the released disc matching the discid. *)

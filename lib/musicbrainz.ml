@@ -647,11 +647,11 @@ module Recording =
     type t =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         title : string option;
-        artist_credit : Artist_Credit.t list }
+        artist_credits : Artist_Credit.t list }
 
-    let make id title artist_credit =
-      let artist_credit = opt_list artist_credit in
-      { id; title; artist_credit }
+    let make id title artist_credits =
+      let artist_credits = opt_list artist_credits in
+      { id; title; artist_credits }
 
     let jsont =
       Jsont.Object.map ~kind:"Recording" make
@@ -661,12 +661,12 @@ module Recording =
       |> Jsont.Object.finish
 
     let artist_ids r =
-      List.map Artist_Credit.artist_id r.artist_credit |> sset_union_list
+      List.map Artist_Credit.artist_id r.artist_credits |> sset_union_list
 
     let update_artists map r =
-      let* artist_credit =
-        Result_list.map (Artist_Credit.update_artist map) r.artist_credit in
-      Ok { r with artist_credit }
+      let* artist_credits =
+        Result_list.map (Artist_Credit.update_artist map) r.artist_credits in
+      Ok { r with artist_credits }
 
     let print r =
       let open Printf in
@@ -674,7 +674,7 @@ module Recording =
         (match r.title with
          | None | Some "" -> "[" ^ r.id ^ "]"
          | Some s -> s);
-      begin match r.artist_credit with
+      begin match r.artist_credits with
       | [] -> ()
       | c :: clist ->
          printf "      Art.: %s\n" (Artist_Credit.to_string c);
@@ -691,12 +691,12 @@ module Track =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         position : int option;
         title : string option;
-        artist_credit : Artist_Credit.t list;
+        artist_credits : Artist_Credit.t list;
         recording : Recording.t option }
 
-    let make id position title artist_credit recording =
-      let artist_credit = opt_list artist_credit in
-      { id; position; title; artist_credit; recording }
+    let make id position title artist_credits recording =
+      let artist_credits = opt_list artist_credits in
+      { id; position; title; artist_credits; recording }
 
     let jsont =
       Jsont.Object.map ~kind:"Track" make
@@ -709,7 +709,7 @@ module Track =
 
     let artist_ids t =
       let artist_credits =
-        List.map Artist_Credit.artist_id t.artist_credit |> sset_union_list in
+        List.map Artist_Credit.artist_id t.artist_credits |> sset_union_list in
       match t.recording with
       | None -> artist_credits
       | Some recording -> MBID_Set.union (Recording.artist_ids recording) artist_credits
@@ -722,7 +722,7 @@ module Track =
         (match t.title with
          | None | Some "" -> "[" ^ t.id ^ "]"
          | Some s -> s);
-      begin match t.artist_credit with
+      begin match t.artist_credits with
       | [] -> ()
       | c :: clist ->
          printf "      Art.: %s\n" (Artist_Credit.to_string c);
@@ -735,14 +735,14 @@ module Track =
       ()
 
     let update_artists map t =
-      let* artist_credit =
-        Result_list.map (Artist_Credit.update_artist map) t.artist_credit in
+      let* artist_credits =
+        Result_list.map (Artist_Credit.update_artist map) t.artist_credits in
       match t.recording with
       | Some recording ->
          let* recording = Recording.update_artists map recording in
-         Ok { t with artist_credit; recording = Some recording }
+         Ok { t with artist_credits; recording = Some recording }
       | None ->
-         Ok { t with artist_credit }
+         Ok { t with artist_credits }
 
   end
 
@@ -809,12 +809,12 @@ module Release =
     type t =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         title : string option;
-        artist_credit : Artist_Credit.t list;
+        artist_credits : Artist_Credit.t list;
         media : Medium.t list }
-    let make id title artist_credit media =
-      let artist_credit = opt_list artist_credit
+    let make id title artist_credits media =
+      let artist_credits = opt_list artist_credits
       and media = opt_list media in
-      { id; title; artist_credit; media }
+      { id; title; artist_credits; media }
     let jsont =
       Jsont.Object.map ~kind:"Release" make
       |> Jsont.Object.mem "id" Jsont.string
@@ -827,7 +827,7 @@ module Release =
 type disc =
   { medium : Medium.t;
     title : string option;
-    artist_credit : Artist_Credit.t list }
+    artist_credits : Artist_Credit.t list }
 
 let release_of_mbid ~root mbid =
   let* text = Release_cached.get ~root mbid in
@@ -843,9 +843,9 @@ let discs_of_discid ~root discid =
       (fun mbid ->
         let* release = release_of_mbid ~root mbid in
         let title = release.Release.title
-        and artist_credit = release.Release.artist_credit
+        and artist_credits = release.Release.artist_credits
         and media = List.filter (contains_discid discid) release.Release.media in
-        Ok (List.map (fun medium -> { medium; title; artist_credit}) media))
+        Ok (List.map (fun medium -> { medium; title; artist_credits }) media))
       releases in
   Ok (List.concat discs)
 
@@ -859,18 +859,18 @@ let disc_of_discid ~root discid =
 let artist_ids_on_disc d =
   MBID_Set.union
     (Medium.artist_ids d.medium)
-    (List.map Artist_Credit.artist_id d.artist_credit |> sset_union_list)
+    (List.map Artist_Credit.artist_id d.artist_credits |> sset_union_list)
 
 let update_artists_on_disc map d =
   let* medium = Medium.update_artists map d.medium
-  and* artist_credit =
-    Result_list.map (Artist_Credit.update_artist map) d.artist_credit in
-  Ok { d with artist_credit; medium }
+  and* artist_credits =
+    Result_list.map (Artist_Credit.update_artist map) d.artist_credits in
+  Ok { d with artist_credits; medium }
 
 let print_disc ~root disc =
   let open Printf in
   printf "Release: %s\n" (Option.value disc.title ~default:"(no title)");
-  begin match disc.artist_credit with
+  begin match disc.artist_credits with
   | [] -> ()
   | c :: clist ->
      printf "Artists: %s\n" (Artist_Credit.to_string c);
