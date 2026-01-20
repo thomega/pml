@@ -282,6 +282,8 @@ module Artist : sig
   (** Wrap the MBID in a set so that we can easily form sets without
       duplicates. *)
 
+  val compare : t -> t -> int
+
   val update : t Artist_cached.M.t -> t -> (t, string) result
   (** Find the artist with the same MBID in the dictionary.
       This is used to replace the artist record without

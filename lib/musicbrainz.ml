@@ -345,10 +345,32 @@ module Artist =
       |> Jsont.Object.finish
 
     let id a = MBID_Set.singleton a.id
+
     let update map a =
       match Artist_cached.M.find_opt a.id map with
       | Some a -> Ok a
       | None -> Error (Printf.sprintf "Artist ID '%s' not found!" a.id)
+
+    let compare a1 a2 =
+      let c =
+        match a1.artist_type, a2.artist_type with
+        | Some at1, Some at2 -> Artist_type.compare at1 at2
+        | Some _, None -> -1
+        | None, Some _ -> 1
+        | None, None -> 0 in
+      if c <> 0 then
+        c
+      else
+        match a1.lifespan, a2.lifespan with
+        | Some ls1, Some ls2 ->
+           begin match Lifespan.relation ls1 ls2 with
+           | Before -> -1
+           | After -> 1
+           | Overlap -> 0
+           end
+        | Some _, None -> -1
+        | None, Some _ -> 1
+        | None, None -> 0
 
     let to_string a =
       (Option.value a.sort_name ~default:(Option.value a.name ~default:"(anonymous)"))
