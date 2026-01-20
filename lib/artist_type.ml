@@ -92,6 +92,19 @@ let roles_of_string s =
         set)
     no_role re_role_alist
 
+let%test_module _ =
+  (module struct
+
+     let normalize s_in s_out =
+       roles_of_string s_in |> roles_to_string = s_out
+
+     let%test _ = normalize "" ""
+     let%test _ = normalize "composer and soprano" "comp./S."
+     let%test _ = normalize "baritone and pianist" "Bar./p."
+     let%test _ = normalize "violinist, conductor, tenor, composer" "comp./cond./T./vln."
+
+   end)
+
 type t =
   | Person of Roles.t
   | Group
