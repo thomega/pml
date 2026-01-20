@@ -2,7 +2,7 @@ module Artist =
   struct
 
     module MB = Musicbrainz.Artist
-    module AT = Musicbrainz.Artist_type
+    module AT = Artist_type
 
     type t =
       { name : string;
