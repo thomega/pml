@@ -47,6 +47,12 @@ let relation ls1 ls2 =
        Overlap
   | Limbo, _ | _, Limbo | Alive _, Alive _ | Dead' _, Dead' _ -> Overlap
 
+let compare ls1 ls2 =
+  match relation ls1 ls2 with
+  | Before -> -1
+  | After -> 1
+  | Overlap -> 0
+
 let not_performer ?(cutoff=1910) lifespan =
   match relation lifespan (Alive (Date.of_year cutoff)) with
   | Before -> true

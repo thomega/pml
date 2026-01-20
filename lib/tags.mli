@@ -4,9 +4,19 @@ module Artist : sig
   type t =
     { name : string (** The [sort_name] if available, accept [name] as substitute. *) ;
       artist_type : Artist_type.t;
+      lifespan : Lifespan.t;
       id : string }
   val of_mb : Musicbrainz.Artist.t -> t
 end
+
+val disjoint_oldest_opt : Artist.t list -> (Artist.t * Artist.t list) option
+(** Check if there is an oldest artist in the list, who died before any
+    of the others where born.  This artist must be the composer.
+
+    {e One could think of generalizing this to the case that there are
+       more artists that are older than the rest.  This would allow
+       for collaborative compositions. However, this appears to be too
+       rare to be worth the effort.}*)
 
 module All_tracks : sig
   type t =
