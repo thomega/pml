@@ -13,6 +13,13 @@ module Artist =
     let sort_name_of_name name =
       name
 
+    let compare a1 a2 =
+      let c = AT.compare a1.artist_type a2.artist_type in
+      if c <> 0 then
+        c
+      else
+        Lifespan.compare a1.lifespan a2.lifespan
+
     let of_mb mb =
       let id = mb.MB.id
       and name =
@@ -29,22 +36,25 @@ module Artist =
 
   end
 
+module Artists = Set.Make (struct type t = Artist.t let compare = Artist.compare end)
+
 let disjoint_oldest_opt artists =
   let open Artist in
+  let artists = Artists.elements artists in
   match List.sort (fun a1 a2 -> Lifespan.compare a1.lifespan a2.lifespan) artists with
   | [] | [_] -> None
   | a1 :: (a2 :: _ as alist) ->
      begin match Lifespan.relation a1.lifespan a2.lifespan with
-     | Before -> Some (a1, alist)
+     | Before -> Some (a1, Artists.of_list alist)
      | After | Overlap -> None 
      end
-  
+
 module All_tracks =
   struct
     type t =
       { title : string;
-        composers : Artist.t list;
-        performers : Artist.t list;
+        composers : Artists.t;
+        performers : Artists.t;
         tracks : int }
     let of_mb () =
       failwith "missing"
@@ -56,8 +66,9 @@ module Track =
     type t =
       { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
         title : string;
-        performers : Artist.t list;
-        inherited : All_tracks.t;
+        composers : Artists.t;
+        performers : Artists.t;
+        all_tracks : All_tracks.t;
         id : string }
 
     let of_mb mb =
@@ -65,9 +76,10 @@ module Track =
       let id = mb.MB.id in
       let number = 0 in
       let title = "" in
-      let performers = [] in
-      let inherited = All_tracks.of_mb () in
-      { id; number; title; performers; inherited }
+      let composers = Artists.empty in
+      let performers = Artists.empty in
+      let all_tracks = All_tracks.of_mb () in
+      { id; number; title; composers; performers; all_tracks }
 
   end
 
@@ -77,8 +89,8 @@ module Partial =
       { release : string;
         disc : string;
         title : string;
-        composers : Artist.t list;
-        performers : Artist.t list;
+        composers : Artists.t;
+        performers : Artists.t;
         tracks : Track.t list;
         total_tracks : int }
   end

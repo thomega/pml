@@ -2,14 +2,17 @@
 
 module Artist : sig
   type t =
-    { name : string (** The [sort_name] if available, accept [name] as substitute. *) ;
-      artist_type : Artist_type.t;
-      lifespan : Lifespan.t;
-      id : string }
+    { name : string; (** The [sort_name] if available, accept [name] as substitute. *)
+      artist_type : Artist_type.t; (** Determines the credit order. *)
+      lifespan : Lifespan.t; (** Can separate composers from performers. *)
+      id : string (** MBID *) }
+  val compare : t -> t -> int
   val of_mb : Musicbrainz.Artist.t -> t
 end
 
-val disjoint_oldest_opt : Artist.t list -> (Artist.t * Artist.t list) option
+module Artists : Set.S with type elt = Artist.t
+
+val disjoint_oldest_opt : Artists.t -> (Artist.t * Artists.t) option
 (** Check if there is an oldest artist in the list, who died before any
     of the others where born.  This artist must be the composer.
 
@@ -21,8 +24,8 @@ val disjoint_oldest_opt : Artist.t list -> (Artist.t * Artist.t list) option
 module All_tracks : sig
   type t =
     { title : string;
-      composers : Artist.t list;
-      performers : Artist.t list;
+      composers : Artists.t;
+      performers : Artists.t;
       tracks : int }
   val of_mb : unit -> t
 end
@@ -31,8 +34,9 @@ module Track : sig
   type t =
     { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
       title : string;
-      performers : Artist.t list;
-      inherited : All_tracks.t;
+      composers : Artists.t;
+      performers : Artists.t;
+      all_tracks : All_tracks.t;
       id : string }
   val of_mb : Musicbrainz.Track.t -> t
 end
@@ -42,10 +46,10 @@ module Partial : sig
     { release : string; (** The Musicbrainz id of the release from which the data are taken. *)
       disc : string; (** The discid from which the audio was ripped. *)
       title : string; (** The title of the whole work. This can not be empty. *)
-      composers : Artist.t list; (** Composers of a work that is expected to be performed
-                                     by others.  This will usually be left empty for
-                                     popular music.  *)
-      performers : Artist.t list; (** Instrumentalists, singers, conductors. *)
+      composers : Artists.t; (** Composers of a work that is expected to be performed
+                                 by others.  This will usually be left empty for
+                                 popular music.  *)
+      performers : Artists.t; (** Instrumentalists, singers, conductors. *)
       tracks : Track.t list;
       total_tracks : int (** The total number of tracks of the piece.  This is only needed
                              for the correct number of leading zeros in numbers in filenames. *)

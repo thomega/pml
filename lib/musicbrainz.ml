@@ -362,12 +362,7 @@ module Artist =
         c
       else
         match a1.lifespan, a2.lifespan with
-        | Some ls1, Some ls2 ->
-           begin match Lifespan.relation ls1 ls2 with
-           | Before -> -1
-           | After -> 1
-           | Overlap -> 0
-           end
+        | Some ls1, Some ls2 -> Lifespan.compare ls1 ls2
         | Some _, None -> -1
         | None, Some _ -> 1
         | None, None -> 0
