@@ -12,14 +12,9 @@ end
 
 module Artists : Set.S with type elt = Artist.t
 
-val disjoint_oldest_opt : Artists.t -> (Artist.t * Artists.t) option
-(** Check if there is an oldest artist in the list, who died before any
-    of the others where born.  This artist must be the composer.
-
-    {e One could think of generalizing this to the case that there are
-       more artists that are older than the rest.  This would allow
-       for collaborative compositions. However, this appears to be too
-       rare to be worth the effort.}*)
+val lifespan_gaps : Artists.t -> Artists.t list
+(** Check if there is are artists, who died before others where born.
+    Such artists must be the composer(s). *)
 
 module All_tracks : sig
   type t =

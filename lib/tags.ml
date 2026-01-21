@@ -38,16 +38,46 @@ module Artist =
 
 module Artists = Set.Make (struct type t = Artist.t let compare = Artist.compare end)
 
-let disjoint_oldest_opt artists =
+let find_gaps is_gap sorted_list =
+  let open List in
+  let rec find_gaps' groups_rev group_rev = function
+    | [] -> rev_append groups_rev [rev group_rev]
+    | [_] as a -> rev_append groups_rev [rev_append group_rev a]
+    | a1 :: (a2 :: _ as a2_etc) ->
+       if is_gap a1 a2 then
+         find_gaps' (rev_append group_rev [a1] :: groups_rev) [] a2_etc
+       else
+         find_gaps' groups_rev (a1 :: group_rev) a2_etc in
+  find_gaps' [] [] sorted_list
+
+let%test_module _ =
+  (module struct
+
+     let is_gap x y = y > x + 1
+
+     let test_gaps alist groups =
+       find_gaps is_gap alist = groups
+
+     let%test _ = test_gaps [] [[]]
+     let%test _ = test_gaps [1] [[1]]
+     let%test _ = test_gaps [1;2] [[1;2]]
+     let%test _ = test_gaps [1;3] [[1];[3]]
+     let%test _ = test_gaps [1;3;5] [[1];[3];[5]]
+     let%test _ = test_gaps [1;2;4;5;6;8;9] [[1;2];[4;5;6];[8;9]]
+     let%test _ = test_gaps [1;3;2] [[1];[3;2]]
+
+   end)
+
+let lifespan_gaps artists =
   let open Artist in
-  let artists = Artists.elements artists in
-  match List.sort (fun a1 a2 -> Lifespan.compare a1.lifespan a2.lifespan) artists with
-  | [] | [_] -> None
-  | a1 :: (a2 :: _ as alist) ->
-     begin match Lifespan.relation a1.lifespan a2.lifespan with
-     | Before -> Some (a1, Artists.of_list alist)
-     | After | Overlap -> None 
-     end
+  Artists.elements artists
+  |> List.sort (fun a1 a2 -> Lifespan.compare a1.lifespan a2.lifespan)
+  |> find_gaps
+       (fun a1 a2 ->
+         match Lifespan.relation a1.lifespan a2.lifespan with
+         | Before -> true
+         | After | Overlap -> false)
+  |> List.map Artists.of_list
 
 module All_tracks =
   struct
