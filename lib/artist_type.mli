@@ -33,6 +33,7 @@ module Roles : Set.S with type elt = role
 
 val no_role : Roles.t
 val roles_of_string : string -> Roles.t
+(** Scan the string for keywords. *)
 
 type t =
   | Person of Roles.t
@@ -46,6 +47,10 @@ type t =
     For us, only [Person], [Group], [Orchestra] and [Choir] should be relevant. *)
 
 val compare : t -> t -> int
+(** Compare in such a way that sorting a list of artists moves
+    composers and conductors to the front, singers and instrumentalists
+    next and ensembles, orchestras and choirs last.*)
+
 val of_string : Roles.t -> string -> t
 val to_string : t -> string
 

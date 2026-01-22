@@ -18,7 +18,11 @@ module Artist =
       if c <> 0 then
         c
       else
-        Lifespan.compare a1.lifespan a2.lifespan
+        let c = Lifespan.compare a1.lifespan a2.lifespan in
+        if c <> 0 then
+          c
+        else
+          String.compare a1.name a2.name
 
     let of_mb mb =
       let id = mb.MB.id
@@ -101,13 +105,21 @@ module Track =
         all_tracks : All_tracks.t;
         id : string }
 
+    let artists_of_credits credits =
+      List.filter_map
+        (fun c -> Option.map Artist.of_mb c.Musicbrainz.Artist_Credit.artist)
+        credits
+
+    let classify_artists credits =
+      let artists = artists_of_credits credits in
+      (Artists.of_list artists, Artists.of_list artists)
+
     let of_mb mb =
       let module MB = Musicbrainz.Track in
-      let id = mb.MB.id in
-      let number = 0 in
-      let title = "" in
-      let composers = Artists.empty in
-      let performers = Artists.empty in
+      let id = mb.MB.id
+      and number = Option.value mb.MB.position ~default:0
+      and title = Option.value mb.MB.title ~default:"(untitled)"
+      and composers, performers = classify_artists mb.MB.artist_credits in
       let all_tracks = All_tracks.of_mb () in
       { id; number; title; composers; performers; all_tracks }
 

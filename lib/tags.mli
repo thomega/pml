@@ -1,13 +1,52 @@
 (** WIP: tags and file system layout for musical works ripped from disc(s). *)
 
+(** The data structures in [Musicbrains] are a slightly embellished translation
+    of the JSON response for the [release] containing a particular disc.
+    Currently, the only embellishment is the [Lifespan.t] of the artists.
+
+    Therefore, we have a hierarchy
+    {v
+     release
+      - title
+      - artist_credit*
+         - name
+         - artist
+      - medium*
+         - position
+         - title
+         - track*
+            - position
+            - title
+            - artist_credit*
+               - name
+               - artist
+            - recording*
+               - title
+               - artist_credit*
+                  - name
+                  - artist
+     v}
+    and we have to take care of two things for tagging the rip of a disk
+    {ul {- partially invert the hierarchy to put a reference to the release
+           into the medium}
+        {- disambiguate the titles and artists of release, medium, track
+           and recording.}}
+ *)
+
 module Artist : sig
+
   type t =
     { name : string; (** The [sort_name] if available, accept [name] as substitute. *)
       artist_type : Artist_type.t; (** Determines the credit order. *)
       lifespan : Lifespan.t; (** Can separate composers from performers. *)
       id : string (** MBID *) }
+
   val compare : t -> t -> int
+  (** Compare artists by [artist_type] and use [lifespan] and [name] as a tie breakers. *)
+
   val of_mb : Musicbrainz.Artist.t -> t
+  (** Translate and replace [None] by defaults.  *)
+
 end
 
 module Artists : Set.S with type elt = Artist.t
