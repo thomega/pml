@@ -318,6 +318,16 @@ module MBID_Set = Set.Make (String)
 let mbid_union sets =
   List.fold_left MBID_Set.union MBID_Set.empty sets
 
+let re_blank =
+  Re.(seq [start; rep blank; stop] |> compile)
+
+let is_blank s =
+  Re.execp re_blank s
+
+let blank_to_none = function
+  | None | Some "" -> None
+  | Some s as string_option -> if is_blank s then None else string_option
+
 module Artist =
   struct
 
@@ -330,6 +340,8 @@ module Artist =
         disambiguation : string option }
 
     let make id name sort_name artist_type lifespan disambiguation =
+      let name = blank_to_none name
+      and sort_name = blank_to_none sort_name in
       let roles =
         match disambiguation with
         | None -> Artist_type.no_role
@@ -403,6 +415,7 @@ module Artist_Credit =
         artist : Artist.t option }
 
     let make name artist =
+      let name = blank_to_none name in
       { name; artist }
 
     let jsont =
@@ -439,7 +452,8 @@ module Recording =
         artist_credits : Artist_Credit.t list }
 
     let make id title artist_credits =
-      let artist_credits = opt_list artist_credits in
+      let title = blank_to_none title
+      and artist_credits = opt_list artist_credits in
       { id; title; artist_credits }
 
     let jsont =
@@ -484,7 +498,8 @@ module Track =
         recording : Recording.t option }
 
     let make id position title artist_credits recording =
-      let artist_credits = opt_list artist_credits in
+      let title = blank_to_none title
+      and artist_credits = opt_list artist_credits in
       { id; position; title; artist_credits; recording }
 
     let jsont =
@@ -560,7 +575,8 @@ module Medium =
 
     let make id position title discs tracks =
       let discs = opt_list discs
-      and tracks = opt_list tracks in
+      and tracks = opt_list tracks
+      and title = blank_to_none title in
       { id; position; title; discs; tracks }
 
     let jsont =
@@ -603,7 +619,8 @@ module Release =
         media : Medium.t list }
 
     let make id title artist_credits media =
-      let artist_credits = opt_list artist_credits
+      let title = blank_to_none title
+      and artist_credits = opt_list artist_credits
       and media = opt_list media in
       { id; title; artist_credits; media }
 

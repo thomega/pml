@@ -14,7 +14,7 @@
   (ocamlopt_flags (:standard -inline 32))
   (libraries
     clibdiscid
-    curl jsont jsont.bytesrw re unix))
+    curl jsont jsont.bytesrw re ubase unix))
 
 (documentation
   (package pml)

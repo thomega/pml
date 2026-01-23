@@ -94,41 +94,48 @@ let artists_of_credits credits =
     credits
   |> Artists.of_list
 
-module Recording =
-  struct
-
-    type t =
-      { title : string;
-        artists : Artists.t;
-        id : string }
-
-    let of_mb mb =
-      let module MB = Musicbrainz.Recording in
-      let id = mb.MB.id
-      and title = Option.value mb.MB.title ~default:"(untitled)"
-      and artists = artists_of_credits mb.MB.artist_credits in
-      { id; title; artists }
-
-  end
-
 module Track =
   struct
 
     type t =
       { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
         title : string;
+        recording_title : string option;
         artists : Artists.t;
-        recording : Recording.t option;
         id : string }
 
     let of_mb mb =
-      let module MB = Musicbrainz.Track in
-      let id = mb.MB.id
-      and number = Option.value mb.MB.position ~default:0
-      and title = Option.value mb.MB.title ~default:"(untitled)"
-      and artists = artists_of_credits mb.MB.artist_credits
-      and recording = Option.map Recording.of_mb mb.Musicbrainz.Track.recording in
-      { id; number; title; artists; recording }
+      let module T = Musicbrainz.Track in
+      let module R = Musicbrainz.Recording in
+      let id = mb.T.id
+      and number = Option.value mb.T.position ~default:0 in
+
+      let title, recording_title =
+        match mb.T.title, mb.T.recording with
+        | Some t, Some r ->
+           begin match r.R.title with
+           | Some rt ->
+              if Ubase.from_utf8 t = Ubase.from_utf8 rt then
+                (t, None)
+              else
+                (t, Some rt)
+           | None -> (t, None)
+           end
+        | Some t, None -> (t, None)
+        | None, Some r ->
+           begin match r.R.title with
+           | Some rt -> (rt, None)
+           | None -> ("(untitled)", None)
+           end
+        | None, None -> ("(untitled)", None) in
+
+      let artists = artists_of_credits mb.T.artist_credits in
+      let artists =
+        match mb.T.recording with
+        | Some r -> Artists.union (artists_of_credits r.R.artist_credits) artists
+        | None -> artists in
+
+      { id; number; title; recording_title; artists }
 
   end
 
@@ -174,6 +181,7 @@ module Disc =
     type t =
       { artist : Artist.t;
         title : string;
+        release_title : string;
         performer : Artist.t option;
         tracks : Track.t list;
         total_tracks : int;
@@ -184,22 +192,32 @@ module Disc =
       let medium = Medium.of_mb mb.MB.medium
       and release = Release.of_mb mb.MB.release
       and discid = mb.MB.discid in
-      let artist = Artists.min_elt release.Release.artists
-      and title = release.Release.title in
+      let title = medium.Medium.title
+      and release_title =  release.Release.title in
+      let artist = Artists.min_elt release.Release.artists in
       let performer = Artists.min_elt_opt (Artists.remove artist release.Release.artists)
       and tracks = medium.Medium.tracks
       and total_tracks = 100 in
-      { artist; title; performer; tracks; total_tracks; discid }
+      { artist; title; release_title; performer; tracks; total_tracks; discid }
 
     let print d =
       let open Printf in
       printf "Discid: %s\n" d.discid;
       printf "Artist: %s\n" d.artist.Artist.name;
       printf "Title: %s\n" d.title;
+      printf "Release: %s\n" d.release_title;
       begin match d.performer with
       | Some p -> printf "Performer: %s\n" p.Artist.name
       | None -> ()
       end;
-      ()
+      List.iter
+        (fun t ->
+          printf "  #%02d: '%s'\n" t.Track.number t.Track.title;
+          begin match t.recording_title with
+          | Some t -> printf "     = '%s'\n" t
+          | None -> ()
+          end;
+          Artists.iter (fun a -> printf "       > %s\n" a.Artist.name) t.Track.artists)
+        d.tracks
 
   end

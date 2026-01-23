@@ -55,20 +55,12 @@ val lifespan_gaps : Artists.t -> Artists.t list
 (** Check if there is are artists, who died before others where born.
     Such artists must be the composer(s). *)
 
-module Recording : sig
-  type t =
-    { title : string;
-      artists : Artists.t;
-      id : string }
-  val of_mb : Musicbrainz.Recording.t -> t
-end
-
 module Track : sig
   type t =
     { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
       title : string;
+      recording_title : string option;
       artists : Artists.t;
-      recording : Recording.t option;
       id : string }
   val of_mb : Musicbrainz.Track.t -> t
 end
@@ -106,6 +98,7 @@ module Disc : sig
                           From this and the [performer], if present,
                           we will derive the name of the second level
                           directory for storing the files. *)
+      release_title : string;
       performer : Artist.t option; (** The top billed performer for classical music, 
                                        to distinguish different interpretations.
                                        Empty for popular music. *)
