@@ -20,7 +20,7 @@
             - artist_credit*
                - name
                - artist
-            - recording*
+            - recording?
                - title
                - artist_credit*
                   - name
@@ -55,38 +55,63 @@ val lifespan_gaps : Artists.t -> Artists.t list
 (** Check if there is are artists, who died before others where born.
     Such artists must be the composer(s). *)
 
-module All_tracks : sig
+module Recording : sig
   type t =
     { title : string;
-      composers : Artists.t;
-      performers : Artists.t;
-      tracks : int }
-  val of_mb : unit -> t
+      artists : Artists.t;
+      id : string }
+  val of_mb : Musicbrainz.Recording.t -> t
 end
 
 module Track : sig
   type t =
     { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
       title : string;
-      composers : Artists.t;
-      performers : Artists.t;
-      all_tracks : All_tracks.t;
+      artists : Artists.t;
+      recording : Recording.t option;
       id : string }
   val of_mb : Musicbrainz.Track.t -> t
 end
 
-module Partial : sig
+module Medium : sig
   type t =
-    { release : string; (** The Musicbrainz id of the release from which the data are taken. *)
-      disc : string; (** The discid from which the audio was ripped. *)
-      title : string; (** The title of the whole work. This can not be empty. *)
-      composers : Artists.t; (** Composers of a work that is expected to be performed
-                                 by others.  This will usually be left empty for
-                                 popular music.  *)
-      performers : Artists.t; (** Instrumentalists, singers, conductors. *)
+    { title : string;
       tracks : Track.t list;
-      total_tracks : int (** The total number of tracks of the piece.  This is only needed
-                             for the correct number of leading zeros in numbers in filenames. *)
-    }
+      id : string }
+  val of_mb : Musicbrainz.Medium.t -> t
 end
-(** The part of a a musical work that fits on one disc. *)
+
+module Release : sig
+  type t =
+    { title : string; (** The title of the whole work. This can not be empty. *)
+      artists : Artists.t; (** Composers of a work that is expected to be performed
+                               by others.  This will usually be left empty for
+                               popular music.
+                               Performers: instrumentalists, singers, conductors, etc. *)
+      media : Medium.t list;
+      id : string }
+  val of_mb : Musicbrainz.Release.t -> t
+end
+
+module Disk : sig
+  type t =
+    { artist : Artist.t; (** The primary sorting key for the ripped files.
+                             From this, we will derive the name of the top
+                             level directory for storing the files.
+                             For classical music, this will be the composer.
+                             For popular music, it will be the top billed
+                             performer. *) 
+      title : string; (** The title of the work.
+                          From this and the [performer], if present,
+                          we will derive the name of the second level
+                          directory for storing the files. *)
+      performer : Artist.t option; (** The top billed performer for classical music, 
+                                       to distinguish different interpretations.
+                                       Empty for popular music. *)
+      tracks : Track.t list;
+      total_tracks : int; (** The total number of tracks of the release containing the disc.
+                              This is only needed for the correct number of leading zeros in
+                              numbers in filenames. *)
+      discid : string (** The discid from which the audio was ripped. *) }
+end
+

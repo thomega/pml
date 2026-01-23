@@ -83,15 +83,14 @@ let lifespan_gaps artists =
          | After | Overlap -> false)
   |> List.map Artists.of_list
 
-module All_tracks =
+module Recording =
   struct
     type t =
       { title : string;
-        composers : Artists.t;
-        performers : Artists.t;
-        tracks : int }
-    let of_mb () =
-      failwith "missing"
+        artists : Artists.t;
+        id : string }
+    let of_mb _ =
+      assert false
   end
 
 module Track =
@@ -100,9 +99,8 @@ module Track =
     type t =
       { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
         title : string;
-        composers : Artists.t;
-        performers : Artists.t;
-        all_tracks : All_tracks.t;
+        artists : Artists.t;
+        recording : Recording.t option;
         id : string }
 
     let artists_of_credits credits =
@@ -111,28 +109,47 @@ module Track =
         credits
 
     let classify_artists credits =
-      let artists = artists_of_credits credits in
-      (Artists.of_list artists, Artists.of_list artists)
+      artists_of_credits credits |> Artists.of_list
 
     let of_mb mb =
       let module MB = Musicbrainz.Track in
       let id = mb.MB.id
       and number = Option.value mb.MB.position ~default:0
       and title = Option.value mb.MB.title ~default:"(untitled)"
-      and composers, performers = classify_artists mb.MB.artist_credits in
-      let all_tracks = All_tracks.of_mb () in
-      { id; number; title; composers; performers; all_tracks }
+      and artists = classify_artists mb.MB.artist_credits
+      and recording = Option.map Recording.of_mb mb.Musicbrainz.Track.recording in
+      { id; number; title; artists; recording }
 
   end
 
-module Partial =
+module Medium =
   struct
     type t =
-      { release : string;
-        disc : string;
-        title : string;
-        composers : Artists.t;
-        performers : Artists.t;
+      { title : string;
         tracks : Track.t list;
-        total_tracks : int }
+        id : string }
+    let of_mb _ =
+      assert false
+  end
+
+module Release =
+  struct
+    type t =
+      { title : string;
+        artists : Artists.t;
+        media : Medium.t list;
+        id : string }
+    let of_mb _ =
+      assert false
+  end
+
+module Disk =
+  struct
+    type t =
+      { artist : Artist.t;
+        title : string;
+        performer : Artist.t option;
+        tracks : Track.t list;
+        total_tracks : int;
+        discid : string }
   end
