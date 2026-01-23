@@ -244,7 +244,10 @@ module Cached (Table : Table) : Cached =
     let local = C.get
 
     let get ~root key =
-      C.lookup ~root key remote_unsafe
+      let* text = C.lookup ~root key remote_unsafe in
+      match Error.get_error_opt text with
+      | Some msg -> Error (Printf.sprintf "get '%s' returns error object: %s" key msg)
+      | None -> Ok text
 
     let url key =
       let* key = Table.valid_key key in

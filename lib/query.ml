@@ -37,6 +37,9 @@ let write_to buffer data =
   Buffer.add_string buffer data;
   String.length data
 
+let fmt_error url msg =
+  Printf.sprintf "curl %s failed: %s" url msg
+
 (* We can live with an explicit state here, because
    [libcurl] is stateful anyway. *)
 let last_curl = ref 0.0
@@ -74,8 +77,8 @@ let curl ?timeout ~user_agent url =
        Curl.global_cleanup ();
        last_curl := Unix.time ();
        match !error_response with
-       | "" -> Error (Curl.strerror curlcode)
-       | s -> Error s
+       | "" -> Error (fmt_error url (Curl.strerror curlcode))
+       | s -> Error (fmt_error url s)
      end
 
 let exec api query key =
