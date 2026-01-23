@@ -365,11 +365,25 @@ module Artist =
       if c <> 0 then
         c
       else
-        match a1.lifespan, a2.lifespan with
-        | Some ls1, Some ls2 -> Lifespan.compare ls1 ls2
-        | Some _, None -> -1
-        | None, Some _ -> 1
-        | None, None -> 0
+        let c = 
+          match a1.lifespan, a2.lifespan with
+          | Some ls1, Some ls2 -> Lifespan.compare ls1 ls2
+          | Some _, None -> -1
+          | None, Some _ -> 1
+          | None, None -> 0 in
+        if c <> 0 then
+          c
+        else
+          let c =
+            match a1.sort_name, a2.sort_name with
+            | Some n1, Some n2 -> String.compare n1 n2
+            | Some _, None -> -1
+            | None, Some _ -> 1
+            | None, None -> 0 in
+          if c <> 0 then
+            c
+          else
+            String.compare a1.id a2.id
 
     let to_string a =
       (Option.value a.sort_name ~default:(Option.value a.name ~default:"(anonymous)"))

@@ -21,7 +21,11 @@ module Artist =
         if c <> 0 then
           c
         else
-          String.compare a1.name a2.name
+          let c = String.compare a1.name a2.name in
+          if c <> 0 then
+            c
+          else
+            String.compare a1.id a2.id
 
     let of_mb mb =
       let module A = Musicbrainz.Artist in
@@ -182,7 +186,7 @@ module Disc =
       and discid = mb.MB.discid in
       let artist = Artists.min_elt release.Release.artists
       and title = release.Release.title in
-      let performer = Artists.max_elt_opt (Artists.remove artist release.Release.artists)
+      let performer = Artists.min_elt_opt (Artists.remove artist release.Release.artists)
       and tracks = medium.Medium.tracks
       and total_tracks = 100 in
       { artist; title; performer; tracks; total_tracks; discid }
