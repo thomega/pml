@@ -702,6 +702,9 @@ module Release : sig
      </define>
      v} *)
 
+  val artist_ids : t -> MBID_Set.t
+  (** Extract the MBID of all credited artists. *)
+
 end
 
 module Taggable : sig

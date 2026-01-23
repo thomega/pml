@@ -316,7 +316,7 @@ module Artist_cached = Cached (Artist_table)
 module MBID_Set = Set.Make (String)
 
 let mbid_union sets =
-  List.fold_left (fun acc s -> MBID_Set.union s acc) MBID_Set.empty sets
+  List.fold_left MBID_Set.union MBID_Set.empty sets
 
 module Artist =
   struct
@@ -350,6 +350,7 @@ module Artist =
     let id a = MBID_Set.singleton a.id
 
     let update map a =
+      (* List.iter (fun (s, _) -> Printf.printf "key: %s\n" s) (Artist_cached.M.bindings map); *)
       match Artist_cached.M.find_opt a.id map with
       | Some a -> Ok a
       | None -> Error (Printf.sprintf "Artist ID '%s' not found!" a.id)
@@ -600,6 +601,11 @@ module Release =
       |> Jsont.Object.opt_mem "media" Jsont.(list Medium.jsont)
       |> Jsont.Object.finish
 
+    let artist_ids r =
+      MBID_Set.union
+        (List.map Artist_Credit.artist_id r.artist_credits |> mbid_union)
+        (List.map Medium.artist_ids r.media |> mbid_union)
+
     let update_artists map r =
       let* artist_credits =
         Result_list.map (Artist_Credit.update_artist map) r.artist_credits
@@ -637,7 +643,7 @@ module Taggable =
     let artist_ids d =
       MBID_Set.union
         (Medium.artist_ids d.medium)
-        (List.map Artist_Credit.artist_id d.release.Release.artist_credits |> mbid_union)
+        (Release.artist_ids d.release)
 
     let update_artists map d =
       let* medium = Medium.update_artists map d.medium
