@@ -704,20 +704,23 @@ module Release : sig
 
 end
 
-type disc =
-  { medium : Medium.t;
-    title : string option;
-    artist_credits : Artist_Credit.t list }
+module Taggable : sig
 
-val disc_of_discid : root:string -> string -> (disc, string) result
-(** Find the released disc matching the discid. *)
+  type t =
+    { medium : Medium.t;
+      release : Release.t }
 
-val artist_ids_on_disc : disc -> MBID_Set.t
-(** Extract the MBID of all credited artists. *)
+  val of_discid : root:string -> string -> (t, string) result
+  (** Find the released disc matching the discid. *)
 
-val update_artists_on_disc : Artist.t Artist_cached.M.t -> disc -> (disc, string) result
+  val artist_ids : t -> MBID_Set.t
+  (** Extract the MBID of all credited artists. *)
+
+  val update_artists : Artist.t Artist_cached.M.t -> t -> (t, string) result
   (** Do a [Artist.update] on all credited artists. *)
 
-val print_disc : root:string -> disc -> unit
-(** Exploration, WIP ... *)
+  val print : root:string -> t -> unit
+  (** Exploration, WIP ... *)
+
+end
 

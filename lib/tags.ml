@@ -1,12 +1,11 @@
 module Artist =
   struct
 
-    module MB = Musicbrainz.Artist
-    module AT = Artist_type
+    module A = Musicbrainz.Artist
 
     type t =
       { name : string;
-        artist_type : AT.t;
+        artist_type : Artist_type.t;
         lifespan : Lifespan.t;
         id : string }
 
@@ -14,7 +13,7 @@ module Artist =
       name
 
     let compare a1 a2 =
-      let c = AT.compare a1.artist_type a2.artist_type in
+      let c = Artist_type.compare a1.artist_type a2.artist_type in
       if c <> 0 then
         c
       else
@@ -25,17 +24,19 @@ module Artist =
           String.compare a1.name a2.name
 
     let of_mb mb =
-      let id = mb.MB.id
+      let module A = Musicbrainz.Artist in
+      let module AT = Artist_type in
+      let id = mb.A.id
       and name =
-        match mb.MB.sort_name, mb.MB.name with
+        match mb.A.sort_name, mb.A.name with
         | Some sort_name, Some _name -> sort_name
         | Some sort_name, None -> sort_name
         | None, Some name -> sort_name_of_name name
         | None, None -> "(anonymous)"
       and artist_type =
-        Option.value mb.MB.artist_type ~default:(AT.Person AT.Roles.empty)
+        Option.value mb.A.artist_type ~default:(AT.Person AT.Roles.empty)
       and lifespan =
-        Option.value mb.MB.lifespan ~default:Lifespan.Limbo in
+        Option.value mb.A.lifespan ~default:Lifespan.Limbo in
       { id; name; artist_type; lifespan }
 
   end
@@ -83,14 +84,27 @@ let lifespan_gaps artists =
          | After | Overlap -> false)
   |> List.map Artists.of_list
 
+let artists_of_credits credits =
+  List.filter_map
+    (fun c -> Option.map Artist.of_mb c.Musicbrainz.Artist_Credit.artist)
+    credits
+  |> Artists.of_list
+
 module Recording =
   struct
+
     type t =
       { title : string;
         artists : Artists.t;
         id : string }
-    let of_mb _ =
-      assert false
+
+    let of_mb mb =
+      let module MB = Musicbrainz.Recording in
+      let id = mb.MB.id
+      and title = Option.value mb.MB.title ~default:"(untitled)"
+      and artists = artists_of_credits mb.MB.artist_credits in
+      { id; title; artists }
+
   end
 
 module Track =
@@ -103,20 +117,12 @@ module Track =
         recording : Recording.t option;
         id : string }
 
-    let artists_of_credits credits =
-      List.filter_map
-        (fun c -> Option.map Artist.of_mb c.Musicbrainz.Artist_Credit.artist)
-        credits
-
-    let classify_artists credits =
-      artists_of_credits credits |> Artists.of_list
-
     let of_mb mb =
       let module MB = Musicbrainz.Track in
       let id = mb.MB.id
       and number = Option.value mb.MB.position ~default:0
       and title = Option.value mb.MB.title ~default:"(untitled)"
-      and artists = classify_artists mb.MB.artist_credits
+      and artists = artists_of_credits mb.MB.artist_credits
       and recording = Option.map Recording.of_mb mb.Musicbrainz.Track.recording in
       { id; number; title; artists; recording }
 
@@ -124,27 +130,43 @@ module Track =
 
 module Medium =
   struct
+
     type t =
       { title : string;
         tracks : Track.t list;
         id : string }
-    let of_mb _ =
-      assert false
+
+    let of_mb mb =
+      let module MB = Musicbrainz.Medium in
+      let id = mb.MB.id
+      and title = Option.value mb.MB.title ~default:"(untitled)"
+      and tracks = List.map Track.of_mb mb.MB.tracks in
+      { id; title; tracks }
+
   end
 
 module Release =
   struct
+
     type t =
       { title : string;
         artists : Artists.t;
         media : Medium.t list;
         id : string }
-    let of_mb _ =
-      assert false
+
+    let of_mb mb =
+      let module MB = Musicbrainz.Release in
+      let id = mb.MB.id
+      and title = Option.value mb.MB.title ~default:"(untitled)"
+      and artists = artists_of_credits mb.MB.artist_credits
+      and media = List.map Medium.of_mb mb.MB.media in
+      { id; title; artists; media }
+
   end
 
 module Disk =
   struct
+
     type t =
       { artist : Artist.t;
         title : string;
@@ -152,4 +174,5 @@ module Disk =
         tracks : Track.t list;
         total_tracks : int;
         discid : string }
+
   end

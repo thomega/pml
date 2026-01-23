@@ -203,13 +203,13 @@ module Medium : Exit_Cmd =
 
     let explore ~cache ?discid () =
       ignore cache;
-      let module MB = Pml.Musicbrainz in
+      let module MB = Pml.Musicbrainz.Taggable in
       match discid with
       | None -> 0
       | Some id ->
-         match MB.disc_of_discid ~root:cache id with
+         match MB.of_discid ~root:cache id with
          | Error msg -> prerr_endline msg; 1
-         | Ok disc -> MB.print_disc ~root:cache disc; 0
+         | Ok disc -> MB.print ~root:cache disc; 0
 
     let cmd =
       let open Cmd in

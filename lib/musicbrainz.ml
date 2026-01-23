@@ -286,13 +286,13 @@ module Release_Short =
 module Discid =
   struct
     type t =
-      { _id : string;
+      { id : string;
         releases : Release_Short.t list }
-    let make _id releases =
+    let make id releases =
       let releases = opt_list releases in
-      { _id; releases }
+      { id; releases }
     let jsont =
-      Jsont.Object.map ~kind:"Diskid" make
+      Jsont.Object.map ~kind:"Discid" make
       |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.opt_mem "releases" Jsont.(list Release_Short.jsont)
       |> Jsont.Object.finish
@@ -301,10 +301,13 @@ module Discid =
 
 let releases_of_discid ~root discid =
   let* json = Discid_cached.get ~root discid in
-  let* discid = Jsont_bytesrw.decode_string Discid.jsont json in
-  match discid.Discid.releases with
-  | [] -> Error "No Releases"
-  | releases -> Ok (List.map (fun r -> r.Release_Short.id) releases)
+  let* discid' = Jsont_bytesrw.decode_string Discid.jsont json in
+  if discid'.Discid.id <> discid then
+    Error (Printf.sprintf "inconsistent discid: '%s' <> '%s'" discid'.Discid.id discid)
+  else
+    match discid'.Discid.releases with
+    | [] -> Error "No Releases"
+    | releases -> Ok (List.map (fun r -> r.Release_Short.id) releases)
 
 module Release_cached = Cached (Release_table)
 
@@ -577,15 +580,18 @@ module Medium =
 
 module Release =
   struct
+
     type t =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         title : string option;
         artist_credits : Artist_Credit.t list;
         media : Medium.t list }
+
     let make id title artist_credits media =
       let artist_credits = opt_list artist_credits
       and media = opt_list media in
       { id; title; artist_credits; media }
+
     let jsont =
       Jsont.Object.map ~kind:"Release" make
       |> Jsont.Object.mem "id" Jsont.string
@@ -593,70 +599,78 @@ module Release =
       |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Artist_Credit.jsont)
       |> Jsont.Object.opt_mem "media" Jsont.(list Medium.jsont)
       |> Jsont.Object.finish
+
+    let update_artists map r =
+      let* artist_credits =
+        Result_list.map (Artist_Credit.update_artist map) r.artist_credits
+      and* media = Result_list.map (Medium.update_artists map) r.media in
+      Ok { r with artist_credits; media }
+
   end
 
-type disc =
-  { medium : Medium.t;
-    title : string option;
-    artist_credits : Artist_Credit.t list }
+module Taggable =
+  struct
 
-let release_of_mbid ~root mbid =
-  let* text = Release_cached.get ~root mbid in
-  Jsont_bytesrw.decode_string Release.jsont text
+    type t =
+      { medium : Medium.t;
+        release : Release.t }
 
-let contains_discid discid medium =
-  List.exists (fun disc -> discid = disc.Disc.id) medium.Medium.discs
+    let release_of_mbid ~root mbid =
+      let* text = Release_cached.get ~root mbid in
+      Jsont_bytesrw.decode_string Release.jsont text
 
-let discs_of_discid ~root discid =
-  let* releases = releases_of_discid ~root discid in
-  let* discs =
-    Result_list.map
-      (fun mbid ->
-        let* release = release_of_mbid ~root mbid in
-        let title = release.Release.title
-        and artist_credits = release.Release.artist_credits
-        and media = List.filter (contains_discid discid) release.Release.media in
-        Ok (List.map (fun medium -> { medium; title; artist_credits }) media))
-      releases in
-  Ok (List.concat discs)
+    let contains_discid discid medium =
+      List.exists (fun disc -> discid = disc.Disc.id) medium.Medium.discs
 
-let disc_of_discid ~root discid =
-  let* discs = discs_of_discid ~root discid in
-  match discs with
-  | [disc] -> Ok disc
-  | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
-  | _ -> Error (Printf.sprintf "multiple released discs for discid '%s'" discid)
+    let discs_of_discid ~root discid =
+      let* releases = releases_of_discid ~root discid in
+      let* discs =
+        Result_list.map
+          (fun mbid ->
+            let* release = release_of_mbid ~root mbid in
+            let media = List.filter (contains_discid discid) release.Release.media in
+            Ok (List.map (fun medium -> { medium; release }) media))
+          releases in
+      Ok (List.concat discs)
 
-let artist_ids_on_disc d =
-  MBID_Set.union
-    (Medium.artist_ids d.medium)
-    (List.map Artist_Credit.artist_id d.artist_credits |> mbid_union)
+    let of_discid ~root discid =
+      let* discs = discs_of_discid ~root discid in
+      match discs with
+      | [disc] -> Ok disc
+      | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
+      | _ -> Error (Printf.sprintf "multiple released discs for discid '%s'" discid)
 
-let update_artists_on_disc map d =
-  let* medium = Medium.update_artists map d.medium
-  and* artist_credits =
-    Result_list.map (Artist_Credit.update_artist map) d.artist_credits in
-  Ok { d with artist_credits; medium }
+    let artist_ids d =
+      MBID_Set.union
+        (Medium.artist_ids d.medium)
+        (List.map Artist_Credit.artist_id d.release.Release.artist_credits |> mbid_union)
 
-let print_disc ~root disc =
-  let open Printf in
-  printf "Release: %s\n" (Option.value disc.title ~default:"(no title)");
-  begin match disc.artist_credits with
-  | [] -> ()
-  | c :: clist ->
-     printf "Artists: %s\n" (Artist_Credit.to_string c);
-     List.iter (fun c -> printf "         %s\n" (Artist_Credit.to_string c)) clist
-  end;
-  Medium.print disc.medium;
-  let ids = artist_ids_on_disc disc |> MBID_Set.elements in
-  let* artist_map =
-    Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) ids in
-  let* disc = update_artists_on_disc artist_map disc in
-  Ok (artist_map, disc)
+    let update_artists map d =
+      let* medium = Medium.update_artists map d.medium
+      and* release = Release.update_artists map d.release in
+      Ok { medium; release }
 
-let print_disc ~root disc =
-  match print_disc ~root disc with
-  | Error msg -> prerr_endline msg
-  | Ok (map, disc) ->
-     Artist_cached.M.iter (fun id _ -> print_endline id) map;
-     print_disc ~root disc |> ignore
+    let print ~root disc =
+      let open Printf in
+      printf "Release: %s\n" (Option.value disc.release.Release.title ~default:"(no title)");
+      begin match disc.release.Release.artist_credits with
+      | [] -> ()
+      | c :: clist ->
+         printf "Artists: %s\n" (Artist_Credit.to_string c);
+         List.iter (fun c -> printf "         %s\n" (Artist_Credit.to_string c)) clist
+      end;
+      Medium.print disc.medium;
+      let ids = artist_ids disc |> MBID_Set.elements in
+      let* artist_map =
+        Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) ids in
+      let* disc = update_artists artist_map disc in
+      Ok (artist_map, disc)
+
+    let print ~root disc =
+      match print ~root disc with
+      | Error msg -> prerr_endline msg
+      | Ok (map, disc) ->
+         Artist_cached.M.iter (fun id _ -> print_endline id) map;
+         print ~root disc |> ignore
+
+  end
