@@ -14,7 +14,7 @@ let musicbrainz =
     host = "musicbrainz.org";
     api = "ws/2";
     user_agent = client_name ^ "/" ^ client_version ^ " ( " ^ contact ^ " )";
-    timeout = Some 10 }
+    timeout = Some 60 }
 
 type query =
   { table : string;
