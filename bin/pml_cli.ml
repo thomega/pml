@@ -201,21 +201,30 @@ module Medium : Exit_Cmd =
       let doc = Printf.sprintf "Disc to be examined." in
       Arg.(value & opt (some string) None & info ["d"; "disc"; "discid"] ~docv:"id" ~doc)
 
-    let explore ~cache ?discid () =
+    let processed =
+      let doc = "Process the data." in
+      Arg.(value & flag & info ["p"; "processed"] ~doc)
+
+    let explore ~cache ?discid ~processed () =
       ignore cache;
       let module MB = Pml.Musicbrainz.Taggable in
+      let module T = Pml.Tags.Disc in
       match discid with
       | None -> 0
       | Some id ->
          match MB.of_discid ~root:cache id with
          | Error msg -> prerr_endline msg; 1
-         | Ok disc -> MB.print ~root:cache disc; 0
+         | Ok disc ->
+            if processed then
+              T.print (T.of_mb disc)
+            else
+              MB.print disc; 0
 
     let cmd =
       let open Cmd in
       make (info "medium" ~man) @@
-        let+ cache and+ discid in
-        explore ~cache ?discid ()
+        let+ cache and+ discid and+ processed in
+        explore ~cache ?discid ~processed ()
 
   end
 

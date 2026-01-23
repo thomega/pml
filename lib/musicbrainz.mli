@@ -708,18 +708,13 @@ module Taggable : sig
 
   type t =
     { medium : Medium.t;
-      release : Release.t }
+      release : Release.t;
+      discid : string }
 
   val of_discid : root:string -> string -> (t, string) result
   (** Find the released disc matching the discid. *)
 
-  val artist_ids : t -> MBID_Set.t
-  (** Extract the MBID of all credited artists. *)
-
-  val update_artists : Artist.t Artist_cached.M.t -> t -> (t, string) result
-  (** Do a [Artist.update] on all credited artists. *)
-
-  val print : root:string -> t -> unit
+  val print : t -> unit
   (** Exploration, WIP ... *)
 
 end

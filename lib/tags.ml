@@ -164,7 +164,7 @@ module Release =
 
   end
 
-module Disk =
+module Disc =
   struct
 
     type t =
@@ -174,5 +174,28 @@ module Disk =
         tracks : Track.t list;
         total_tracks : int;
         discid : string }
+
+    let of_mb mb =
+      let module MB = Musicbrainz.Taggable in
+      let medium = Medium.of_mb mb.MB.medium
+      and release = Release.of_mb mb.MB.release
+      and discid = mb.MB.discid in
+      let artist = Artists.min_elt release.Release.artists
+      and title = release.Release.title in
+      let performer = Artists.max_elt_opt (Artists.remove artist release.Release.artists)
+      and tracks = medium.Medium.tracks
+      and total_tracks = 100 in
+      { artist; title; performer; tracks; total_tracks; discid }
+
+    let print d =
+      let open Printf in
+      printf "Discid: %s\n" d.discid;
+      printf "Artist: %s\n" d.artist.Artist.name;
+      printf "Title: %s\n" d.title;
+      begin match d.performer with
+      | Some p -> printf "Performer: %s\n" p.Artist.name
+      | None -> ()
+      end;
+      ()
 
   end

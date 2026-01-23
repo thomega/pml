@@ -613,7 +613,8 @@ module Taggable =
 
     type t =
       { medium : Medium.t;
-        release : Release.t }
+        release : Release.t;
+        discid : string }
 
     let release_of_mbid ~root mbid =
       let* text = Release_cached.get ~root mbid in
@@ -629,16 +630,9 @@ module Taggable =
           (fun mbid ->
             let* release = release_of_mbid ~root mbid in
             let media = List.filter (contains_discid discid) release.Release.media in
-            Ok (List.map (fun medium -> { medium; release }) media))
+            Ok (List.map (fun medium -> { medium; release; discid }) media))
           releases in
       Ok (List.concat discs)
-
-    let of_discid ~root discid =
-      let* discs = discs_of_discid ~root discid in
-      match discs with
-      | [disc] -> Ok disc
-      | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
-      | _ -> Error (Printf.sprintf "multiple released discs for discid '%s'" discid)
 
     let artist_ids d =
       MBID_Set.union
@@ -648,10 +642,28 @@ module Taggable =
     let update_artists map d =
       let* medium = Medium.update_artists map d.medium
       and* release = Release.update_artists map d.release in
-      Ok { medium; release }
+      Ok { d with medium; release }
 
-    let print ~root disc =
+    let add_lifespans ~root disc =
+      let ids = artist_ids disc |> MBID_Set.elements in
+      let* artist_map =
+        Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) ids in
+      update_artists artist_map disc
+
+    let of_discid_sans_lifespans ~root discid =
+      let* discs = discs_of_discid ~root discid in
+      match discs with
+      | [disc] -> Ok disc
+      | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
+      | _ -> Error (Printf.sprintf "multiple released discs for discid '%s'" discid)
+
+    let of_discid ~root discid =
+      let* disc = of_discid_sans_lifespans ~root discid in
+      add_lifespans ~root disc
+      
+    let print disc =
       let open Printf in
+      printf "Discid: %s\n" disc.discid;
       printf "Release: %s\n" (Option.value disc.release.Release.title ~default:"(no title)");
       begin match disc.release.Release.artist_credits with
       | [] -> ()
@@ -659,18 +671,6 @@ module Taggable =
          printf "Artists: %s\n" (Artist_Credit.to_string c);
          List.iter (fun c -> printf "         %s\n" (Artist_Credit.to_string c)) clist
       end;
-      Medium.print disc.medium;
-      let ids = artist_ids disc |> MBID_Set.elements in
-      let* artist_map =
-        Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) ids in
-      let* disc = update_artists artist_map disc in
-      Ok (artist_map, disc)
-
-    let print ~root disc =
-      match print ~root disc with
-      | Error msg -> prerr_endline msg
-      | Ok (map, disc) ->
-         Artist_cached.M.iter (fun id _ -> print_endline id) map;
-         print ~root disc |> ignore
+      Medium.print disc.medium
 
   end

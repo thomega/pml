@@ -93,7 +93,8 @@ module Release : sig
   val of_mb : Musicbrainz.Release.t -> t
 end
 
-module Disk : sig
+module Disc : sig
+
   type t =
     { artist : Artist.t; (** The primary sorting key for the ripped files.
                              From this, we will derive the name of the top
@@ -113,5 +114,11 @@ module Disk : sig
                               This is only needed for the correct number of leading zeros in
                               numbers in filenames. *)
       discid : string (** The discid from which the audio was ripped. *) }
+
+  val of_mb : Musicbrainz.Taggable.t -> t
+
+  val print : t -> unit
+  (** Exploration, WIP ... *)
+
 end
 
