@@ -7,8 +7,9 @@ type t =
                      and the padding character ['='] with
                      ['.'], ['_'] and ['-'] respectively. *)
     freedb : string (** The disc identifier use by FreeDB. (obsolete) *);
-    toc : string (** The TOC of the disc, used for fuzzy searches.
+    toc : string; (** The TOC of the disc, used for fuzzy searches.
                      The spaces are already replaced by ['+']. *)
+    submission_url : string (** URL for submitting a diskid to MusicBrainz. *)
   }
 (** See the {{: https://musicbrainz.org/doc/Disc_ID_Calculation }MusicBrainz documentation}
     for details. *)

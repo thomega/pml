@@ -252,6 +252,10 @@ module Query_Disc : Exit_Cmd =
                  for fuzzy searches on MusicBrainz." in
       Arg.(value & flag & info ["t"; "toc"] ~doc)
 
+    let print_submission_url =
+      let doc = "Print the URL accessing the discid submission interface." in
+      Arg.(value & flag & info ["u"; "url"] ~doc)
+
     let default_device =
       Pml.Discid.default_device ()
 
@@ -259,14 +263,14 @@ module Query_Disc : Exit_Cmd =
       let doc = Printf.sprintf "Choose CD-ROM device." in
       Arg.(value & opt string default_device & info ["d"; "device"] ~doc)
 
-    let query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_toc =
+    let query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_toc ~print_submission_url =
       if verbose then
         Printf.printf "querying %s ...\n" device;
       match Pml.Discid.get ~device () with
       | Result.Ok ids ->
          begin
-           if not lookup && not print_id && not print_toc then
-             Printf.printf "id = %s\ntoc = %s\n" ids.id ids.toc
+           if not lookup && not print_id && not print_toc && not print_submission_url then
+             Printf.printf "id = %s\ntoc = %s\nsubmit = %s\n" ids.id ids.toc ids.submission_url
            else if lookup then
              begin match Pml.Musicbrainz.Discid_cached.get ~root:cache ids.id with
              | Error msg -> Printf.eprintf "error: %s\n" msg
@@ -279,6 +283,8 @@ module Query_Disc : Exit_Cmd =
              print_endline ids.id
            else if print_toc then
              print_endline ids.toc
+           else if print_submission_url then
+             print_endline ids.submission_url
          end;
          0
       | Result.Error msg ->
@@ -288,8 +294,9 @@ module Query_Disc : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "disc" ~man) @@
-        let+ device and+ verbose and+ cache and+ lookup and+ print_id and+ print_toc in
-        query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_toc
+        let+ device and+ verbose and+ cache and+ lookup
+           and+ print_id and+ print_toc and+ print_submission_url in
+        query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_toc ~print_submission_url
 
 end
 

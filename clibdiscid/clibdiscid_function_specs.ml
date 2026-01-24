@@ -13,5 +13,6 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let get_id = foreign "discid_get_id" ((ptr void) @-> returning string)
   let get_freedb_id = foreign "discid_get_freedb_id" ((ptr void) @-> returning string)
   let get_toc_string = foreign "discid_get_toc_string" ((ptr void) @-> returning string)
+  let get_submission_url = foreign "discid_get_submission_url" ((ptr void) @-> returning string)
 
 end

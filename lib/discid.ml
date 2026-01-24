@@ -1,7 +1,8 @@
 type t =
   { id : string;
     freedb : string;
-    toc : string }
+    toc : string;
+    submission_url : string }
 
 module type Raw =
   sig
@@ -14,6 +15,7 @@ module type Raw =
     val get_id : disc -> string
     val get_freedb_id : disc -> string
     val get_toc_string : disc -> string
+    val get_submission_url : disc -> string
   end
 (** The same low level functions as in the module Clibdiscid.Functions that
     is produced by Ctypes and dune.  But we make the disc type opaque. *)
@@ -30,6 +32,7 @@ module Raw : Raw =
     let get_id = L.get_id
     let get_freedb_id = L.get_freedb_id
     let get_toc_string = L.get_toc_string
+    let get_submission_url = L.get_submission_url
   end
 
 let get ?device () =
@@ -43,7 +46,8 @@ let get ?device () =
      let ids =
        { id = get_id disc;
          freedb = get_freedb_id disc;
-         toc = String.map (fun c -> if c = ' ' then '+' else c) (get_toc_string disc) } in
+         toc = String.map (fun c -> if c = ' ' then '+' else c) (get_toc_string disc);
+         submission_url = get_submission_url disc } in
      free disc;
      Result.Ok ids
 
