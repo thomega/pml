@@ -126,7 +126,7 @@ let of_string roles = function
 let to_rank_and_string = function
   | Person roles ->
      begin match Roles.min_elt_opt roles with
-     | None -> ([1; 0], "Person")
+     | None -> ([1; 5], "Person")
      | Some role ->
         let r, _ = role_to_rank_and_string role in
         (1 :: r, roles_to_string roles)
