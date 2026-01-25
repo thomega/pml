@@ -87,28 +87,29 @@ end
 
 module Disc : sig
 
-  type title_options =
-    { release : string option;
-      medium : string option;
-      tracks : string option }
+  type title_kind =
+    | Tracks (** Common prefix of the tracks *)
+    | Medium (** Disc. *)
+    | Release (** Release. *)
+  (** The origin of the title. *)
 
   type t =
-    { artist : Artist.t; (** The primary sorting key for the ripped files.
-                             From this, we will derive the name of the top
-                             level directory for storing the files.
-                             For classical music, this will be the composer.
-                             For popular music, it will be the top billed
-                             performer. *) 
-      titles : string list; (** Possible titles of the work.
-                                From this and the [performer], if present,
-                                we will derive the name of the second level
-                                directory for storing the files. *)
-      title_options : title_options;
+    { composer : Artist.t; (** The primary sorting key for the ripped files.
+                               From this, we will derive the name of the top
+                               level directory for storing the files.
+                               For classical music, this will be the composer.
+                               For popular music, it will be the top billed
+                               performer. *) 
+      titles : (title_kind * string) list; (** Possible titles of the work.
+                                               From this and the [performer], if present,
+                                               we will derive the name of the second level
+                                               directory for storing the files. *)
       performer : Artist.t option; (** The top billed performer for classical music, 
                                        to distinguish different interpretations.
                                        Empty for popular music. *)
       tracks : Track.t list;
-      tracks_orig : Track.t list option;
+      tracks_orig : Track.t list option; (** The tracks with the original names iff a common
+                                             prefix has been stripped to be used as title. *)
       total_tracks : int; (** The total number of tracks of the release containing the disc.
                               This is only needed for the correct number of leading zeros in
                               numbers in filenames. *)

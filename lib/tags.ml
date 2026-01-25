@@ -178,80 +178,99 @@ module Release =
 module Disc =
   struct
 
-    type title_options =
-      { release : string option;
-        medium : string option;
-        tracks : string option }
+    type title_kind =
+      | Tracks
+      | Medium
+      | Release
+
+    let title_kind_to_string = function
+      | Tracks -> "tracks"
+      | Medium -> "medium"
+      | Release -> "release"
 
     type t =
-      { artist : Artist.t;
-        titles : string list;
-        title_options : title_options;
+      { composer : Artist.t;
+        titles : (title_kind * string) list;
         performer : Artist.t option;
         tracks : Track.t list;
         tracks_orig : Track.t list option;
         total_tracks : int;
         discid : string }
 
-    let prefix_track_titles tracks =
-      List.map (fun t -> t.Track.title) tracks |> Edit.common_prefix
+    let make_artists artists =
+      let composer = Artists.min_elt artists in
+      let performer_opt = Artists.min_elt_opt (Artists.remove composer artists) in
+      (composer, performer_opt)
 
     let replace_track_titles strings tracks =
       List.map2 (fun s t -> { t with Track.title = s }) strings tracks
+
+    let re_trailing_punctuatio =
+      Re.(seq [rep1 (alt [blank; set ":;.-_/"]); stop] |> compile)
+
+    let strip_trailing_punctuation s =
+      Re.replace_string re_trailing_punctuatio ~by:"" s
+
+    let make_titles release medium tracks =
+      let title, tracks, tracks_orig =
+        match List.map (fun t -> t.Track.title) tracks |> Edit.common_prefix with
+        | "" , _ ->
+           (None, tracks, None)
+        | pfx, tails ->
+           let title = strip_trailing_punctuation pfx
+           and stripped_tracks = replace_track_titles tails tracks in
+           (Some title, stripped_tracks, Some tracks) in
+      let titles =
+        List.filter_map Fun.id
+          [ Option.map (fun t -> (Tracks, t)) title;
+            Option.map (fun t -> (Medium, t)) medium.Medium.title;
+            Option.map (fun t -> (Release, t)) release.Release.title ] in
+      (titles, tracks, tracks_orig)
 
     let of_mb mb =
       let module MB = Musicbrainz.Taggable in
       let medium = Medium.of_mb mb.MB.medium
       and release = Release.of_mb mb.MB.release
       and discid = mb.MB.discid in
-      let artist = Artists.min_elt release.Release.artists in
-      let performer = Artists.min_elt_opt (Artists.remove artist release.Release.artists)
-      and tracks = medium.Medium.tracks 
-      and total_tracks = 100 in
-      let tracks_title, tracks, tracks_orig =
-        match prefix_track_titles tracks with
-        | "" , _ -> (None, tracks, None)
-        | pfx, tails -> (Some pfx, replace_track_titles tails tracks, Some tracks) in
-      let title_options =
-        { medium = medium.Medium.title;
-          release = release.Release.title;
-          tracks = tracks_title } in
-      let titles =
-        List.filter_map Fun.id [title_options.tracks; title_options.medium; title_options.release] in
-      { artist; titles; title_options; performer; tracks; tracks_orig; total_tracks; discid }
+      let composer, performer = make_artists release.Release.artists in
+      let total_tracks = 100 in
+      let titles, tracks, tracks_orig = make_titles release medium medium.Medium.tracks in
+      { composer; titles; performer; tracks; tracks_orig; total_tracks; discid }
 
     let print d =
       let open Printf in
-      printf "Discid: %s\n" d.discid;
+      printf "Discid: '%s'\n" d.discid;
       begin match d.performer with
-      | Some _ -> printf "Composer: %s\n" d.artist.Artist.name
-      | None -> printf "Artist: %s\n" d.artist.Artist.name
+      | Some _ -> printf "Composer: '%s'\n" d.composer.Artist.name
+      | None -> printf "Artist: '%s'\n" d.composer.Artist.name
       end;
-      List.iter (fun t -> printf "Title: %s\n" t) d.titles;
-      begin match d.title_options.tracks with
-      | Some t -> printf "Tracks Prefix: %s\n" t
-      | None -> ()
-      end;
-      begin match d.title_options.medium with
-      | Some t -> printf "Medium: %s\n" t
-      | None -> ()
-      end;
-      begin match d.title_options.release with
-      | Some t -> printf "Release: %s\n" t
-      | None -> ()
-      end;
+      List.iter (fun (k, t) -> printf "Title(%s): '%s'\n" (title_kind_to_string k) t) d.titles;
       begin match d.performer with
-      | Some p -> printf "Performer: %s\n" p.Artist.name
+      | Some p -> printf "Performer: '%s'\n" p.Artist.name
       | None -> ()
       end;
-      List.iter
-        (fun t ->
-          printf "  #%02d: '%s'\n" t.Track.number t.Track.title;
-          begin match t.recording_title with
-          | Some t -> printf "     = '%s'\n" t
-          | None -> ()
-          end;
-          Artists.iter (fun a -> printf "       > %s\n" a.Artist.name) t.Track.artists)
-        d.tracks
+      begin match d.tracks_orig with
+      | Some tracks_orig ->
+         List.iter2
+           (fun t ot ->
+             printf "  #%02d: '%s'\n" t.Track.number t.Track.title;
+             printf "       original: '%s'\n" ot.Track.title;
+             begin match t.recording_title with
+             | Some t -> printf "     = '%s'\n" t
+             | None -> ()
+             end;
+             Artists.iter (fun a -> printf "       > '%s'\n" a.Artist.name) t.Track.artists)
+           d.tracks tracks_orig
+      | None ->
+         List.iter
+           (fun t ->
+             printf "  #%02d: '%s'\n" t.Track.number t.Track.title;
+             begin match t.recording_title with
+             | Some t -> printf "     = '%s'\n" t
+             | None -> ()
+             end;
+             Artists.iter (fun a -> printf "       > '%s'\n" a.Artist.name) t.Track.artists)
+           d.tracks
+      end
 
   end
