@@ -67,7 +67,7 @@ end
 
 module Medium : sig
   type t =
-    { title : string;
+    { title : string option;
       tracks : Track.t list;
       id : string }
   val of_mb : Musicbrainz.Medium.t -> t
@@ -75,7 +75,7 @@ end
 
 module Release : sig
   type t =
-    { title : string; (** The title of the whole work. This can not be empty. *)
+    { title : string option; (** The title of the whole work. *)
       artists : Artists.t; (** Composers of a work that is expected to be performed
                                by others.  This will usually be left empty for
                                popular music.
@@ -94,11 +94,11 @@ module Disc : sig
                              For classical music, this will be the composer.
                              For popular music, it will be the top billed
                              performer. *) 
-      title : string; (** The title of the work.
-                          From this and the [performer], if present,
-                          we will derive the name of the second level
-                          directory for storing the files. *)
-      release_title : string;
+      title : string option; (** The title of the work.
+                                 From this and the [performer], if present,
+                                 we will derive the name of the second level
+                                 directory for storing the files. *)
+      release_title : string option;
       performer : Artist.t option; (** The top billed performer for classical music, 
                                        to distinguish different interpretations.
                                        Empty for popular music. *)

@@ -143,14 +143,14 @@ module Medium =
   struct
 
     type t =
-      { title : string;
+      { title : string option;
         tracks : Track.t list;
         id : string }
 
     let of_mb mb =
       let module MB = Musicbrainz.Medium in
       let id = mb.MB.id
-      and title = Option.value mb.MB.title ~default:"(untitled)"
+      and title = mb.MB.title
       and tracks = List.map Track.of_mb mb.MB.tracks in
       { id; title; tracks }
 
@@ -160,7 +160,7 @@ module Release =
   struct
 
     type t =
-      { title : string;
+      { title : string option;
         artists : Artists.t;
         media : Medium.t list;
         id : string }
@@ -168,7 +168,7 @@ module Release =
     let of_mb mb =
       let module MB = Musicbrainz.Release in
       let id = mb.MB.id
-      and title = Option.value mb.MB.title ~default:"(untitled)"
+      and title = mb.MB.title
       and artists = artists_of_credits mb.MB.artist_credits
       and media = List.map Medium.of_mb mb.MB.media in
       { id; title; artists; media }
@@ -180,8 +180,8 @@ module Disc =
 
     type t =
       { artist : Artist.t;
-        title : string;
-        release_title : string;
+        title : string option;
+        release_title : string option;
         performer : Artist.t option;
         tracks : Track.t list;
         total_tracks : int;
@@ -200,12 +200,42 @@ module Disc =
       and total_tracks = 100 in
       { artist; title; release_title; performer; tracks; total_tracks; discid }
 
+    let track_titles d =
+      List.map (fun t -> t.Track.title) d.tracks
+
+    let prefix_track_titles d =
+      track_titles d |> Edit.common_prefix
+
+    let replace_track_titles d slist =
+      let tracks =
+        List.map2 (fun t s -> { t with Track.title = s }) d.tracks slist in
+      { d with tracks }
+
+    let factor_track_titles d =
+      let pfx, tails = prefix_track_titles d in
+      if pfx = "" then
+        (d, None)
+      else
+        let d = replace_track_titles d tails in
+        ({ d with title = Some pfx }, d.title)
+
     let print d =
       let open Printf in
+      let d, title = factor_track_titles d in
       printf "Discid: %s\n" d.discid;
       printf "Artist: %s\n" d.artist.Artist.name;
-      printf "Title: %s\n" d.title;
-      printf "Release: %s\n" d.release_title;
+      begin match d.title with
+      | Some t -> printf "Title: %s\n" t
+      | None -> ()
+      end;
+      begin match title with
+      | Some t -> printf "Original Title: %s\n" t
+      | None -> ()
+      end;
+      begin match d.release_title with
+      | Some t -> printf "Release: %s\n" t
+      | None -> ()
+      end;
       begin match d.performer with
       | Some p -> printf "Performer: %s\n" p.Artist.name
       | None -> ()
