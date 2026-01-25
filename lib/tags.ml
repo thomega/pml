@@ -198,8 +198,9 @@ module Disc =
         total_tracks : int;
         discid : string;
         medium_id : string;
-        release_id : string
-    }
+        release_id : string }
+
+    (** TODO: sanitize titles for filenames, rotate articles, ... *)
 
     (** Heuristics for selecting composer and top billed performer.
         This relies on the ordering in [Artist_types]. *)
@@ -218,6 +219,8 @@ module Disc =
 
     let strip_trailing_punctuation s =
       Re.replace_string re_trailing_punctuatio ~by:"" s
+
+    (** TODO: sanitize titles for filenames, rotate articles, ... *)
 
     (** Heuristics for selecing the title. *)
     let make_titles release medium tracks =
@@ -250,6 +253,27 @@ module Disc =
       { composer; titles; performer; artists;
         tracks; tracks_orig; total_tracks;
         discid; medium_id; release_id }
+
+    let edit _d =
+      Error ("editing not implemented yet!")
+
+    let script d =
+      let open Printf in
+      printf "#! /bin/sh\n";
+      printf "########################################################################\n";
+      printf "# tag disc %s\n" d.discid;
+      printf "#   a.k.a. %s\n" d.medium_id;
+      printf "#  release %s\n" d.release_id;
+      printf "########################################################################\n";
+      printf "ROOT=\"%s\"\n"
+        (match d.composer with
+         | Some c -> c.Artist.name
+         | None -> "Anonymous");
+      printf "SUBDIR=\"%s\"\n"
+        (match d.titles with
+         | [] -> "Unnamed"
+         | (_kind, t) :: _ -> t);
+      Ok ()
 
     let print d =
       let open Printf in

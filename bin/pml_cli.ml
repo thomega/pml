@@ -205,7 +205,11 @@ module Medium : Exit_Cmd =
       let doc = "Process the data." in
       Arg.(value & flag & info ["p"; "processed"] ~doc)
 
-    let explore ~cache ?discid ~processed () =
+    let ripper =
+      let doc = "Write ripper script." in
+      Arg.(value & flag & info ["r"; "ripper"] ~doc)
+
+    let explore ~cache ?discid ~processed ~ripper () =
       ignore cache;
       let module MB = Pml.Musicbrainz.Taggable in
       let module T = Pml.Tags.Disc in
@@ -215,16 +219,20 @@ module Medium : Exit_Cmd =
          match MB.of_discid ~root:cache id with
          | Error msg -> prerr_endline msg; 1
          | Ok disc ->
-            if processed then
-              T.print (T.of_mb disc)
+            if ripper then
+              match T.script (T.of_mb disc) with
+              | Error msg -> prerr_endline msg; 1
+              | Ok () -> 0
+            else if processed then
+              (T.print (T.of_mb disc); 0)
             else
-              MB.print disc; 0
+              (MB.print disc; 0)
 
     let cmd =
       let open Cmd in
       make (info "medium" ~man) @@
-        let+ cache and+ discid and+ processed in
-        explore ~cache ?discid ~processed ()
+        let+ cache and+ discid and+ processed and+ ripper in
+        explore ~cache ?discid ~processed ~ripper ()
 
   end
 

@@ -121,6 +121,12 @@ module Disc : sig
 
   val of_mb : Musicbrainz.Taggable.t -> t
 
+  val edit : t -> (t, string) result
+  (** (Interactively) edit the tags. *)
+
+  val script : t -> (unit, string) result
+  (** Write a shell script for ripping, encoding and tagging. *)
+
   val print : t -> unit
   (** Exploration, WIP ... *)
 
