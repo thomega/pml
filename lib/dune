@@ -4,7 +4,7 @@
   (modules
     Musicbrainz Tags Discid Query Cache
     Artist_type Lifespan Date
-    Result_list Option_syntax)
+    Edit Result_list Option_syntax)
   (private_modules )
   ; (wrapped false)
   (inline_tests)

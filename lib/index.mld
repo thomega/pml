@@ -12,5 +12,5 @@ You can also jump immediately to the wrapped API modules
 {3 Artist Classification}
 {!modules:Pml.Artist_type Pml.Lifespan Pml.Date}
 {3 General Purpose Libraries}
-{!modules:Pml.Cache Pml.Result_list Pml.Option_syntax}
+{!modules:Pml.Edit Pml.Cache Pml.Result_list Pml.Option_syntax}
 
