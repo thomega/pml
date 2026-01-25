@@ -189,18 +189,26 @@ module Disc =
       | Release -> "release"
 
     type t =
-      { composer : Artist.t;
+      { composer : Artist.t option;
         titles : (title_kind * string) list;
         performer : Artist.t option;
+        artists : Artists.t;
         tracks : Track.t list;
         tracks_orig : Track.t list option;
         total_tracks : int;
-        discid : string }
+        discid : string;
+        medium_id : string;
+        release_id : string
+    }
 
+    (** Heuristics for selecting composer and top billed performer.
+        This relies on the ordering in [Artist_types]. *)
     let make_artists artists =
-      let composer = Artists.min_elt artists in
-      let performer_opt = Artists.min_elt_opt (Artists.remove composer artists) in
-      (composer, performer_opt)
+      match Artists.min_elt_opt artists with
+      | None -> (None, None)
+      | Some composer ->
+         let performer_opt = Artists.min_elt_opt (Artists.remove composer artists) in
+         (Some composer, performer_opt)
 
     let replace_track_titles strings tracks =
       List.map2 (fun s t -> { t with Track.title = s }) strings tracks
@@ -211,6 +219,7 @@ module Disc =
     let strip_trailing_punctuation s =
       Re.replace_string re_trailing_punctuatio ~by:"" s
 
+    (** Heuristics for selecing the title. *)
     let make_titles release medium tracks =
       let title, tracks, tracks_orig =
         match List.map (fun t -> t.Track.title) tracks |> Edit.common_prefix with
@@ -232,23 +241,35 @@ module Disc =
       let medium = Medium.of_mb mb.MB.medium
       and release = Release.of_mb mb.MB.release
       and discid = mb.MB.discid in
-      let composer, performer = make_artists release.Release.artists in
-      let total_tracks = 100 in
+      let medium_id = medium.Medium.id
+      and release_id = release.Release.id
+      and total_tracks = 100 in
+      let artists = release.Release.artists in
+      let composer, performer = make_artists artists in
       let titles, tracks, tracks_orig = make_titles release medium medium.Medium.tracks in
-      { composer; titles; performer; tracks; tracks_orig; total_tracks; discid }
+      { composer; titles; performer; artists;
+        tracks; tracks_orig; total_tracks;
+        discid; medium_id; release_id }
 
     let print d =
       let open Printf in
       printf "Discid: '%s'\n" d.discid;
-      begin match d.performer with
-      | Some _ -> printf "Composer: '%s'\n" d.composer.Artist.name
-      | None -> printf "Artist: '%s'\n" d.composer.Artist.name
+      printf "Medium: '%s'\n" d.medium_id;
+      printf "Release: '%s'\n" d.release_id;
+      begin match d.composer with
+      | Some composer ->
+         begin match d.performer with
+         | Some _ -> printf "Composer: '%s'\n" composer.Artist.name
+         | None -> printf "Artist: '%s'\n" composer.Artist.name
+         end
+      | None -> ()
       end;
       List.iter (fun (k, t) -> printf "Title(%s): '%s'\n" (title_kind_to_string k) t) d.titles;
       begin match d.performer with
       | Some p -> printf "Performer: '%s'\n" p.Artist.name
       | None -> ()
       end;
+      Artists.iter (fun a -> printf "            > '%s'\n" a.Artist.name) d.artists;
       begin match d.tracks_orig with
       | Some tracks_orig ->
          List.iter2
