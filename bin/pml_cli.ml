@@ -30,7 +30,7 @@ module type Exit_Cmd =
 let root =
   let doc = Printf.sprintf "Path to the root directory of the local cache."
   and env = Cmd.Env.info "MUSICBRAINZ_CACHE" in
-  Arg.(value & opt string default_cache & info ["c"; "cache"] ~docv:"path" ~doc ~env)
+  Arg.(value & opt string default_cache & info ["C"; "cache"] ~docv:"path" ~doc ~env)
 
 module Cachetest : Exit_Cmd =
   struct
@@ -193,22 +193,31 @@ module Medium : Exit_Cmd =
 
     let discid =
       let doc = Printf.sprintf "Disc to be examined." in
-      Arg.(value & opt (some string) None & info ["d"; "disc"; "discid"] ~docv:"id" ~doc)
+      Arg.(value & opt (some string) None & info ["d"; "disc"; "discid"] ~docv:"discid" ~doc)
 
     let title =
       let doc = Printf.sprintf "Overwrite derived title." in
-      Arg.(value & opt (some string) None & info ["t"; "title"] ~doc)
+      Arg.(value & opt (some string) None & info ["t"; "title"] ~docv:"title" ~doc)
+
+    let composer =
+      let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
+      Arg.(value & opt (some string) None & info ["c"; "composer"] ~docv:"name" ~doc)
+
+    let performer =
+      let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
+      Arg.(value & opt (some string) None & info ["p"; "performer"] ~docv:"name" ~doc)
 
     let processed =
       let doc = "Process the data." in
-      Arg.(value & flag & info ["p"; "processed"] ~doc)
+      Arg.(value & flag & info ["P"; "processed"] ~doc)
 
     let ripper =
       let doc = "Write ripper script." in
       Arg.(value & flag & info ["r"; "ripper"] ~doc)
 
-    let explore ~root ?discid ?title ~processed ~ripper () =
-      ignore root;
+    let explore ~root ?discid ?title ?composer ?performer ~processed ~ripper () =
+      ignore composer;
+      ignore performer;
       let module MB = Pml.Musicbrainz.Taggable in
       let module T = Pml.Tags.Disc in
       let open Result.Syntax in
@@ -220,10 +229,9 @@ module Medium : Exit_Cmd =
            Ok (ids.Pml.Discid.id) in
       let* disc = MB.of_discid ~root id in
       let tagged = T.of_mb disc in
-      let* tagged =
-        match title with
-        | None -> Ok tagged
-        | Some title -> T.user_title title tagged in
+      let* tagged = Option.fold ~some:(fun s -> T.user_title s tagged) ~none:(Ok tagged) title in
+      let* tagged = Option.fold ~some:(fun s -> T.user_composer s tagged) ~none:(Ok tagged) composer in
+      let* tagged = Option.fold ~some:(fun s -> T.user_performer s tagged) ~none:(Ok tagged) performer in
       if ripper then
         T.script tagged
       else if processed then
@@ -231,16 +239,16 @@ module Medium : Exit_Cmd =
       else
         Ok (MB.print disc)
 
-    let explore ~root ?discid ?title ~processed ~ripper () =
-      match explore ~root ?discid ?title ~processed ~ripper () with
+    let explore ~root ?discid ?title ?composer ?performer ~processed ~ripper () =
+      match explore ~root ?discid ?title ?composer ?performer ~processed ~ripper () with
       | Error msg -> prerr_endline msg; 1
       | Ok () -> 0
 
     let cmd =
       let open Cmd in
       make (info "medium" ~man) @@
-        let+ root and+ discid and+ title and+ processed and+ ripper in
-        explore ~root ?discid ?title ~processed ~ripper ()
+        let+ root and+ discid and+ title and+ composer and+ performer and+ processed and+ ripper in
+        explore ~root ?discid ?title ?composer ?performer ~processed ~ripper ()
 
   end
 

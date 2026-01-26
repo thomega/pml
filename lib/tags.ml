@@ -310,6 +310,12 @@ module Disc =
          Ok { d with titles; tracks; tracks_orig }
       | _ -> Ok (force_user_title title d)
 
+    let user_composer _composer _d =
+      Error "user_composer"
+
+    let user_performer _performer _d =
+      Error "user_performer"
+
     let script d =
       let open Printf in
       printf "#! /bin/sh\n";

@@ -125,6 +125,12 @@ module Disc : sig
   val user_title : string -> t -> (t, string) result
   (** (Interactively?) edit the tags. *)
 
+  val user_composer : string -> t -> (t, string) result
+  (** (Interactively?) name composer. *)
+
+  val user_performer : string -> t -> (t, string) result
+  (** (Interactively?) name top billed performer. *)
+
   val script : t -> (unit, string) result
   (** Write a shell script for ripping, encoding and tagging. *)
 
