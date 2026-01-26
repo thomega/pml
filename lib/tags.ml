@@ -214,17 +214,31 @@ module Disc =
     let replace_track_titles strings tracks =
       List.map2 (fun s t -> { t with Track.title = s }) strings tracks
 
-    let re_trailing_punctuatio =
+    let re_trailing_punctuation =
       Re.(seq [rep1 (alt [blank; set ":;.-_/"]); stop] |> compile)
 
     let strip_trailing_punctuation s =
-      Re.replace_string re_trailing_punctuatio ~by:"" s
+      Re.replace_string re_trailing_punctuation ~by:"" s
 
     (** TODO: sanitize titles for filenames, rotate articles, ... *)
 
-    (** Heuristics for selecing the title. *)
+    let%test_module _ =
+      (module struct
+
+         let%test _ =
+           strip_trailing_punctuation "abc: " = "abc"
+
+         let%test _ =
+           strip_trailing_punctuation "abc - /" = "abc"
+
+         let%test _ =
+           strip_trailing_punctuation "abc: def: " = "abc: def"
+
+       end)
+
+    (** Heuristics for selecting the title. *)
     let make_titles release medium tracks =
-      let title, tracks, tracks_orig =
+      let prefix, tracks, tracks_orig =
         match List.map (fun t -> t.Track.title) tracks |> Edit.common_prefix with
         | "" , _ ->
            (None, tracks, None)
@@ -234,7 +248,7 @@ module Disc =
            (Some title, stripped_tracks, Some tracks) in
       let titles =
         List.filter_map Fun.id
-          [ Option.map (fun t -> (Tracks, t)) title;
+          [ Option.map (fun t -> (Tracks, t)) prefix;
             Option.map (fun t -> (Medium, t)) medium.Medium.title;
             Option.map (fun t -> (Release, t)) release.Release.title ] in
       (titles, tracks, tracks_orig)

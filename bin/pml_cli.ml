@@ -74,9 +74,13 @@ module Cachetest : Exit_Cmd =
     let print_keys key_value_pairs =
       List.iter (fun (key, _) -> print_endline key) key_value_pairs
 
-    let found = function
-      | Ok (Some _) -> Ok ()
-      | Ok None -> Error "not found"
+    let found kind key = function
+      | Ok (Some json) ->
+         begin match Pml.Musicbrainz.Error.get_error_opt json with
+         | None -> Ok ()
+         | Some msg -> Error (Printf.sprintf "%s key '%s' points to error object: '%s'" kind key msg)
+         end
+      | Ok None -> Error (Printf.sprintf "%s key '%s': not found locally" kind key)
       | Error _ as e -> e
 
     let cache_tool ~root ~normalize ~remote ?discid ?release ?artist
@@ -102,7 +106,7 @@ module Cachetest : Exit_Cmd =
                else if remote then
                  MB.Discid_cached.get ~root discid |> Result.map (fun _ -> ())
                else
-                 MB.Discid_cached.local ~root discid |> found
+                 MB.Discid_cached.local ~root discid |> found "discid" discid
             | None -> Ok ()
           and* _ =
             match release with
@@ -112,7 +116,7 @@ module Cachetest : Exit_Cmd =
                else if remote then
                  MB.Release_cached.get ~root release |> Result.map (fun _ -> ())
                else
-                 MB.Release_cached.local ~root release |> found
+                 MB.Release_cached.local ~root release |> found "release" release
             | None -> Ok ()
           and* _ =
             match artist with
@@ -122,7 +126,7 @@ module Cachetest : Exit_Cmd =
                else if remote then
                  MB.Artist_cached.get ~root artist |> Result.map (fun _ -> ())
                else
-                 MB.Artist_cached.local ~root artist |> found
+                 MB.Artist_cached.local ~root artist |> found "artist" artist
             | None -> Ok () in
           Ok () in
       match result with
@@ -203,20 +207,27 @@ module Medium : Exit_Cmd =
       ignore root;
       let module MB = Pml.Musicbrainz.Taggable in
       let module T = Pml.Tags.Disc in
-      match discid with
-      | None -> 0
-      | Some id ->
-         match MB.of_discid ~root id with
-         | Error msg -> prerr_endline msg; 1
-         | Ok disc ->
-            if ripper then
-              match T.script (T.of_mb disc) with
-              | Error msg -> prerr_endline msg; 1
-              | Ok () -> 0
-            else if processed then
-              (T.print (T.of_mb disc); 0)
-            else
-              (MB.print disc; 0)
+      let open Result.Syntax in
+      let* id =
+        match discid with
+        | Some id -> Ok id
+        | None ->
+           let* ids = Pml.Discid.get () in
+           Ok (ids.Pml.Discid.id) in
+      let* disc = MB.of_discid ~root id in
+      let* _ =
+        if ripper then
+          T.script (T.of_mb disc)
+        else if processed then
+          Ok (T.print (T.of_mb disc))
+        else
+          Ok (MB.print disc) in
+      Ok ()
+
+    let explore ~root ?discid ~processed ~ripper () =
+      match explore ~root ?discid ~processed ~ripper () with
+      | Error msg -> prerr_endline msg; 1
+      | Ok () -> 0
 
     let cmd =
       let open Cmd in
