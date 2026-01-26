@@ -215,6 +215,11 @@ module Medium : Exit_Cmd =
       let doc = "Write ripper script." in
       Arg.(value & flag & info ["r"; "ripper"] ~doc)
 
+    let edit f string_opt tagged =
+      match string_opt with
+      | None -> Ok tagged
+      | Some s -> f s tagged
+
     let explore ~root ?discid ?title ?composer ?performer ~processed ~ripper () =
       ignore composer;
       ignore performer;
@@ -229,9 +234,9 @@ module Medium : Exit_Cmd =
            Ok (ids.Pml.Discid.id) in
       let* disc = MB.of_discid ~root id in
       let tagged = T.of_mb disc in
-      let* tagged = Option.fold ~some:(fun s -> T.user_title s tagged) ~none:(Ok tagged) title in
-      let* tagged = Option.fold ~some:(fun s -> T.user_composer s tagged) ~none:(Ok tagged) composer in
-      let* tagged = Option.fold ~some:(fun s -> T.user_performer s tagged) ~none:(Ok tagged) performer in
+      let* tagged = edit T.user_title title tagged in
+      let* tagged = edit T.user_composer composer tagged in
+      let* tagged = edit T.user_performer performer tagged in
       if ripper then
         T.script tagged
       else if processed then
