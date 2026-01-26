@@ -219,11 +219,19 @@ module Disc =
     let replace_track_titles strings tracks =
       List.map2 (fun s t -> { t with Track.title = s }) strings tracks
 
+    let punctuation =      ":;.-_/"
+
     let re_trailing_punctuation =
-      Re.(seq [rep1 (alt [blank; set ":;.-_/"]); stop] |> compile)
+      Re.(seq [rep1 (alt [blank; set punctuation]); stop] |> compile)
+
+    let re_leading_punctuation =
+      Re.(seq [start; rep1 (alt [blank; set punctuation])] |> compile)
 
     let strip_trailing_punctuation s =
       Re.replace_string re_trailing_punctuation ~by:"" s
+
+    let strip_leading_punctuation s =
+      Re.replace_string re_leading_punctuation ~by:"" s
 
     (** TODO: sanitize titles for filenames, rotate articles, ... *)
 
@@ -283,25 +291,22 @@ module Disc =
       { d with titles; tracks; tracks_orig }
 
     let chop_prefix n s =
-      String.sub s n (String.length s - n)
+      String.sub s n (String.length s - n) |> strip_leading_punctuation
+
+    let chop_prefixes n tracks =
+      List.map (fun t -> { t with Track.title = chop_prefix n t.Track.title }) tracks
 
     let user_title title d =
       begin match d.titles with
       | Tracks longest_prefix :: _ ->
+         let title = strip_trailing_punctuation title in
          if String.starts_with ~prefix:title longest_prefix then
            let n = String.length title
            and titles = [User title] in
            let tracks, tracks_orig =
              match d.tracks_orig with
-             | None ->
-                let tracks_orig = Some d.tracks
-                and tracks = 
-                  List.map (fun t -> { t with Track.title = chop_prefix n t.Track.title }) d.tracks in
-                (tracks, tracks_orig)
-             | Some tracks_orig ->
-                let tracks = 
-                  List.map (fun t -> { t with Track.title = chop_prefix n t.Track.title }) tracks_orig in
-                (tracks, d.tracks_orig) in
+             | None -> (chop_prefixes n d.tracks, Some d.tracks)
+             | Some tracks_orig -> (chop_prefixes n tracks_orig, d.tracks_orig) in
            Ok { d with titles; tracks; tracks_orig }
          else
            Ok (force_user_title title d)
