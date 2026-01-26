@@ -27,7 +27,7 @@ module type Exit_Cmd =
     val cmd : int Cmd.t
   end
 
-let cache =
+let root =
   let doc = Printf.sprintf "Path to the root directory of the local cache."
   and env = Cmd.Env.info "MUSICBRAINZ_CACHE" in
   Arg.(value & opt string default_cache & info ["c"; "cache"] ~docv:"path" ~doc ~env)
@@ -67,85 +67,57 @@ module Cachetest : Exit_Cmd =
       let doc = Printf.sprintf "List all cached artists." in
       Arg.(value & flag & info ["A"; "list_artists"] ~doc)
 
-    let cache_tool ~cache ~normalize ?discid ?release ?artist
+    let cache_tool ~root ~normalize ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list () =
       let module MB = Pml.Musicbrainz in
-      if discid_list then
-        match
-          let open Result.Syntax in
-          let* discids = MB.Discid_cached.all_local ~root:cache in
+      let open Result.Syntax in
+      let result =
+        if discid_list then
+          let* discids = MB.Discid_cached.all_local ~root in
           Ok (List.iter (fun (discid, _) -> print_endline discid) discids)
-        with
-        | Error msg -> prerr_endline msg; 1
-        | Ok _ -> 0
-      else if release_list then
-        match
-          let open Result.Syntax in
-          let* releases = MB.Release_cached.all_local ~root:cache in
+        else if release_list then
+          let* releases = MB.Release_cached.all_local ~root in
           Ok (List.iter (fun (release, _) -> print_endline release) releases)
-        with
-        | Error msg -> prerr_endline msg; 1
-        | Ok _ -> 0
-      else if artist_list then
-        match
-          let open Result.Syntax in
-          let* artists = MB.Artist_cached.all_local ~root:cache in
+        else if artist_list then
+          let* artists = MB.Artist_cached.all_local ~root in
           Ok (List.iter (fun (artist, _) -> print_endline artist) artists)
-        with
-        | Error msg -> prerr_endline msg; 1
-        | Ok _ -> 0
-      else if normalize then
-        let rc_discid =
-          match discid with
-          | None -> 0
-          | Some discid ->
-             begin match MB.Discid_cached.Internal.map ~root:cache discid MB.Raw.normalize with
-             | Error msg -> Printf.eprintf "error: %s\n" msg; 1
-             | Ok () -> 0
-             end
-        and rc_release =
-          match release with
-          | None -> 0
-          | Some release ->
-             begin match MB.Release_cached.Internal.map ~root:cache release MB.Raw.normalize with
-             | Error msg -> Printf.eprintf "error: %s\n" msg; 1
-             | Ok () -> 0
-             end
-        and rc_artist =
-          match artist with
-          | None -> 0
-          | Some artist ->
-             begin match MB.Artist_cached.Internal.map ~root:cache artist MB.Raw.normalize with
-             | Error msg -> Printf.eprintf "error: %s\n" msg; 1
-             | Ok () -> 0
-             end in
-        rc_discid + rc_release + rc_artist
-      else
-        match discid, release, artist with
-        | None, None, None -> 0
-        | Some discid, None, None ->
-           begin match MB.Discid_cached.get ~root:cache discid with
-           | Error msg -> Printf.eprintf "error: %s\n" msg; 1
-           | Ok json -> print_endline json; 0
-           end
-        | None, Some release, None ->
-           begin match MB.Release_cached.get ~root:cache release with
-           | Error msg -> Printf.eprintf "error: %s\n" msg; 1
-           | Ok json -> print_endline json; 0
-           end
-        | None, None, Some artist ->
-           begin match MB.Artist_cached.get ~root:cache artist with
-           | Error msg -> Printf.eprintf "error: %s\n" msg; 1
-           | Ok json -> print_endline json; 0
-           end
-        | _ -> 1
+        else
+          let* _ =
+            match discid with
+            | Some discid ->
+               if normalize then
+                 MB.Discid_cached.Internal.map ~root discid MB.Raw.normalize
+               else
+                 MB.Discid_cached.get ~root discid |> Result.map (fun _ -> ())
+            | None -> Ok ()
+          and* _ =
+            match release with
+            | Some release ->
+               if normalize then
+                 MB.Release_cached.Internal.map ~root release MB.Raw.normalize
+               else
+                 MB.Release_cached.get ~root release |> Result.map (fun _ -> ())
+            | None -> Ok ()
+          and* _ =
+            match artist with
+            | Some artist ->
+               if normalize then
+                 MB.Artist_cached.Internal.map ~root artist MB.Raw.normalize
+               else
+                 MB.Artist_cached.get ~root artist |> Result.map (fun _ -> ())
+            | None -> Ok () in
+          Ok () in
+      match result with
+      | Error msg -> prerr_endline msg; 1
+      | Ok _ -> 0
+
 
     let cmd =
       let open Cmd in
       make (info "cache" ~man) @@
-        let+ cache and+ normalize and+ discid and+ release and+ artist
+        let+ root and+ normalize and+ discid and+ release and+ artist
            and+ discid_list and+ release_list and+ artist_list in
-        cache_tool ~cache ~normalize ?discid ?release ?artist
+        cache_tool ~root ~normalize ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list ()
 
   end
@@ -169,8 +141,8 @@ module Musicbrainz : Exit_Cmd =
       let doc = "Dump the whole tree." in
       Arg.(value & flag & info ["p"; "pretty"] ~doc)
 
-    let parse_json ~cache ?file ~schema ~pretty () =
-      ignore cache;
+    let parse_json ~root ?file ~schema ~pretty () =
+      ignore root;
       let module MB = Pml.Musicbrainz in
       match file with
       | None -> 0
@@ -185,8 +157,8 @@ module Musicbrainz : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "musicbrainz" ~man) @@
-        let+ cache and+ file and+ schema and+ pretty in
-        parse_json ~cache ?file ~schema ~pretty ()
+        let+ root and+ file and+ schema and+ pretty in
+        parse_json ~root ?file ~schema ~pretty ()
 
   end
 
@@ -209,14 +181,14 @@ module Medium : Exit_Cmd =
       let doc = "Write ripper script." in
       Arg.(value & flag & info ["r"; "ripper"] ~doc)
 
-    let explore ~cache ?discid ~processed ~ripper () =
-      ignore cache;
+    let explore ~root ?discid ~processed ~ripper () =
+      ignore root;
       let module MB = Pml.Musicbrainz.Taggable in
       let module T = Pml.Tags.Disc in
       match discid with
       | None -> 0
       | Some id ->
-         match MB.of_discid ~root:cache id with
+         match MB.of_discid ~root id with
          | Error msg -> prerr_endline msg; 1
          | Ok disc ->
             if ripper then
@@ -231,8 +203,8 @@ module Medium : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "medium" ~man) @@
-        let+ cache and+ discid and+ processed and+ ripper in
-        explore ~cache ?discid ~processed ~ripper ()
+        let+ root and+ discid and+ processed and+ ripper in
+        explore ~root ?discid ~processed ~ripper ()
 
   end
 
@@ -271,7 +243,7 @@ module Query_Disc : Exit_Cmd =
       let doc = Printf.sprintf "Choose CD-ROM device." in
       Arg.(value & opt string default_device & info ["d"; "device"] ~doc)
 
-    let query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_toc ~print_submission_url =
+    let query_disc ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url =
       if verbose then
         Printf.printf "querying %s ...\n" device;
       match Pml.Discid.get ~device () with
@@ -280,12 +252,12 @@ module Query_Disc : Exit_Cmd =
            if not lookup && not print_id && not print_toc && not print_submission_url then
              Printf.printf "id = %s\ntoc = %s\nsubmit = %s\n" ids.id ids.toc ids.submission_url
            else if lookup then
-             begin match Pml.Musicbrainz.Discid_cached.get ~root:cache ids.id with
+             begin match Pml.Musicbrainz.Discid_cached.get ~root ids.id with
              | Error msg -> Printf.eprintf "error: %s\n" msg
              | Ok json ->
                 Printf.printf
                   "received %d bytes for %s in %s/discid\n"
-                  (String.length json) ids.id cache
+                  (String.length json) ids.id root
              end
            else if print_id then
              print_endline ids.id
@@ -302,9 +274,9 @@ module Query_Disc : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "disc" ~man) @@
-        let+ device and+ verbose and+ cache and+ lookup
+        let+ device and+ verbose and+ root and+ lookup
            and+ print_id and+ print_toc and+ print_submission_url in
-        query_disc ~device ~verbose ~cache ~lookup ~print_id ~print_toc ~print_submission_url
+        query_disc ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url
 
 end
 
