@@ -178,19 +178,24 @@ module Release =
 module Disc =
   struct
 
-    type title_kind =
-      | Tracks
-      | Medium
-      | Release
+    type title =
+      | User of string
+      | Tracks of string
+      | Medium of string
+      | Release of string
 
     let title_kind_to_string = function
-      | Tracks -> "tracks"
-      | Medium -> "medium"
-      | Release -> "release"
+      | User _ -> "user"
+      | Tracks _ -> "tracks"
+      | Medium _ -> "medium"
+      | Release _ -> "release"
+
+    let title_to_string = function
+      | User s | Tracks s | Medium s | Release s -> s
 
     type t =
       { composer : Artist.t option;
-        titles : (title_kind * string) list;
+        titles : title list;
         performer : Artist.t option;
         artists : Artists.t;
         tracks : Track.t list;
@@ -248,9 +253,9 @@ module Disc =
            (Some title, stripped_tracks, Some tracks) in
       let titles =
         List.filter_map Fun.id
-          [ Option.map (fun t -> (Tracks, t)) prefix;
-            Option.map (fun t -> (Medium, t)) medium.Medium.title;
-            Option.map (fun t -> (Release, t)) release.Release.title ] in
+          [ Option.map (fun t -> Tracks t) prefix;
+            Option.map (fun t -> Medium t) medium.Medium.title;
+            Option.map (fun t -> Release t) release.Release.title ] in
       (titles, tracks, tracks_orig)
 
     let of_mb mb =
@@ -268,8 +273,40 @@ module Disc =
         tracks; tracks_orig; total_tracks;
         discid; medium_id; release_id }
 
-    let edit _d =
-      Error ("editing not implemented yet!")
+    let force_user_title title d =
+      let titles = [User title]
+      and tracks =
+        match d.tracks_orig with
+        | None -> d.tracks
+        | Some tracks -> tracks
+      and tracks_orig = None in
+      { d with titles; tracks; tracks_orig }
+
+    let chop_prefix n s =
+      String.sub s n (String.length s - n)
+
+    let user_title title d =
+      begin match d.titles with
+      | Tracks longest_prefix :: _ ->
+         if String.starts_with ~prefix:title longest_prefix then
+           let n = String.length title
+           and titles = [User title] in
+           let tracks, tracks_orig =
+             match d.tracks_orig with
+             | None ->
+                let tracks_orig = Some d.tracks
+                and tracks = 
+                  List.map (fun t -> { t with Track.title = chop_prefix n t.Track.title }) d.tracks in
+                (tracks, tracks_orig)
+             | Some tracks_orig ->
+                let tracks = 
+                  List.map (fun t -> { t with Track.title = chop_prefix n t.Track.title }) tracks_orig in
+                (tracks, d.tracks_orig) in
+           Ok { d with titles; tracks; tracks_orig }
+         else
+           Ok (force_user_title title d)
+      | _ -> Ok (force_user_title title d)
+      end
 
     let script d =
       let open Printf in
@@ -286,7 +323,7 @@ module Disc =
       printf "SUBDIR=\"%s\"\n"
         (match d.titles with
          | [] -> "Unnamed"
-         | (_kind, t) :: _ -> t);
+         | t :: _ -> (title_to_string t));
       Ok ()
 
     let print d =
@@ -302,7 +339,10 @@ module Disc =
          end
       | None -> ()
       end;
-      List.iter (fun (k, t) -> printf "Title(%s): '%s'\n" (title_kind_to_string k) t) d.titles;
+      List.iter
+        (fun t ->
+          printf "Title(%s): '%s'\n" (title_kind_to_string t) (title_to_string t))
+        d.titles;
       begin match d.performer with
       | Some p -> printf "Performer: '%s'\n" p.Artist.name
       | None -> ()

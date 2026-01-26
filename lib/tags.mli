@@ -87,10 +87,11 @@ end
 
 module Disc : sig
 
-  type title_kind =
-    | Tracks (** Common prefix of the tracks *)
-    | Medium (** Disc. *)
-    | Release (** Release. *)
+  type title =
+    | User of string (** User selected. *)
+    | Tracks of string (** Longest common prefix of the tracks *)
+    | Medium of string (** Disc. *)
+    | Release of string (** Release. *)
   (** The origin of the title. *)
 
   type t =
@@ -100,10 +101,10 @@ module Disc : sig
                                       For classical music, this will be the composer.
                                       For popular music, it will be the top billed
                                       performer. *) 
-      titles : (title_kind * string) list; (** Possible titles of the work.
-                                               From this and the [performer], if present,
-                                               we will derive the name of the second level
-                                               directory for storing the files. *)
+      titles : title list; (** Possible titles of the work.
+                               From this and the [performer], if present,
+                               we will derive the name of the second level
+                               directory for storing the files. *)
       performer : Artist.t option; (** The top billed performer for classical music, 
                                        to distinguish different interpretations.
                                        Empty for popular music. *)
@@ -121,8 +122,8 @@ module Disc : sig
 
   val of_mb : Musicbrainz.Taggable.t -> t
 
-  val edit : t -> (t, string) result
-  (** (Interactively) edit the tags. *)
+  val user_title : string -> t -> (t, string) result
+  (** (Interactively?) edit the tags. *)
 
   val script : t -> (unit, string) result
   (** Write a shell script for ripping, encoding and tagging. *)

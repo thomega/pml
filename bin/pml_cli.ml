@@ -195,6 +195,10 @@ module Medium : Exit_Cmd =
       let doc = Printf.sprintf "Disc to be examined." in
       Arg.(value & opt (some string) None & info ["d"; "disc"; "discid"] ~docv:"id" ~doc)
 
+    let title =
+      let doc = Printf.sprintf "Overwrite derived title." in
+      Arg.(value & opt (some string) None & info ["t"; "title"] ~doc)
+
     let processed =
       let doc = "Process the data." in
       Arg.(value & flag & info ["p"; "processed"] ~doc)
@@ -203,7 +207,7 @@ module Medium : Exit_Cmd =
       let doc = "Write ripper script." in
       Arg.(value & flag & info ["r"; "ripper"] ~doc)
 
-    let explore ~root ?discid ~processed ~ripper () =
+    let explore ~root ?discid ?title ~processed ~ripper () =
       ignore root;
       let module MB = Pml.Musicbrainz.Taggable in
       let module T = Pml.Tags.Disc in
@@ -215,25 +219,28 @@ module Medium : Exit_Cmd =
            let* ids = Pml.Discid.get () in
            Ok (ids.Pml.Discid.id) in
       let* disc = MB.of_discid ~root id in
-      let* _ =
-        if ripper then
-          T.script (T.of_mb disc)
-        else if processed then
-          Ok (T.print (T.of_mb disc))
-        else
-          Ok (MB.print disc) in
-      Ok ()
+      let tagged = T.of_mb disc in
+      let* tagged =
+        match title with
+        | None -> Ok tagged
+        | Some title -> T.user_title title tagged in
+      if ripper then
+        T.script tagged
+      else if processed then
+        Ok (T.print tagged)
+      else
+        Ok (MB.print disc)
 
-    let explore ~root ?discid ~processed ~ripper () =
-      match explore ~root ?discid ~processed ~ripper () with
+    let explore ~root ?discid ?title ~processed ~ripper () =
+      match explore ~root ?discid ?title ~processed ~ripper () with
       | Error msg -> prerr_endline msg; 1
       | Ok () -> 0
 
     let cmd =
       let open Cmd in
       make (info "medium" ~man) @@
-        let+ root and+ discid and+ processed and+ ripper in
-        explore ~root ?discid ~processed ~ripper ()
+        let+ root and+ discid and+ title and+ processed and+ ripper in
+        explore ~root ?discid ?title ~processed ~ripper ()
 
   end
 
