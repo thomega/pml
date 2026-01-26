@@ -219,7 +219,7 @@ module Disc =
     let replace_track_titles strings tracks =
       List.map2 (fun s t -> { t with Track.title = s }) strings tracks
 
-    let punctuation =      ":;.-_/"
+    let punctuation = ":;.-_/"
 
     let re_trailing_punctuation =
       Re.(seq [rep1 (alt [blank; set punctuation]); stop] |> compile)
@@ -257,7 +257,8 @@ module Disc =
            (None, tracks, None)
         | pfx, tails ->
            let title = strip_trailing_punctuation pfx
-           and stripped_tracks = replace_track_titles tails tracks in
+           and tails = List.map strip_leading_punctuation tails in
+           let stripped_tracks = replace_track_titles tails tracks in
            (Some title, stripped_tracks, Some tracks) in
       let titles =
         List.filter_map Fun.id
@@ -297,21 +298,17 @@ module Disc =
       List.map (fun t -> { t with Track.title = chop_prefix n t.Track.title }) tracks
 
     let user_title title d =
-      begin match d.titles with
-      | Tracks longest_prefix :: _ ->
-         let title = strip_trailing_punctuation title in
-         if String.starts_with ~prefix:title longest_prefix then
-           let n = String.length title
-           and titles = [User title] in
-           let tracks, tracks_orig =
-             match d.tracks_orig with
-             | None -> (chop_prefixes n d.tracks, Some d.tracks)
-             | Some tracks_orig -> (chop_prefixes n tracks_orig, d.tracks_orig) in
-           Ok { d with titles; tracks; tracks_orig }
-         else
-           Ok (force_user_title title d)
+      let title = strip_trailing_punctuation title in
+      match d.titles with
+      | Tracks longest_prefix :: _ when String.starts_with ~prefix:title longest_prefix ->
+         let titles = [User title] in
+         let tracks, tracks_orig =
+           let n = String.length title in
+           match d.tracks_orig with
+           | None -> (chop_prefixes n d.tracks, Some d.tracks)
+           | Some tracks_orig -> (chop_prefixes n tracks_orig, d.tracks_orig) in
+         Ok { d with titles; tracks; tracks_orig }
       | _ -> Ok (force_user_title title d)
-      end
 
     let script d =
       let open Printf in
