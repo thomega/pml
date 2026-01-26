@@ -43,6 +43,18 @@ module Artist =
         Option.value mb.A.lifespan ~default:Lifespan.Limbo in
       { id; name; artist_type; lifespan }
 
+    let performer role name =
+      let artist_type = Artist_type.(Person (Roles.singleton role))
+      and lifespan = Lifespan.Limbo
+      and id = "" in
+      {name; artist_type; lifespan; id }
+
+    let composer name =
+      performer Artist_type.Composer name
+
+    let conductor name =
+      performer Artist_type.Conductor name
+
   end
 
 module Artists = Set.Make (struct type t = Artist.t let compare = Artist.compare end)
@@ -310,11 +322,11 @@ module Disc =
          Ok { d with titles; tracks; tracks_orig }
       | _ -> Ok (force_user_title title d)
 
-    let user_composer _composer _d =
-      Error "user_composer"
+    let user_composer name d =
+      Ok { d with composer = Some (Artist.composer name) }
 
-    let user_performer _performer _d =
-      Error "user_performer"
+    let user_performer name d =
+      Ok { d with performer = Some (Artist.conductor name) }
 
     let script d =
       let open Printf in

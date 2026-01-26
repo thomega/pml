@@ -47,6 +47,10 @@ module Artist : sig
   val of_mb : Musicbrainz.Artist.t -> t
   (** Translate and replace [None] by defaults.  *)
 
+  val composer : string -> t
+
+  val conductor : string -> t
+
 end
 
 module Artists : Set.S with type elt = Artist.t
