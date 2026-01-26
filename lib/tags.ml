@@ -336,14 +336,18 @@ module Disc =
       printf "#   a.k.a. %s\n" d.medium_id;
       printf "#  release %s\n" d.release_id;
       printf "########################################################################\n";
-      printf "ROOT=\"%s\"\n"
-        (match d.composer with
-         | Some c -> c.Artist.name
-         | None -> "Anonymous");
-      printf "SUBDIR=\"%s\"\n"
-        (match d.titles with
-         | [] -> "Unnamed"
-         | t :: _ -> (title_to_string t));
+      let root =
+        match d.composer with
+        | Some c -> c.Artist.name
+        | None -> "Anonymous" in
+      printf "ROOT=\"%s\"\n" root;
+      let subdir =
+        match d.titles, d.performer with
+        | [], None -> "Unnamed"
+        | t :: _, None -> title_to_string t
+        | [], Some p -> p.Artist.name
+        | t :: _, Some p -> sprintf "%s - %s" (title_to_string t) p.Artist.name in
+      printf "SUBDIR=\"%s\"\n" subdir;
       Ok ()
 
     let print d =
