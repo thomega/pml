@@ -43,6 +43,10 @@ module Cachetest : Exit_Cmd =
       let doc = "Normalize the JSON file." in
       Arg.(value & flag & info ["n"; "normalize"] ~doc)
 
+    let remote =
+      let doc = "Access the remote database, iff necessary." in
+      Arg.(value & flag & info ["remote"] ~doc)
+
     let discid =
       let doc = Printf.sprintf "Lookup by discid." in
       Arg.(value & opt (some string) None & info ["d"; "discid"] ~docv:"discid" ~doc)
@@ -67,44 +71,58 @@ module Cachetest : Exit_Cmd =
       let doc = Printf.sprintf "List all cached artists." in
       Arg.(value & flag & info ["A"; "list_artists"] ~doc)
 
-    let cache_tool ~root ~normalize ?discid ?release ?artist
+    let print_keys key_value_pairs =
+      List.iter (fun (key, _) -> print_endline key) key_value_pairs
+
+    let found = function
+      | Ok (Some _) -> Ok ()
+      | Ok None -> Error "not found"
+      | Error _ as e -> e
+
+    let cache_tool ~root ~normalize ~remote ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list () =
       let module MB = Pml.Musicbrainz in
       let open Result.Syntax in
       let result =
         if discid_list then
           let* discids = MB.Discid_cached.all_local ~root in
-          Ok (List.iter (fun (discid, _) -> print_endline discid) discids)
+          Ok (print_keys discids)
         else if release_list then
           let* releases = MB.Release_cached.all_local ~root in
-          Ok (List.iter (fun (release, _) -> print_endline release) releases)
+          Ok (print_keys releases)
         else if artist_list then
           let* artists = MB.Artist_cached.all_local ~root in
-          Ok (List.iter (fun (artist, _) -> print_endline artist) artists)
+          Ok (print_keys artists)
         else
           let* _ =
             match discid with
             | Some discid ->
                if normalize then
                  MB.Discid_cached.Internal.map ~root discid MB.Raw.normalize
-               else
+               else if remote then
                  MB.Discid_cached.get ~root discid |> Result.map (fun _ -> ())
+               else
+                 MB.Discid_cached.local ~root discid |> found
             | None -> Ok ()
           and* _ =
             match release with
             | Some release ->
                if normalize then
                  MB.Release_cached.Internal.map ~root release MB.Raw.normalize
-               else
+               else if remote then
                  MB.Release_cached.get ~root release |> Result.map (fun _ -> ())
+               else
+                 MB.Release_cached.local ~root release |> found
             | None -> Ok ()
           and* _ =
             match artist with
             | Some artist ->
                if normalize then
                  MB.Artist_cached.Internal.map ~root artist MB.Raw.normalize
-               else
+               else if remote then
                  MB.Artist_cached.get ~root artist |> Result.map (fun _ -> ())
+               else
+                 MB.Artist_cached.local ~root artist |> found
             | None -> Ok () in
           Ok () in
       match result with
@@ -115,9 +133,9 @@ module Cachetest : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "cache" ~man) @@
-        let+ root and+ normalize and+ discid and+ release and+ artist
+        let+ root and+ normalize and+ remote and+ discid and+ release and+ artist
            and+ discid_list and+ release_list and+ artist_list in
-        cache_tool ~root ~normalize ?discid ?release ?artist
+        cache_tool ~root ~normalize ~remote ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list ()
 
   end
