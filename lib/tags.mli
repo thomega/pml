@@ -58,13 +58,19 @@ val lifespan_gaps : Artists.t -> Artists.t list
     Such artists must be the composer(s). *)
 
 module Track : sig
+
   type t =
     { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
       title : string;
       recording_title : string option;
       artists : Artists.t;
       id : string }
+
   val of_mb : Musicbrainz.Track.t -> t
+
+  val recording_title : t -> t
+  (** If [recording_title] exists, replace [title] by it and set it to [None]. *)
+
 end
 
 module Medium : sig
@@ -123,6 +129,8 @@ module Disc : sig
     }
 
   val of_mb : Musicbrainz.Taggable.t -> t
+
+  val recording_titles : t -> (t, string) result
 
   val user_title : string -> t -> (t, string) result
   (** (Interactively?) set the title. *)

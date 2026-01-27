@@ -135,13 +135,19 @@ module Track =
            end
         | None, None -> ("(untitled)", None) in
 
-      let artists = artists_of_credits mb.T.artist_credits in
+      let artists =
+        artists_of_credits mb.T.artist_credits in
       let artists =
         match mb.T.recording with
         | Some r -> Artists.union (artists_of_credits r.R.artist_credits) artists
         | None -> artists in
 
       { id; number; title; recording_title; artists }
+
+    let recording_title t =
+      match t.recording_title with
+      | Some title -> { t with title; recording_title = None }
+      | None -> t
 
   end
 
@@ -256,7 +262,7 @@ module Disc =
        end)
 
     (** Heuristics for selecting the title. *)
-    let make_titles release medium tracks =
+    let make_titles ~release ~medium tracks =
       let prefix, tracks, tracks_orig =
         match List.map (fun t -> t.Track.title) tracks |> Edit.common_prefix with
         | "" , _ ->
@@ -269,8 +275,8 @@ module Disc =
       let titles =
         List.filter_map Fun.id
           [ Option.map (fun t -> Tracks t) prefix;
-            Option.map (fun t -> Medium t) medium.Medium.title;
-            Option.map (fun t -> Release t) release.Release.title ] in
+            Option.map (fun t -> Medium t) medium;
+            Option.map (fun t -> Release t) release ] in
       (titles, tracks, tracks_orig)
 
     let add_tracks_artists artists tracks =
@@ -288,10 +294,26 @@ module Disc =
       and total_tracks = 100 in
       let artists = add_tracks_artists release.Release.artists medium.Medium.tracks in
       let composer, performer = make_artists artists in
-      let titles, tracks, tracks_orig = make_titles release medium medium.Medium.tracks in
+      let titles, tracks, tracks_orig =
+        make_titles ~release:release.Release.title ~medium:medium.Medium.title medium.Medium.tracks in
       { composer; titles; performer; artists;
         tracks; tracks_orig; total_tracks;
         discid; medium_id; release_id }
+
+    let recording_titles d =
+      let release =
+        List.find_opt (function Release _ -> true | _ -> false) d.titles
+        |> Option.map title_to_string
+      and medium =
+        List.find_opt (function Medium _ -> true | _ -> false) d.titles
+        |> Option.map title_to_string
+      and tracks =
+        match d.tracks_orig with
+        | Some tracks -> tracks
+        | None -> d.tracks in
+      let titles, tracks, tracks_orig =
+        make_titles ~release ~medium (List.map Track.recording_title tracks) in
+      Ok { d with titles; tracks; tracks_orig }
 
     let force_user_title title d =
       let titles = [User title]

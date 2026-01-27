@@ -196,6 +196,10 @@ let title =
   let doc = Printf.sprintf "Overwrite derived title." in
   Arg.(value & opt (some string) None & info ["t"; "title"] ~docv:"title" ~doc)
 
+let recording_titles =
+  let doc = "Choose the recording titles as track titles." in
+  Arg.(value & flag & info ["R"; "recording"] ~doc)
+
 let medium_title =
   let doc = "Choose the medium title." in
   Arg.(value & flag & info ["m"; "medium"] ~doc)
@@ -222,6 +226,7 @@ let performer_prefix =
 
 type editing =
   { title : string option;
+    recording_titles : bool;
     medium_title : bool;
     release_title : bool;
     composer : string option;
@@ -230,9 +235,10 @@ type editing =
     performer_prefix : string option }
 
 let editing =
-  let+ title and+ release_title and+ medium_title and+ composer
-     and+ composer_prefix and+ performer and+ performer_prefix in
-  { title; release_title; medium_title; composer; composer_prefix; performer; performer_prefix }
+  let+ title and+ recording_titles and+ release_title and+ medium_title
+     and+ composer and+ composer_prefix and+ performer and+ performer_prefix in
+  { title; recording_titles; release_title; medium_title;
+    composer; composer_prefix; performer; performer_prefix }
 
 let apply_edit f string_opt tagged =
   let open Result.Syntax in
@@ -251,6 +257,7 @@ let apply_edit_if flag f tagged =
 
 let apply_edits e tagged =
   Ok tagged
+  |> apply_edit_if e.recording_titles Tags.Disc.recording_titles
   |> apply_edit_if e.release_title Tags.Disc.release_title
   |> apply_edit_if e.medium_title Tags.Disc.medium_title
   |> apply_edit Tags.Disc.user_title e.title
