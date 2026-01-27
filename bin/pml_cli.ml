@@ -184,6 +184,17 @@ module Musicbrainz : Exit_Cmd =
 
   end
 
+let default_device =
+  Pml.Discid.default_device ()
+
+let device =
+  let doc = Printf.sprintf "Choose CD-ROM device." in
+  Arg.(value & opt string default_device & info ["device"] ~doc)
+
+let discid =
+  let doc = Printf.sprintf "Disc to be examined." in
+  Arg.(value & opt (some string) None & info ["d"; "disc"; "discid"] ~docv:"discid" ~doc)
+
 let title =
   let doc = Printf.sprintf "Overwrite derived title." in
   Arg.(value & opt (some string) None & info ["t"; "title"] ~docv:"title" ~doc)
@@ -205,16 +216,38 @@ let editing =
   let+ title and+ composer and+ performer in
   { title; composer; performer }
 
+let apply_edit f string_opt tagged =
+  let open Result.Syntax in
+  let* tagged in
+  match string_opt with
+  | None -> Ok tagged
+  | Some s -> f s tagged
+
+let apply_edits editing tagged =
+  Ok tagged
+  |> apply_edit Pml.Tags.Disc.user_title editing.title
+  |> apply_edit Pml.Tags.Disc.user_composer editing.composer
+  |> apply_edit Pml.Tags.Disc.user_performer editing.performer
+
+let get_discid ?discid ?device () =
+  let module D = Pml.Discid in
+  let open Result.Syntax in
+  match discid with
+  | Some discid -> Ok discid
+  | None ->
+     let* ids = D.get ?device () in
+     Ok (ids.D.id)
+
+let exit_result = function
+  | Error msg -> prerr_endline msg; 1
+  | Ok () -> 0
+
 module Medium : Exit_Cmd =
   struct
 
     let man = [
         `S Manpage.s_description;
         `P "Explore media." ] @ Common.man_footer
-
-    let discid =
-      let doc = Printf.sprintf "Disc to be examined." in
-      Arg.(value & opt (some string) None & info ["d"; "disc"; "discid"] ~docv:"discid" ~doc)
 
     let processed =
       let doc = "Process the data." in
@@ -224,50 +257,28 @@ module Medium : Exit_Cmd =
       let doc = "Write ripper script." in
       Arg.(value & flag & info ["r"; "ripper"] ~doc)
 
-    let edit f string_opt tagged =
-      match tagged with
-      | Error _ as e -> e
-      | Ok tagged ->
-         begin match string_opt with
-         | None -> Ok tagged
-         | Some s -> f s tagged
-         end
-
-    let explore ~root ?discid ~title ~composer ~performer ~processed ~ripper () =
-      ignore composer;
-      ignore performer;
-      let module MB = Pml.Musicbrainz.Taggable in
+    let explore ~root ?discid ?device ~editing ~processed ~ripper () =
+      let module M = Pml.Musicbrainz.Taggable in
       let module T = Pml.Tags.Disc in
       let open Result.Syntax in
-      let* id =
-        match discid with
-        | Some id -> Ok id
-        | None ->
-           let* ids = Pml.Discid.get () in
-           Ok (ids.Pml.Discid.id) in
-      let* disc = MB.of_discid ~root id in
-      let* tagged =
-        Ok (T.of_mb disc)
-        |> edit T.user_title title
-        |> edit T.user_composer composer
-        |> edit T.user_performer performer in
+      let* id = get_discid ?discid ?device () in
+      let* disc = M.of_discid ~root id in
+      let* tagged = apply_edits editing (T.of_mb disc) in
       if ripper then
         T.script tagged
       else if processed then
         Ok (T.print tagged)
       else
-        Ok (MB.print disc)
+        Ok (M.print disc)
 
-    let explore ~root ?discid ~title ~composer ~performer ~processed ~ripper () =
-      match explore ~root ?discid ~title ~composer ~performer ~processed ~ripper () with
-      | Error msg -> prerr_endline msg; 1
-      | Ok () -> 0
+    let explore ~root ?discid ?device ~editing ~processed ~ripper () =
+      explore ~root ?discid ?device ~editing ~processed ~ripper () |> exit_result
 
     let cmd =
       let open Cmd in
       make (info "medium" ~man) @@
-        let+ root and+ discid and+ editing and+ processed and+ ripper in
-        explore ~root ?discid ~title:editing.title ~composer:editing.composer ~performer:editing.performer ~processed ~ripper ()
+        let+ root and+ discid and+ device and+ editing and+ processed and+ ripper in
+        explore ~root ?discid ~device ~editing ~processed ~ripper ()
 
   end
 
@@ -298,13 +309,6 @@ module Query_Disc : Exit_Cmd =
     let print_submission_url =
       let doc = "Print the URL accessing the discid submission interface." in
       Arg.(value & flag & info ["u"; "url"] ~doc)
-
-    let default_device =
-      Pml.Discid.default_device ()
-
-    let device =
-      let doc = Printf.sprintf "Choose CD-ROM device." in
-      Arg.(value & opt string default_device & info ["d"; "device"] ~doc)
 
     let query_disc ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url =
       if verbose then
