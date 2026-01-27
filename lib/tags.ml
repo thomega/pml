@@ -392,12 +392,27 @@ module Disc =
 
     let script d =
       let open Printf in
+      let separator () =
+        printf "########################################################################\n" in
       printf "#! /bin/sh\n";
-      printf "########################################################################\n";
+      separator ();
       printf "# tag disc %s\n" d.discid;
       printf "#   a.k.a. %s\n" d.medium_id;
       printf "#  release %s\n" d.release_id;
-      printf "########################################################################\n";
+      separator ();
+      printf "\n";
+      separator ();
+      printf "# Rip CD unless an output file exists\n";
+      separator ();
+      printf "\n";
+      printf "if [ ! -f track01.cdda.wav ]; then\n";
+      printf "  cdparanoia /dev/cdrom\n";
+      printf "fi\n";
+      printf "\n";
+      separator ();
+      printf "# Set up target directory\n";
+      separator ();
+      printf "\n";
       let root =
         match d.composer with
         | Some c -> c.Artist.name
@@ -410,6 +425,19 @@ module Disc =
         | [], Some p -> p.Artist.name
         | t :: _, Some p -> sprintf "%s - %s" (title_to_string t) p.Artist.name in
       printf "SUBDIR=\"%s\"\n" subdir;
+      printf "DIR=\"$ROOT/$SUBDIR\"\n";
+      printf "mkdir -p \"$DIR\"\n";
+      printf "\n";
+      separator ();
+      printf "# Encode and tag\n";
+      separator ();
+      printf "\n";
+      List.iteri
+        (fun i t ->
+          printf "WAV=track%02d.cdda.wav\n" (succ i);
+          printf "TITLE=\"%02d %s\"\n" t.Track.number t.Track.title;
+          printf "\n")
+        d.tracks;
       Ok ()
 
     let print d =
