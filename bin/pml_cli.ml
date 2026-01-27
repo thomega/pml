@@ -154,7 +154,7 @@ module JSON : Exit_Cmd =
 
     let file =
       let doc = Printf.sprintf "JSON file to be examined." in
-      Arg.(value & opt (some filepath) None & info ["f"; "file"] ~docv:"name" ~doc)
+      Arg.(required & pos 0 (some filepath) None & info [] ~docv:"filename" ~doc)
 
     let schema =
       let doc = "Dump the whole tree without contents." in
@@ -164,23 +164,20 @@ module JSON : Exit_Cmd =
       let doc = "Dump the whole tree." in
       Arg.(value & flag & info ["p"; "pretty"] ~doc)
 
-    let parse_json ~root ?file ~schema ~pretty () =
+    let parse_json ~root ~file ~schema ~pretty () =
       ignore root;
-      match file with
-      | None -> 0
-      | Some name ->
-         if schema then
-           try Musicbrainz.Raw.dump_schema_file name; 0 with _ -> 1
-         else if pretty then
-           try Musicbrainz.Raw.print_file name; 0 with _ -> 1
-         else
-           0
+      if schema then
+        try Musicbrainz.Raw.dump_schema_file file; 0 with _ -> 1
+      else if pretty then
+        try Musicbrainz.Raw.print_file file; 0 with _ -> 1
+      else
+        0
 
     let cmd =
       let open Cmd in
       make (info "json" ~man) @@
         let+ root and+ file and+ schema and+ pretty in
-        parse_json ~root ?file ~schema ~pretty ()
+        parse_json ~root ~file ~schema ~pretty ()
 
   end
 
