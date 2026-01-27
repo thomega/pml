@@ -322,6 +322,26 @@ module Disc =
          Ok { d with titles; tracks; tracks_orig }
       | _ -> Ok (force_user_title title d)
 
+    let get_medium_title d =
+      match List.find_opt (function Medium _ -> true | _ -> false) d.titles with
+      | Some t -> Ok (title_to_string t)
+      | None -> Error "no medium title"
+        
+    let get_release_title d =
+      match List.find_opt (function Release _ -> true | _ -> false) d.titles with
+      | Some t -> Ok (title_to_string t)
+      | None -> Error "no release title"
+        
+    let medium_title d =
+      let open Result.Syntax in
+      let* title = get_medium_title d in
+      user_title title d
+
+    let release_title d =
+      let open Result.Syntax in
+      let* title = get_release_title d in
+      user_title title d
+
     let user_composer name d =
       Ok { d with composer = Some (Artist.composer name) }
 

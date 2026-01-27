@@ -196,6 +196,14 @@ let title =
   let doc = Printf.sprintf "Overwrite derived title." in
   Arg.(value & opt (some string) None & info ["t"; "title"] ~docv:"title" ~doc)
 
+let medium_title =
+  let doc = "Choose the medium title." in
+  Arg.(value & flag & info ["m"; "medium"] ~doc)
+
+let release_title =
+  let doc = "Choose the release title." in
+  Arg.(value & flag & info ["r"; "release"] ~doc)
+
 let composer =
   let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
   Arg.(value & opt (some string) None & info ["c"; "composer"] ~docv:"name" ~doc)
@@ -206,12 +214,14 @@ let performer =
 
 type editing =
   { title : string option;
+    medium_title : bool;
+    release_title : bool;
     composer : string option;
     performer : string option }
 
 let editing =
-  let+ title and+ composer and+ performer in
-  { title; composer; performer }
+  let+ title and+ release_title and+ medium_title and+ composer and+ performer in
+  { title; release_title; medium_title; composer; performer }
 
 let apply_edit f string_opt tagged =
   let open Result.Syntax in
@@ -220,11 +230,21 @@ let apply_edit f string_opt tagged =
   | None -> Ok tagged
   | Some s -> f s tagged
 
-let apply_edits editing tagged =
+let apply_edit_if flag f tagged =
+  let open Result.Syntax in
+  let* tagged in
+  if flag then
+    f tagged
+  else
+    Ok tagged
+
+let apply_edits e tagged =
   Ok tagged
-  |> apply_edit Tags.Disc.user_title editing.title
-  |> apply_edit Tags.Disc.user_composer editing.composer
-  |> apply_edit Tags.Disc.user_performer editing.performer
+  |> apply_edit_if e.release_title Tags.Disc.release_title
+  |> apply_edit_if e.medium_title Tags.Disc.medium_title
+  |> apply_edit Tags.Disc.user_title e.title
+  |> apply_edit Tags.Disc.user_composer e.composer
+  |> apply_edit Tags.Disc.user_performer e.performer
 
 let get_discid ?device ?discid () =
   let open Result.Syntax in

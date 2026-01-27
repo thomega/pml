@@ -127,7 +127,13 @@ module Disc : sig
   val of_mb : Musicbrainz.Taggable.t -> t
 
   val user_title : string -> t -> (t, string) result
-  (** (Interactively?) edit the tags. *)
+  (** (Interactively?) set the title. *)
+
+  val medium_title : t -> (t, string) result
+  (** (Interactively?) select the medium title as the title. *)
+
+  val release_title : t -> (t, string) result
+  (** (Interactively?) select the release title as the title. *)
 
   val user_composer : string -> t -> (t, string) result
   (** (Interactively?) name composer. *)
