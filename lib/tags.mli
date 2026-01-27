@@ -47,9 +47,7 @@ module Artist : sig
   val of_mb : Musicbrainz.Artist.t -> t
   (** Translate and replace [None] by defaults.  *)
 
-  val composer : string -> t
-
-  val conductor : string -> t
+  val of_name : string -> t
 
 end
 
@@ -140,6 +138,12 @@ module Disc : sig
 
   val user_performer : string -> t -> (t, string) result
   (** (Interactively?) name top billed performer. *)
+
+  val composer_prefix : string -> t -> (t, string) result
+  (** (Interactively?) select composer by matching prefix. *)
+
+  val performer_prefix : string -> t -> (t, string) result
+  (** (Interactively?) select top billed performer by matching prefix. *)
 
   val script : t -> (unit, string) result
   (** Write a shell script for ripping, encoding and tagging. *)

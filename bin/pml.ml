@@ -31,7 +31,7 @@ module type Exit_Cmd =
 let root =
   let doc = Printf.sprintf "Path to the root directory of the local cache."
   and env = Cmd.Env.info "MUSICBRAINZ_CACHE" in
-  Arg.(value & opt dirpath default_cache & info ["C"; "cache"] ~docv:"path" ~doc ~env)
+  Arg.(value & opt dirpath default_cache & info ["cache"] ~docv:"path" ~doc ~env)
 
 module Cachetest : Exit_Cmd =
   struct
@@ -212,16 +212,27 @@ let performer =
   let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
   Arg.(value & opt (some string) None & info ["p"; "performer"] ~docv:"name" ~doc)
 
+let composer_prefix =
+  let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
+  Arg.(value & opt (some string) None & info ["C"; "Composer"] ~docv:"prefix" ~doc)
+
+let performer_prefix =
+  let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
+  Arg.(value & opt (some string) None & info ["P"; "Performer"] ~docv:"prefix" ~doc)
+
 type editing =
   { title : string option;
     medium_title : bool;
     release_title : bool;
     composer : string option;
-    performer : string option }
+    composer_prefix : string option;
+    performer : string option;
+    performer_prefix : string option }
 
 let editing =
-  let+ title and+ release_title and+ medium_title and+ composer and+ performer in
-  { title; release_title; medium_title; composer; performer }
+  let+ title and+ release_title and+ medium_title and+ composer
+     and+ composer_prefix and+ performer and+ performer_prefix in
+  { title; release_title; medium_title; composer; composer_prefix; performer; performer_prefix }
 
 let apply_edit f string_opt tagged =
   let open Result.Syntax in
@@ -243,6 +254,8 @@ let apply_edits e tagged =
   |> apply_edit_if e.release_title Tags.Disc.release_title
   |> apply_edit_if e.medium_title Tags.Disc.medium_title
   |> apply_edit Tags.Disc.user_title e.title
+  |> apply_edit Tags.Disc.composer_prefix e.composer_prefix
+  |> apply_edit Tags.Disc.performer_prefix e.performer_prefix
   |> apply_edit Tags.Disc.user_composer e.composer
   |> apply_edit Tags.Disc.user_performer e.performer
 

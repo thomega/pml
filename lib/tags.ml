@@ -43,17 +43,11 @@ module Artist =
         Option.value mb.A.lifespan ~default:Lifespan.Limbo in
       { id; name; artist_type; lifespan }
 
-    let performer role name =
-      let artist_type = Artist_type.(Person (Roles.singleton role))
+    let of_name name =
+      let artist_type = Artist_type.(Person Roles.empty)
       and lifespan = Lifespan.Limbo
       and id = "" in
       {name; artist_type; lifespan; id }
-
-    let composer name =
-      performer Artist_type.Composer name
-
-    let conductor name =
-      performer Artist_type.Conductor name
 
   end
 
@@ -279,6 +273,11 @@ module Disc =
             Option.map (fun t -> Release t) release.Release.title ] in
       (titles, tracks, tracks_orig)
 
+    let add_tracks_artists artists tracks =
+      List.fold_left
+        (fun acc track -> Artists.union acc track.Track.artists)
+        artists tracks
+
     let of_mb mb =
       let module MB = Musicbrainz.Taggable in
       let medium = Medium.of_mb mb.MB.medium
@@ -287,7 +286,7 @@ module Disc =
       let medium_id = medium.Medium.id
       and release_id = release.Release.id
       and total_tracks = 100 in
-      let artists = release.Release.artists in
+      let artists = add_tracks_artists release.Release.artists medium.Medium.tracks in
       let composer, performer = make_artists artists in
       let titles, tracks, tracks_orig = make_titles release medium medium.Medium.tracks in
       { composer; titles; performer; artists;
@@ -343,10 +342,31 @@ module Disc =
       user_title title d
 
     let user_composer name d =
-      Ok { d with composer = Some (Artist.composer name) }
+      Ok { d with composer = Some (Artist.of_name name) }
 
     let user_performer name d =
-      Ok { d with performer = Some (Artist.conductor name) }
+      Ok { d with performer = Some (Artist.of_name name) }
+
+    let match_performer pfx d =
+      let prefix = String.lowercase_ascii (Ubase.from_utf8 pfx) in
+      let artist =
+        Artists.find_first_opt
+          (fun a ->
+            String.starts_with ~prefix (String.lowercase_ascii (Ubase.from_utf8 a.name)))
+          d.artists in
+      match artist with
+      | Some a -> Ok a.name
+      | None -> Error (Printf.sprintf "pattern '%s' matches no artist" pfx)
+
+    let composer_prefix pfx d =
+      let open Result.Syntax in
+      let* name = match_performer pfx d in
+      user_composer name d
+
+    let performer_prefix pfx d =
+      let open Result.Syntax in
+      let* name = match_performer pfx d in
+      user_performer name d
 
     let script d =
       let open Printf in
@@ -397,9 +417,9 @@ module Disc =
          List.iter2
            (fun t ot ->
              printf "  #%02d: '%s'\n" t.Track.number t.Track.title;
-             printf "       original: '%s'\n" ot.Track.title;
+             printf "       original:  '%s'\n" ot.Track.title;
              begin match t.recording_title with
-             | Some t -> printf "     = '%s'\n" t
+             | Some t -> printf "       recording: '%s'\n" t
              | None -> ()
              end;
              Artists.iter (fun a -> printf "       > '%s'\n" a.Artist.name) t.Track.artists)
