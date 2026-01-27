@@ -418,7 +418,7 @@ module Main : Exit_Cmd =
 
     let cmd =
       let open Cmd in
-      group (info "pml_cli" ~man)
+      group (info "pml" ~man)
         [ Disc.cmd;
           JSON.cmd;
           Medium.cmd;

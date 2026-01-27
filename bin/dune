@@ -1,6 +1,6 @@
 (executable
  (package pml)
- (public_name pml_cli)
- (name pml_cli)
+ (public_name pml)
+ (name pml)
  (libraries
    pml cmdliner))
