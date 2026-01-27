@@ -1,5 +1,6 @@
 let default_cache = "mb-cache"
 
+open Pml
 open Cmdliner
 open Cmdliner.Term.Syntax
 
@@ -76,7 +77,7 @@ module Cachetest : Exit_Cmd =
 
     let found kind key = function
       | Ok (Some json) ->
-         begin match Pml.Musicbrainz.Error.get_error_opt json with
+         begin match Musicbrainz.Error.get_error_opt json with
          | None -> Ok ()
          | Some msg -> Error (Printf.sprintf "%s key '%s' points to error object: '%s'" kind key msg)
          end
@@ -85,48 +86,48 @@ module Cachetest : Exit_Cmd =
 
     let cache_tool ~root ~normalize ~remote ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list () =
-      let module MB = Pml.Musicbrainz in
+      let open Musicbrainz in
       let open Result.Syntax in
       let result =
         if discid_list then
-          let* discids = MB.Discid_cached.all_local ~root in
+          let* discids = Discid_cached.all_local ~root in
           Ok (print_keys discids)
         else if release_list then
-          let* releases = MB.Release_cached.all_local ~root in
+          let* releases = Release_cached.all_local ~root in
           Ok (print_keys releases)
         else if artist_list then
-          let* artists = MB.Artist_cached.all_local ~root in
+          let* artists = Artist_cached.all_local ~root in
           Ok (print_keys artists)
         else
           let* _ =
             match discid with
             | Some discid ->
                if normalize then
-                 MB.Discid_cached.Internal.map ~root discid MB.Raw.normalize
+                 Discid_cached.Internal.map ~root discid Raw.normalize
                else if remote then
-                 MB.Discid_cached.get ~root discid |> Result.map (fun _ -> ())
+                 Discid_cached.get ~root discid |> Result.map (fun _ -> ())
                else
-                 MB.Discid_cached.local ~root discid |> found "discid" discid
+                 Discid_cached.local ~root discid |> found "discid" discid
             | None -> Ok ()
           and* _ =
             match release with
             | Some release ->
                if normalize then
-                 MB.Release_cached.Internal.map ~root release MB.Raw.normalize
+                 Release_cached.Internal.map ~root release Raw.normalize
                else if remote then
-                 MB.Release_cached.get ~root release |> Result.map (fun _ -> ())
+                 Release_cached.get ~root release |> Result.map (fun _ -> ())
                else
-                 MB.Release_cached.local ~root release |> found "release" release
+                 Release_cached.local ~root release |> found "release" release
             | None -> Ok ()
           and* _ =
             match artist with
             | Some artist ->
                if normalize then
-                 MB.Artist_cached.Internal.map ~root artist MB.Raw.normalize
+                 Artist_cached.Internal.map ~root artist Raw.normalize
                else if remote then
-                 MB.Artist_cached.get ~root artist |> Result.map (fun _ -> ())
+                 Artist_cached.get ~root artist |> Result.map (fun _ -> ())
                else
-                 MB.Artist_cached.local ~root artist |> found "artist" artist
+                 Artist_cached.local ~root artist |> found "artist" artist
             | None -> Ok () in
           Ok () in
       match result with
@@ -144,12 +145,12 @@ module Cachetest : Exit_Cmd =
 
   end
 
-module Musicbrainz : Exit_Cmd =
+module JSON : Exit_Cmd =
   struct
 
     let man = [
         `S Manpage.s_description;
-        `P "Experimental Musicbrainz JSON parsing." ] @ Common.man_footer
+        `P "Parsing Musicbrainz JSON files." ] @ Common.man_footer
 
     let file =
       let doc = Printf.sprintf "JSON file to be examined." in
@@ -165,27 +166,26 @@ module Musicbrainz : Exit_Cmd =
 
     let parse_json ~root ?file ~schema ~pretty () =
       ignore root;
-      let module MB = Pml.Musicbrainz in
       match file with
       | None -> 0
       | Some name ->
          if schema then
-           try MB.Raw.dump_schema_file name; 0 with _ -> 1
+           try Musicbrainz.Raw.dump_schema_file name; 0 with _ -> 1
          else if pretty then
-           try MB.Raw.print_file name; 0 with _ -> 1
+           try Musicbrainz.Raw.print_file name; 0 with _ -> 1
          else
            0
 
     let cmd =
       let open Cmd in
-      make (info "musicbrainz" ~man) @@
+      make (info "json" ~man) @@
         let+ root and+ file and+ schema and+ pretty in
         parse_json ~root ?file ~schema ~pretty ()
 
   end
 
 let default_device =
-  Pml.Discid.default_device ()
+  Discid.default_device ()
 
 let device =
   let doc = Printf.sprintf "Choose CD-ROM device." in
@@ -225,18 +225,17 @@ let apply_edit f string_opt tagged =
 
 let apply_edits editing tagged =
   Ok tagged
-  |> apply_edit Pml.Tags.Disc.user_title editing.title
-  |> apply_edit Pml.Tags.Disc.user_composer editing.composer
-  |> apply_edit Pml.Tags.Disc.user_performer editing.performer
+  |> apply_edit Tags.Disc.user_title editing.title
+  |> apply_edit Tags.Disc.user_composer editing.composer
+  |> apply_edit Tags.Disc.user_performer editing.performer
 
 let get_discid ?discid ?device () =
-  let module D = Pml.Discid in
   let open Result.Syntax in
   match discid with
   | Some discid -> Ok discid
   | None ->
-     let* ids = D.get ?device () in
-     Ok (ids.D.id)
+     let* ids = Discid.get ?device () in
+     Ok (ids.Discid.id)
 
 let exit_result = function
   | Error msg -> prerr_endline msg; 1
@@ -251,11 +250,10 @@ module Medium : Exit_Cmd =
             by MusicBrainz." ] @ Common.man_footer
 
     let f ~root ?discid ?device () =
-      let module M = Pml.Musicbrainz.Taggable in
       let open Result.Syntax in
       let* id = get_discid ?discid ?device () in
-      let* disc = M.of_discid ~root id in
-      Ok (M.print disc)
+      let* disc = Musicbrainz.Taggable.of_discid ~root id in
+      Ok (Musicbrainz.Taggable.print disc)
 
     let cmd =
       let open Cmd in
@@ -275,13 +273,11 @@ module Explore : Exit_Cmd =
             fine tune the tagging." ] @ Common.man_footer
 
     let f ~root ?discid ?device ~editing () =
-      let module M = Pml.Musicbrainz.Taggable in
-      let module T = Pml.Tags.Disc in
       let open Result.Syntax in
       let* id = get_discid ?discid ?device () in
-      let* disc = M.of_discid ~root id in
-      let* tagged = apply_edits editing (T.of_mb disc) in
-      Ok (T.print tagged)
+      let* disc = Musicbrainz.Taggable.of_discid ~root id in
+      let* tagged = apply_edits editing (Tags.Disc.of_mb disc) in
+      Ok (Tags.Disc.print tagged)
 
     let cmd =
       let open Cmd in
@@ -299,13 +295,11 @@ module Ripper : Exit_Cmd =
         `P "Write a ripping/tagging script." ] @ Common.man_footer
 
     let f ~root ?discid ?device ~editing () =
-      let module M = Pml.Musicbrainz.Taggable in
-      let module T = Pml.Tags.Disc in
       let open Result.Syntax in
       let* id = get_discid ?discid ?device () in
-      let* disc = M.of_discid ~root id in
-      let* tagged = apply_edits editing (T.of_mb disc) in
-      T.script tagged
+      let* disc = Musicbrainz.Taggable.of_discid ~root id in
+      let* tagged = apply_edits editing (Tags.Disc.of_mb disc) in
+      Tags.Disc.script tagged
 
     let cmd =
       let open Cmd in
@@ -346,13 +340,13 @@ module Query_Disc : Exit_Cmd =
     let query_disc ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url =
       if verbose then
         Printf.printf "querying %s ...\n" device;
-      match Pml.Discid.get ~device () with
-      | Result.Ok ids ->
+      match Discid.get ~device () with
+      | Ok ids ->
          begin
            if not lookup && not print_id && not print_toc && not print_submission_url then
              Printf.printf "id = %s\ntoc = %s\nsubmit = %s\n" ids.id ids.toc ids.submission_url
            else if lookup then
-             begin match Pml.Musicbrainz.Discid_cached.get ~root ids.id with
+             begin match Musicbrainz.Discid_cached.get ~root ids.id with
              | Error msg -> Printf.eprintf "error: %s\n" msg
              | Ok json ->
                 Printf.printf
@@ -367,7 +361,7 @@ module Query_Disc : Exit_Cmd =
              print_endline ids.submission_url
          end;
          0
-      | Result.Error msg ->
+      | Error msg ->
          Printf.eprintf "error: %s!\n" msg;
          1
 
@@ -400,7 +394,7 @@ module Curl : Exit_Cmd =
       Arg.(value & opt int 0 & info ["t"; "timeout"] ~doc)
 
     let curl ?timeout ~user_agent url =
-      match Pml.Query.curl ?timeout ~user_agent url with
+      match Query.curl ?timeout ~user_agent url with
       | Ok s -> print_endline "Response:"; print_endline s; 0
       | Error msg -> prerr_endline "Error:"; prerr_endline msg; 1
 
@@ -429,7 +423,7 @@ module Main : Exit_Cmd =
       let open Cmd in
       group (info "pml_cli" ~man)
         [ Query_Disc.cmd;
-          Musicbrainz.cmd;
+          JSON.cmd;
           Medium.cmd;
           Explore.cmd;
           Ripper.cmd;
