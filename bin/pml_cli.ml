@@ -190,7 +190,7 @@ let device =
 
 let discid =
   let doc = Printf.sprintf "Disc to be examined." in
-  Arg.(value & opt (some string) None & info ["d"; "disc"; "discid"] ~docv:"discid" ~doc)
+  Arg.(value & pos 0 (some string) None & info [] ~docv:"discid" ~doc)
 
 let title =
   let doc = Printf.sprintf "Overwrite derived title." in
@@ -226,7 +226,7 @@ let apply_edits editing tagged =
   |> apply_edit Tags.Disc.user_composer editing.composer
   |> apply_edit Tags.Disc.user_performer editing.performer
 
-let get_discid ?discid ?device () =
+let get_discid ?device ?discid () =
   let open Result.Syntax in
   match discid with
   | Some discid -> Ok discid
@@ -248,7 +248,7 @@ module Medium : Exit_Cmd =
 
     let f ~root ?discid ?device () =
       let open Result.Syntax in
-      let* id = get_discid ?discid ?device () in
+      let* id = get_discid ?device ?discid () in
       let* disc = Musicbrainz.Taggable.of_discid ~root id in
       Ok (Musicbrainz.Taggable.print disc)
 
@@ -271,7 +271,7 @@ module Explore : Exit_Cmd =
 
     let f ~root ?discid ?device ~editing () =
       let open Result.Syntax in
-      let* id = get_discid ?discid ?device () in
+      let* id = get_discid ?device ?discid () in
       let* disc = Musicbrainz.Taggable.of_discid ~root id in
       let* tagged = apply_edits editing (Tags.Disc.of_mb disc) in
       Ok (Tags.Disc.print tagged)
@@ -293,7 +293,7 @@ module Ripper : Exit_Cmd =
 
     let f ~root ?discid ?device ~editing () =
       let open Result.Syntax in
-      let* id = get_discid ?discid ?device () in
+      let* id = get_discid ?device ?discid () in
       let* disc = Musicbrainz.Taggable.of_discid ~root id in
       let* tagged = apply_edits editing (Tags.Disc.of_mb disc) in
       Tags.Disc.script tagged
@@ -306,7 +306,7 @@ module Ripper : Exit_Cmd =
 
   end
 
-module Query_Disc : Exit_Cmd =
+module Disc : Exit_Cmd =
   struct
 
     let man = [
@@ -364,7 +364,7 @@ module Query_Disc : Exit_Cmd =
 
     let cmd =
       let open Cmd in
-      make (info "disc" ~man) @@
+      make (info "discid" ~man) @@
         let+ device and+ verbose and+ root and+ lookup
            and+ print_id and+ print_toc and+ print_submission_url in
         query_disc ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url
@@ -380,11 +380,11 @@ module Curl : Exit_Cmd =
 
     let url =
       let doc = "The URL to query." in
-      Arg.(value & opt string "https://fritz.box" & info ["u"; "url"] ~doc)
+      Arg.(required & pos 0 (some string) None & info [] ~docv:"url" ~doc)
 
     let user_agent =
       let doc = "The user agent string." in
-      Arg.(value & opt string "pml testing" & info ["U"; "User"] ~doc)
+      Arg.(value & opt string "pml testing" & info ["u"; "User"] ~doc)
 
     let timeout =
       let doc = "Timeout for query." in
@@ -419,7 +419,7 @@ module Main : Exit_Cmd =
     let cmd =
       let open Cmd in
       group (info "pml_cli" ~man)
-        [ Query_Disc.cmd;
+        [ Disc.cmd;
           JSON.cmd;
           Medium.cmd;
           Explore.cmd;
