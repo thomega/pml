@@ -184,6 +184,27 @@ module Musicbrainz : Exit_Cmd =
 
   end
 
+let title =
+  let doc = Printf.sprintf "Overwrite derived title." in
+  Arg.(value & opt (some string) None & info ["t"; "title"] ~docv:"title" ~doc)
+
+let composer =
+  let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
+  Arg.(value & opt (some string) None & info ["c"; "composer"] ~docv:"name" ~doc)
+
+let performer =
+  let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
+  Arg.(value & opt (some string) None & info ["p"; "performer"] ~docv:"name" ~doc)
+
+type editing =
+  { title : string option;
+    composer : string option;
+    performer : string option }
+
+let editing =
+  let+ title and+ composer and+ performer in
+  { title; composer; performer }
+
 module Medium : Exit_Cmd =
   struct
 
@@ -194,18 +215,6 @@ module Medium : Exit_Cmd =
     let discid =
       let doc = Printf.sprintf "Disc to be examined." in
       Arg.(value & opt (some string) None & info ["d"; "disc"; "discid"] ~docv:"discid" ~doc)
-
-    let title =
-      let doc = Printf.sprintf "Overwrite derived title." in
-      Arg.(value & opt (some string) None & info ["t"; "title"] ~docv:"title" ~doc)
-
-    let composer =
-      let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
-      Arg.(value & opt (some string) None & info ["c"; "composer"] ~docv:"name" ~doc)
-
-    let performer =
-      let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
-      Arg.(value & opt (some string) None & info ["p"; "performer"] ~docv:"name" ~doc)
 
     let processed =
       let doc = "Process the data." in
@@ -224,7 +233,7 @@ module Medium : Exit_Cmd =
          | Some s -> f s tagged
          end
 
-    let explore ~root ?discid ?title ?composer ?performer ~processed ~ripper () =
+    let explore ~root ?discid ~title ~composer ~performer ~processed ~ripper () =
       ignore composer;
       ignore performer;
       let module MB = Pml.Musicbrainz.Taggable in
@@ -249,16 +258,16 @@ module Medium : Exit_Cmd =
       else
         Ok (MB.print disc)
 
-    let explore ~root ?discid ?title ?composer ?performer ~processed ~ripper () =
-      match explore ~root ?discid ?title ?composer ?performer ~processed ~ripper () with
+    let explore ~root ?discid ~title ~composer ~performer ~processed ~ripper () =
+      match explore ~root ?discid ~title ~composer ~performer ~processed ~ripper () with
       | Error msg -> prerr_endline msg; 1
       | Ok () -> 0
 
     let cmd =
       let open Cmd in
       make (info "medium" ~man) @@
-        let+ root and+ discid and+ title and+ composer and+ performer and+ processed and+ ripper in
-        explore ~root ?discid ?title ?composer ?performer ~processed ~ripper ()
+        let+ root and+ discid and+ editing and+ processed and+ ripper in
+        explore ~root ?discid ~title:editing.title ~composer:editing.composer ~performer:editing.performer ~processed ~ripper ()
 
   end
 
