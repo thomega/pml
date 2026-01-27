@@ -31,7 +31,7 @@ module type Exit_Cmd =
 let root =
   let doc = Printf.sprintf "Path to the root directory of the local cache."
   and env = Cmd.Env.info "MUSICBRAINZ_CACHE" in
-  Arg.(value & opt string default_cache & info ["C"; "cache"] ~docv:"path" ~doc ~env)
+  Arg.(value & opt dirpath default_cache & info ["C"; "cache"] ~docv:"path" ~doc ~env)
 
 module Cachetest : Exit_Cmd =
   struct
@@ -154,7 +154,7 @@ module JSON : Exit_Cmd =
 
     let file =
       let doc = Printf.sprintf "JSON file to be examined." in
-      Arg.(value & opt (some string) None & info ["f"; "file"] ~docv:"name" ~doc)
+      Arg.(value & opt (some filepath) None & info ["f"; "file"] ~docv:"name" ~doc)
 
     let schema =
       let doc = "Dump the whole tree without contents." in
@@ -189,7 +189,7 @@ let default_device =
 
 let device =
   let doc = Printf.sprintf "Choose CD-ROM device." in
-  Arg.(value & opt string default_device & info ["device"] ~doc)
+  Arg.(value & opt filepath default_device & info ["device"] ~doc)
 
 let discid =
   let doc = Printf.sprintf "Disc to be examined." in
