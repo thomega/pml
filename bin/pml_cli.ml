@@ -247,38 +247,71 @@ module Medium : Exit_Cmd =
 
     let man = [
         `S Manpage.s_description;
-        `P "Explore media." ] @ Common.man_footer
+        `P "Show the information on a medium as returned
+            by MusicBrainz." ] @ Common.man_footer
 
-    let processed =
-      let doc = "Process the data." in
-      Arg.(value & flag & info ["P"; "processed"] ~doc)
+    let f ~root ?discid ?device () =
+      let module M = Pml.Musicbrainz.Taggable in
+      let open Result.Syntax in
+      let* id = get_discid ?discid ?device () in
+      let* disc = M.of_discid ~root id in
+      Ok (M.print disc)
 
-    let ripper =
-      let doc = "Write ripper script." in
-      Arg.(value & flag & info ["r"; "ripper"] ~doc)
+    let cmd =
+      let open Cmd in
+      make (info "medium" ~man) @@
+        let+ root and+ discid and+ device in
+        f ~root ?discid ~device () |> exit_result
 
-    let explore ~root ?discid ?device ~editing ~processed ~ripper () =
+  end
+
+module Explore : Exit_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "Explore editing options for the information on
+            a medium returned by MusicBrainz in order to
+            fine tune the tagging." ] @ Common.man_footer
+
+    let f ~root ?discid ?device ~editing () =
       let module M = Pml.Musicbrainz.Taggable in
       let module T = Pml.Tags.Disc in
       let open Result.Syntax in
       let* id = get_discid ?discid ?device () in
       let* disc = M.of_discid ~root id in
       let* tagged = apply_edits editing (T.of_mb disc) in
-      if ripper then
-        T.script tagged
-      else if processed then
-        Ok (T.print tagged)
-      else
-        Ok (M.print disc)
-
-    let explore ~root ?discid ?device ~editing ~processed ~ripper () =
-      explore ~root ?discid ?device ~editing ~processed ~ripper () |> exit_result
+      Ok (T.print tagged)
 
     let cmd =
       let open Cmd in
-      make (info "medium" ~man) @@
-        let+ root and+ discid and+ device and+ editing and+ processed and+ ripper in
-        explore ~root ?discid ~device ~editing ~processed ~ripper ()
+      make (info "explore" ~man) @@
+        let+ root and+ discid and+ device and+ editing in
+        f ~root ?discid ~device ~editing () |> exit_result
+
+  end
+
+module Ripper : Exit_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "Write a ripping/tagging script." ] @ Common.man_footer
+
+    let f ~root ?discid ?device ~editing () =
+      let module M = Pml.Musicbrainz.Taggable in
+      let module T = Pml.Tags.Disc in
+      let open Result.Syntax in
+      let* id = get_discid ?discid ?device () in
+      let* disc = M.of_discid ~root id in
+      let* tagged = apply_edits editing (T.of_mb disc) in
+      T.script tagged
+
+    let cmd =
+      let open Cmd in
+      make (info "ripper" ~man) @@
+        let+ root and+ discid and+ device and+ editing in
+        f ~root ?discid ~device ~editing () |> exit_result
 
   end
 
@@ -398,6 +431,8 @@ module Main : Exit_Cmd =
         [ Query_Disc.cmd;
           Musicbrainz.cmd;
           Medium.cmd;
+          Explore.cmd;
+          Ripper.cmd;
           Cachetest.cmd;
           Curl.cmd]
 
