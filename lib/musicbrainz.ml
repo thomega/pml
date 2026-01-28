@@ -700,35 +700,39 @@ module Taggable =
         invalid_arg "truncate: n < 3"
 
     let ambiguous_discid discid discs =
-      Printf.eprintf "error: %d released discs for discid '%s':\n" (List.length discs) discid;
-      Printf.eprintf "  %-36s %-36s\n" "MEDIUM" "RELEASE";
+      let b = Buffer.create 16 in
+      let pr = Printf.bprintf in
+      pr b "%d released discs for discid '%s':" (List.length discs) discid;
+      pr b "\n  %-36s %-36s" "MEDIUM" "RELEASE";
       List.iter
         (fun d ->
-          Printf.eprintf "/ %-36s %-36s \\\n" d.medium.Medium.id d.release.Release.id;
-          Printf.eprintf "\\ %-36s %-36s /\n"
+          pr b "\n/ %-36s %-36s \\" d.medium.Medium.id d.release.Release.id;
+          pr b "\n\\ %-36s %-36s /"
             (truncate 36 (Option.value ~default:"???" d.medium.Medium.title))
             (truncate 36 (Option.value ~default:"???" d.release.Release.title)))
         discs;
-      flush stderr;
-      Error "ambiguous discid"
+      Buffer.contents b
 
     let disambiguate_medium prefix discid discs =
       ignore discid;
       match List.filter (fun d -> String.starts_with ~prefix d.medium.Medium.id) discs with
-      | [] -> Error "no match"
       | [disk] -> Ok disk
-      | _ -> Error "still ambiguous"
+      | [] -> Error (Printf.sprintf
+                       "%s\nno match for medium '%s'"
+                       (ambiguous_discid discid discs) prefix)
+      | _ -> Error (Printf.sprintf
+                      "%s\nmultiple matches for medium '%s'"
+                      (ambiguous_discid discid discs) prefix)
 
-    (** TODO: here we should allow to select a particular medium! *)
     let of_discid_sans_lifespans ?medium ~root discid =
       ignore medium;
       let* discs = discs_of_discid ~root discid in
       match discs with
-      | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
       | [disc] -> Ok disc
+      | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
       | _ ->
          begin match medium with
-         | None -> ambiguous_discid discid discs
+         | None -> Error (ambiguous_discid discid discs)
          | Some prefix -> disambiguate_medium prefix discid discs
          end
 
