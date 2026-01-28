@@ -104,11 +104,15 @@ module Disc : sig
 
   type trackset =
     { offset : int; (** Number of earlier tracks stored on other CDs. *)
-      first : int; (** First track to be included (counting from 1!). *)
-      last : int option; (** Last track to be included (counting from 1!). *)
+      first : int; (** First track to be included
+                       (counting from 1, {e before} applying the offset). *)
+      last : int option; (** Last track to be included
+                             (counting from 1, {e before} applying the offset). *)
       width : int (** The width of the printed track number, including leading zeros. *)
     }
   (** Track subset selection. *)
+
+  val default_trackset : trackset
 
   type t =
     { composer : Artist.t option; (** The primary sorting key for the ripped files.
@@ -128,7 +132,7 @@ module Disc : sig
       tracks : Track.t list;
       tracks_orig : Track.t list option; (** The tracks with the original names iff a common
                                              prefix has been stripped to be used as title. *)
-      trackset : trackset; (** Select a subset of tracks. *)
+      track_width : int; (** The width of the printed track number, including leading zeros. *)
       discid : string; (** The discid from which the audio was ripped. *)
       medium_id : string;
       release_id : string
@@ -136,7 +140,11 @@ module Disc : sig
 
   val of_mb : Musicbrainz.Taggable.t -> t
 
+  val select_tracks : trackset -> t -> (t, string) result
+  (** (Interactively?) select tracks and apply offsets. *)
+
   val recording_titles : t -> (t, string) result
+  (** (Interactively?) replace the track titles by the recording titles. *)
 
   val user_title : string -> t -> (t, string) result
   (** (Interactively?) set the title. *)

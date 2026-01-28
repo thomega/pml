@@ -221,7 +221,7 @@ module Disc =
         artists : Artists.t;
         tracks : Track.t list;
         tracks_orig : Track.t list option;
-        trackset : trackset;
+        track_width : int;
         discid : string;
         medium_id : string;
         release_id : string }
@@ -298,7 +298,7 @@ module Disc =
       let medium = Medium.of_mb mb.MB.medium
       and release = Release.of_mb mb.MB.release
       and discid = mb.MB.discid
-      and trackset = default_trackset in
+      and track_width = 2 in
       let medium_id = medium.Medium.id
       and release_id = release.Release.id in
       let artists = add_tracks_artists release.Release.artists medium.Medium.tracks in
@@ -306,8 +306,11 @@ module Disc =
       let titles, tracks, tracks_orig =
         make_titles ~release:release.Release.title ~medium:medium.Medium.title medium.Medium.tracks in
       { composer; titles; performer; artists;
-        tracks; tracks_orig; trackset;
+        tracks; tracks_orig; track_width;
         discid; medium_id; release_id }
+
+    let select_tracks _subset _d =
+      Error "missing"
 
     let recording_titles d =
       let release =
@@ -444,7 +447,7 @@ module Disc =
       List.iteri
         (fun i t ->
           printf "WAV=track%02d.cdda.wav\n" (succ i);
-          printf "TITLE=\"%0*d %s\"\n" d.trackset.width t.Track.number t.Track.title;
+          printf "TITLE=\"%0*d %s\"\n" d.track_width t.Track.number t.Track.title;
           printf "\n")
         d.tracks;
       Ok ()
@@ -475,7 +478,7 @@ module Disc =
       | Some tracks_orig ->
          List.iter2
            (fun t ot ->
-             printf "  #%0*d: '%s'\n" d.trackset.width t.Track.number t.Track.title;
+             printf "  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
              printf "       original:  '%s'\n" ot.Track.title;
              begin match t.recording_title with
              | Some t -> printf "       recording: '%s'\n" t
@@ -486,7 +489,7 @@ module Disc =
       | None ->
          List.iter
            (fun t ->
-             printf "  #%0*d: '%s'\n" d.trackset.width t.Track.number t.Track.title;
+             printf "  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
              begin match t.recording_title with
              | Some t -> printf "     = '%s'\n" t
              | None -> ()
