@@ -102,6 +102,14 @@ module Disc : sig
     | Release of string (** Release. *)
   (** The origin of the title. *)
 
+  type trackset =
+    { offset : int; (** Number of earlier tracks stored on other CDs. *)
+      first : int; (** First track to be included (counting from 1!). *)
+      last : int option; (** Last track to be included (counting from 1!). *)
+      width : int (** The width of the printed track number, including leading zeros. *)
+    }
+  (** Track subset selection. *)
+
   type t =
     { composer : Artist.t option; (** The primary sorting key for the ripped files.
                                       From this, we will derive the name of the top
@@ -120,7 +128,7 @@ module Disc : sig
       tracks : Track.t list;
       tracks_orig : Track.t list option; (** The tracks with the original names iff a common
                                              prefix has been stripped to be used as title. *)
-      track_width : int; (** The width of the printed track number, including leading zeros. *)
+      trackset : trackset; (** Select a subset of tracks. *)
       discid : string; (** The discid from which the audio was ripped. *)
       medium_id : string;
       release_id : string

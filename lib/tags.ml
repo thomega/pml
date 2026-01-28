@@ -196,6 +196,15 @@ module Disc =
       | Medium of string
       | Release of string
 
+    type trackset =
+      { offset : int;
+        first : int;
+        last : int option;
+        width : int }
+
+    let default_trackset =
+      { offset = 0; first = 1; last = None; width = 2 }
+
     let title_kind_to_string = function
       | User _ -> "user"
       | Tracks _ -> "tracks"
@@ -212,7 +221,7 @@ module Disc =
         artists : Artists.t;
         tracks : Track.t list;
         tracks_orig : Track.t list option;
-        track_width : int;
+        trackset : trackset;
         discid : string;
         medium_id : string;
         release_id : string }
@@ -289,7 +298,7 @@ module Disc =
       let medium = Medium.of_mb mb.MB.medium
       and release = Release.of_mb mb.MB.release
       and discid = mb.MB.discid
-      and track_width = 2 in
+      and trackset = default_trackset in
       let medium_id = medium.Medium.id
       and release_id = release.Release.id in
       let artists = add_tracks_artists release.Release.artists medium.Medium.tracks in
@@ -297,7 +306,7 @@ module Disc =
       let titles, tracks, tracks_orig =
         make_titles ~release:release.Release.title ~medium:medium.Medium.title medium.Medium.tracks in
       { composer; titles; performer; artists;
-        tracks; tracks_orig; track_width;
+        tracks; tracks_orig; trackset;
         discid; medium_id; release_id }
 
     let recording_titles d =
@@ -435,7 +444,7 @@ module Disc =
       List.iteri
         (fun i t ->
           printf "WAV=track%02d.cdda.wav\n" (succ i);
-          printf "TITLE=\"%0*d %s\"\n" d.track_width t.Track.number t.Track.title;
+          printf "TITLE=\"%0*d %s\"\n" d.trackset.width t.Track.number t.Track.title;
           printf "\n")
         d.tracks;
       Ok ()
@@ -466,7 +475,7 @@ module Disc =
       | Some tracks_orig ->
          List.iter2
            (fun t ot ->
-             printf "  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
+             printf "  #%0*d: '%s'\n" d.trackset.width t.Track.number t.Track.title;
              printf "       original:  '%s'\n" ot.Track.title;
              begin match t.recording_title with
              | Some t -> printf "       recording: '%s'\n" t
@@ -477,7 +486,7 @@ module Disc =
       | None ->
          List.iter
            (fun t ->
-             printf "  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
+             printf "  #%0*d: '%s'\n" d.trackset.width t.Track.number t.Track.title;
              begin match t.recording_title with
              | Some t -> printf "     = '%s'\n" t
              | None -> ()
