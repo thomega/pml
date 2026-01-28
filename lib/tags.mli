@@ -120,9 +120,7 @@ module Disc : sig
       tracks : Track.t list;
       tracks_orig : Track.t list option; (** The tracks with the original names iff a common
                                              prefix has been stripped to be used as title. *)
-      total_tracks : int; (** The total number of tracks of the release containing the disc.
-                              This is only needed for the correct number of leading zeros in
-                              numbers in filenames. *)
+      track_width : int; (** The width of the printed track number, including leading zeros. *)
       discid : string; (** The discid from which the audio was ripped. *)
       medium_id : string;
       release_id : string
