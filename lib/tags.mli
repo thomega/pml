@@ -61,6 +61,7 @@ module Track : sig
 
   type t =
     { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
+      number_on_disc : int;
       title : string;
       recording_title : string option;
       artists : Artists.t;
@@ -134,7 +135,9 @@ module Disc : sig
                                              prefix has been stripped to be used as title. *)
       track_width : int; (** The width of the printed track number, including leading zeros. *)
       discid : string; (** The discid from which the audio was ripped. *)
+      medium_title : string option;
       medium_id : string;
+      release_title : string option;
       release_id : string
     }
 

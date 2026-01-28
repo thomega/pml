@@ -228,6 +228,33 @@ let performer_prefix =
   let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
   Arg.(value & opt (some string) None & info ["P"; "Performer"] ~docv:"prefix" ~doc)
 
+let offset =
+  let doc = Printf.sprintf "Apply an offset to the track numbers." in
+  Arg.(value & opt int Tags.Disc.(default_trackset.offset) & info ["o"; "offset"] ~docv:"n" ~doc)
+
+let first =
+  let doc = Printf.sprintf "First track to select (counting from 1,
+                            $(b,before) applying offset)." in
+  Arg.(value & opt int Tags.Disc.(default_trackset.first) & info ["f"; "first"] ~docv:"n" ~doc)
+
+let last =
+  let doc = Printf.sprintf "Last track to select (counting from 1,
+                            $(b,before) applying offset)." in
+  Arg.(value & opt (some int) Tags.Disc.(default_trackset.last) & info ["l"; "last"] ~docv:"n" ~doc)
+
+let width =
+  let doc = Printf.sprintf "The width of the printed track number,
+                            including leading zeros." in
+  Arg.(value & opt int Tags.Disc.(default_trackset.width) & info ["w"; "width"] ~docv:"n" ~doc)
+
+let trackset =
+  let+ offset and+ first and+ last and+ width in
+  let ts = Tags.Disc.{ offset; first; last; width } in
+  if ts = Tags.Disc.default_trackset then
+    None
+  else
+    Some ts
+
 type editing =
   { title : string option;
     recording_titles : bool;
@@ -236,13 +263,15 @@ type editing =
     composer : string option;
     composer_prefix : string option;
     performer : string option;
-    performer_prefix : string option }
+    performer_prefix : string option;
+    trackset : Tags.Disc.trackset option }
 
 let editing =
   let+ title and+ recording_titles and+ release_title and+ medium_title
-     and+ composer and+ composer_prefix and+ performer and+ performer_prefix in
+     and+ composer and+ composer_prefix and+ performer and+ performer_prefix
+     and+ trackset in
   { title; recording_titles; release_title; medium_title;
-    composer; composer_prefix; performer; performer_prefix }
+    composer; composer_prefix; performer; performer_prefix; trackset }
 
 let apply_edit f string_opt tagged =
   let open Result.Syntax in
@@ -259,8 +288,10 @@ let apply_edit_if flag f tagged =
   else
     Ok tagged
 
+(** The order is very significant! *)
 let apply_edits e tagged =
   Ok tagged
+  |> apply_edit Tags.Disc.select_tracks e.trackset
   |> apply_edit_if e.recording_titles Tags.Disc.recording_titles
   |> apply_edit_if e.release_title Tags.Disc.release_title
   |> apply_edit_if e.medium_title Tags.Disc.medium_title
