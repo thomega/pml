@@ -714,7 +714,7 @@ module Taggable : sig
       release : Release.t;
       discid : string }
 
-  val of_discid : root:string -> string -> (t, string) result
+  val of_discid : ?medium:string -> root:string -> string -> (t, string) result
   (** Find the released disc matching the discid. *)
 
   val print : t -> unit

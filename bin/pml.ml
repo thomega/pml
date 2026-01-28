@@ -40,6 +40,10 @@ module Cachetest : Exit_Cmd =
         `S Manpage.s_description;
         `P "Testing." ] @ Common.man_footer
 
+    let print =
+      let doc = "Print the JSON file." in
+      Arg.(value & flag & info ["p"; "print"] ~doc)
+
     let normalize =
       let doc = "Normalize the JSON file." in
       Arg.(value & flag & info ["n"; "normalize"] ~doc)
@@ -75,16 +79,16 @@ module Cachetest : Exit_Cmd =
     let print_keys key_value_pairs =
       List.iter (fun (key, _) -> print_endline key) key_value_pairs
 
-    let found kind key = function
+    let found print kind key = function
       | Ok (Some json) ->
          begin match Musicbrainz.Error.get_error_opt json with
-         | None -> Ok ()
+         | None -> if print then print_endline json; Ok ()
          | Some msg -> Error (Printf.sprintf "%s key '%s' points to error object: '%s'" kind key msg)
          end
       | Ok None -> Error (Printf.sprintf "%s key '%s': not found locally" kind key)
       | Error _ as e -> e
 
-    let cache_tool ~root ~normalize ~remote ?discid ?release ?artist
+    let cache_tool ~root ~normalize ~remote ~print ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list () =
       let open Musicbrainz in
       let open Result.Syntax in
@@ -107,7 +111,7 @@ module Cachetest : Exit_Cmd =
                else if remote then
                  Discid_cached.get ~root discid |> Result.map (fun _ -> ())
                else
-                 Discid_cached.local ~root discid |> found "discid" discid
+                 Discid_cached.local ~root discid |> found print "discid" discid
             | None -> Ok ()
           and* _ =
             match release with
@@ -117,7 +121,7 @@ module Cachetest : Exit_Cmd =
                else if remote then
                  Release_cached.get ~root release |> Result.map (fun _ -> ())
                else
-                 Release_cached.local ~root release |> found "release" release
+                 Release_cached.local ~root release |> found print "release" release
             | None -> Ok ()
           and* _ =
             match artist with
@@ -127,7 +131,7 @@ module Cachetest : Exit_Cmd =
                else if remote then
                  Artist_cached.get ~root artist |> Result.map (fun _ -> ())
                else
-                 Artist_cached.local ~root artist |> found "artist" artist
+                 Artist_cached.local ~root artist |> found print "artist" artist
             | None -> Ok () in
           Ok () in
       match result with
@@ -138,9 +142,9 @@ module Cachetest : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "cache" ~man) @@
-        let+ root and+ normalize and+ remote and+ discid and+ release and+ artist
+        let+ root and+ normalize and+ remote and+ print and+ discid and+ release and+ artist
            and+ discid_list and+ release_list and+ artist_list in
-        cache_tool ~root ~normalize ~remote ?discid ?release ?artist
+        cache_tool ~root ~normalize ~remote ~print ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list ()
 
   end
@@ -266,6 +270,12 @@ let apply_edits e tagged =
   |> apply_edit Tags.Disc.user_composer e.composer
   |> apply_edit Tags.Disc.user_performer e.performer
 
+let medium =
+  let doc =
+    Printf.sprintf "Select the medium with MBID matched this prefix,
+                    in case of an ambiguous diskid." in
+  Arg.(value & opt (some string) None & info ["M"; "medium_id"] ~docv:"MBID" ~doc)
+
 let get_discid ?device ?discid () =
   let open Result.Syntax in
   match discid with
@@ -286,17 +296,17 @@ module Medium : Exit_Cmd =
         `P "Show the information on a medium as returned
             by MusicBrainz." ] @ Common.man_footer
 
-    let f ~root ?discid ?device () =
+    let f ~root ?medium ?discid ?device () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
-      let* disc = Musicbrainz.Taggable.of_discid ~root id in
+      let* disc = Musicbrainz.Taggable.of_discid ~root ?medium id in
       Ok (Musicbrainz.Taggable.print disc)
 
     let cmd =
       let open Cmd in
       make (info "medium" ~man) @@
-        let+ root and+ discid and+ device in
-        f ~root ?discid ~device () |> exit_result
+        let+ root and+ medium and+ discid and+ device in
+        f ~root ?medium ?discid ~device () |> exit_result
 
   end
 
@@ -309,18 +319,18 @@ module Explore : Exit_Cmd =
             a medium returned by MusicBrainz in order to
             fine tune the tagging." ] @ Common.man_footer
 
-    let f ~root ?discid ?device ~editing () =
+    let f ~root ?medium ?discid ?device ~editing () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
-      let* disc = Musicbrainz.Taggable.of_discid ~root id in
+      let* disc = Musicbrainz.Taggable.of_discid ~root ?medium id in
       let* tagged = apply_edits editing (Tags.Disc.of_mb disc) in
       Ok (Tags.Disc.print tagged)
 
     let cmd =
       let open Cmd in
       make (info "explore" ~man) @@
-        let+ root and+ discid and+ device and+ editing in
-        f ~root ?discid ~device ~editing () |> exit_result
+        let+ root and+ medium and+ discid and+ device and+ editing in
+        f ~root ?medium ?discid ~device ~editing () |> exit_result
 
   end
 
@@ -331,18 +341,18 @@ module Ripper : Exit_Cmd =
         `S Manpage.s_description;
         `P "Write a ripping/tagging script." ] @ Common.man_footer
 
-    let f ~root ?discid ?device ~editing () =
+    let f ~root ?medium ?discid ?device ~editing () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
-      let* disc = Musicbrainz.Taggable.of_discid ~root id in
+      let* disc = Musicbrainz.Taggable.of_discid ~root ?medium id in
       let* tagged = apply_edits editing (Tags.Disc.of_mb disc) in
       Tags.Disc.script tagged
 
     let cmd =
       let open Cmd in
       make (info "ripper" ~man) @@
-        let+ root and+ discid and+ device and+ editing in
-        f ~root ?discid ~device ~editing () |> exit_result
+        let+ root and+ medium and+ discid and+ device and+ editing in
+        f ~root ?medium ?discid ~device ~editing () |> exit_result
 
   end
 

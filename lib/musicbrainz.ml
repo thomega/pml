@@ -690,15 +690,50 @@ module Taggable =
         Artist_cached.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) ids in
       update_artists artist_map disc
 
-    let of_discid_sans_lifespans ~root discid =
+    let truncate n s =
+      let l = String.length s in
+      if l <= n then
+        s
+      else if n >= 3 then
+        String.sub s 0 (n - 3) ^ "..."
+      else
+        invalid_arg "truncate: n < 3"
+
+    let ambiguous_discid discid discs =
+      Printf.eprintf "error: %d released discs for discid '%s':\n" (List.length discs) discid;
+      Printf.eprintf "  %-36s %-36s\n" "MEDIUM" "RELEASE";
+      List.iter
+        (fun d ->
+          Printf.eprintf "/ %-36s %-36s \\\n" d.medium.Medium.id d.release.Release.id;
+          Printf.eprintf "\\ %-36s %-36s /\n"
+            (truncate 36 (Option.value ~default:"???" d.medium.Medium.title))
+            (truncate 36 (Option.value ~default:"???" d.release.Release.title)))
+        discs;
+      flush stderr;
+      Error "ambiguous discid"
+
+    let disambiguate_medium prefix discid discs =
+      ignore discid;
+      match List.filter (fun d -> String.starts_with ~prefix d.medium.Medium.id) discs with
+      | [] -> Error "no match"
+      | [disk] -> Ok disk
+      | _ -> Error "still ambiguous"
+
+    (** TODO: here we should allow to select a particular medium! *)
+    let of_discid_sans_lifespans ?medium ~root discid =
+      ignore medium;
       let* discs = discs_of_discid ~root discid in
       match discs with
-      | [disc] -> Ok disc
       | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
-      | _ -> Error (Printf.sprintf "multiple released discs for discid '%s'" discid)
+      | [disc] -> Ok disc
+      | _ ->
+         begin match medium with
+         | None -> ambiguous_discid discid discs
+         | Some prefix -> disambiguate_medium prefix discid discs
+         end
 
-    let of_discid ~root discid =
-      let* disc = of_discid_sans_lifespans ~root discid in
+    let of_discid ?medium ~root discid =
+      let* disc = of_discid_sans_lifespans ?medium ~root discid in
       add_lifespans ~root disc
       
     let print disc =
