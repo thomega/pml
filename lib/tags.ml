@@ -309,8 +309,48 @@ module Disc =
         tracks; tracks_orig; track_width;
         discid; medium_id; release_id }
 
-    let select_tracks _subset _d =
-      Error "missing"
+    let sublist first last l =
+      let l = List.drop (pred first) l in
+      match last with
+      | Some last -> List.take (last - first + 1) l
+      | None -> l
+
+    (** Test for all possible off-by-one errors. *)
+
+    let%test_module _ =
+      (module struct
+
+         let%test _ = sublist 1 None [] = []
+         let%test _ = sublist 0 None [] = []
+         let%test _ = sublist (-1) None [] = []
+         let%test _ = sublist 1 None [1] = [1]
+         let%test _ = sublist 0 None [1] = [1]
+         let%test _ = sublist 2 None [1] = []
+         let%test _ = sublist 9 None [1] = []
+         let%test _ = sublist 1 None [1;2] = [1;2]
+         let%test _ = sublist 0 None [1;2] = [1;2]
+         let%test _ = sublist 2 None [1;2] = [2]
+         let%test _ = sublist 3 None [1;2] = []
+
+         let%test _ = sublist 1 (Some 3) [] = []
+         let%test _ = sublist 1 (Some 1) [1] = [1]
+         let%test _ = sublist 1 (Some 0) [1] = []
+         let%test _ = sublist 1 (Some 2) [1] = [1]
+         let%test _ = sublist 1 (Some 2) [1;2;3] = [1;2]
+         let%test _ = sublist 2 (Some 2) [1;2;3] = [2]
+         let%test _ = sublist 2 (Some 3) [1;2;3] = [2;3]
+
+       end)
+
+    let select_tracklist subset tracks =
+      sublist subset.first subset.last tracks
+      |> List.map (fun t -> Track.{ t with number = t.number + subset.offset })
+
+    let select_tracks subset d =
+      let track_width = subset.width
+      and tracks = select_tracklist subset d.tracks
+      and tracks_orig = Option.map (select_tracklist subset) d.tracks_orig in
+      Ok { d with tracks; tracks_orig; track_width }
 
     let recording_titles d =
       let release =
