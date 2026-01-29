@@ -33,27 +33,10 @@
            and recording.}}
  *)
 
-module Track : sig
-
-  type t =
-    { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
-      number_on_disc : int;
-      title : string;
-      recording_title : string option;
-      artists : Tag_artist.Collection.t;
-      id : string }
-
-  val of_mb : Mb_track.t -> t
-
-  val recording_title : t -> t
-  (** If [recording_title] exists, replace [title] by it and set it to [None]. *)
-
-end
-
 module Medium : sig
   type t =
     { title : string option;
-      tracks : Track.t list;
+      tracks : Tag_track.t list;
       id : string }
   val of_mb : Mb_medium.t -> t
 end
@@ -106,8 +89,8 @@ module Disc : sig
                                        to distinguish different interpretations.
                                        Empty for popular music. *)
       artists : Tag_artist.Collection.t;
-      tracks : Track.t list;
-      tracks_orig : Track.t list option; (** The tracks with the original names iff a common
+      tracks : Tag_track.t list;
+      tracks_orig : Tag_track.t list option; (** The tracks with the original names iff a common
                                              prefix has been stripped to be used as title. *)
       track_width : int; (** The width of the printed track number, including leading zeros. *)
       discid : string; (** The discid from which the audio was ripped. *)

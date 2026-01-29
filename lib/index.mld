@@ -9,10 +9,10 @@ implementing access to Musicbrainz in order to organize a Physical Media Library
 You can also jump immediately to the wrapped API modules
 
 {3 Building Blocks}
-{!modules:Pml.Tags Pml.Tag_artist Pml.Taggable}
+{!modules:Pml.Tags Pml.Tag_track Pml.Tag_artist}
 
 {3 Musicbrainz Responses}
-{!modules:Pml.Mb_release Pml.Mb_medium Pml.Mb_disc
+{!modules: Pml.Taggable Pml.Mb_release Pml.Mb_medium Pml.Mb_disc
           Pml.Mb_track Pml.Mb_recording
 	  Pml.Mb_artist Pml.Mb_artist_credit}
 
