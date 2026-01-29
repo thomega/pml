@@ -1,19 +1,19 @@
 (* mb_artist.ml -- part of PML (Physical Media Library)
 
-  Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
+   Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
 type t =
   { id : string (** While this is optional in the DTD, it should be there anyway. *);
@@ -81,10 +81,25 @@ let compare a1 a2 =
       else
         String.compare a1.id a2.id
 
-    let to_string a =
-      (Option.value a.sort_name ~default:(Option.value a.name ~default:"(anonymous)"))
-      ^ (match a.disambiguation with
-         | None -> ""
-         | Some s -> " (" ^ s) ^ ")"
-      ^ (Option.fold ~none:"" ~some:(fun t -> " {" ^ Artist_type.to_string t ^ "}") a.artist_type)
-      ^ (Option.fold ~none:"" ~some:(fun ls -> " [" ^ Lifespan.to_string ls ^ "]") a.lifespan)
+let to_string a =
+  let name =
+    match a.name with
+    | None -> "N.N."
+    | Some name -> name
+  and artist_type =
+    match a.artist_type with
+    | None -> ""
+    | Some artist_type ->
+       begin match Artist_type.to_string artist_type with
+       | "" -> ""
+       | s -> " (" ^ s ^ ")"
+       end
+  and lifespan =
+    match a.lifespan with
+    | None -> ""
+    | Some lifespan ->
+       begin match Lifespan.to_string_opt lifespan with
+       | None -> ""
+       | Some lifespan -> " [" ^ lifespan ^ "]"
+       end in
+  name ^ artist_type ^ lifespan

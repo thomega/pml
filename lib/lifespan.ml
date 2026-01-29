@@ -21,11 +21,11 @@ type t =
   | Dead' of Date.t
   | Limbo
 
-let to_string = function
-  | Alive born -> "*" ^ Date.year_to_string born
-  | Dead (born, died) -> "*" ^ Date.year_to_string born ^ ", +" ^ Date.year_to_string died
-  | Dead' died -> "+" ^ Date.year_to_string died
-  | Limbo -> "*/+?"
+let to_string_opt  = function
+  | Alive born -> Some ("*" ^ Date.year_to_string born)
+  | Dead (born, died) -> Some ("*" ^ Date.year_to_string born ^ ", †" ^ Date.year_to_string died)
+  | Dead' died -> Some ("†" ^ Date.year_to_string died)
+  | Limbo -> None
 
 type relation =
   | Before
