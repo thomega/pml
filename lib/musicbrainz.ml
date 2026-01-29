@@ -1,18 +1,5 @@
 open Result.Syntax
 
-module Disc =
-  struct
-    type t =
-      { id : string (** While this is optional in the DTD, it should be there anyway. *);
-      }
-    let make id =
-      { id }
-    let jsont =
-      Jsont.Object.map ~kind:"Disc" make
-      |> Jsont.Object.mem "id" Jsont.string
-      |> Jsont.Object.finish
-  end
-
 module Medium =
   struct
     type t =
@@ -20,7 +7,7 @@ module Medium =
       { id : string (** While this is optional in the DTD, it should be there anyway. *);
         position : int option;
         title : string option;
-        discs : Disc.t list;
+        discs : Mb_disc.t list;
         tracks : Mb_track.t list }
 
     let make id position title discs tracks =
@@ -34,7 +21,7 @@ module Medium =
       |> Jsont.Object.mem "id" Jsont.string
       |> Jsont.Object.opt_mem "position" Jsont.int
       |> Jsont.Object.opt_mem "title" Jsont.string
-      |> Jsont.Object.opt_mem "discs" Jsont.(list Disc.jsont)
+      |> Jsont.Object.opt_mem "discs" Jsont.(list Mb_disc.jsont)
       |> Jsont.Object.opt_mem "tracks" Jsont.(list Mb_track.jsont)
       |> Jsont.Object.finish
 
@@ -108,7 +95,7 @@ module Taggable =
       Jsont_bytesrw.decode_string Release.jsont text
 
     let contains_discid discid medium =
-      List.exists (fun disc -> discid = disc.Disc.id) medium.Medium.discs
+      List.exists (fun disc -> discid = disc.Mb_disc.id) medium.Medium.discs
 
     let discs_of_discid ~root discid =
       let* releases = Cached.releases_of_discid ~root discid in
