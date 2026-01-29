@@ -7,6 +7,9 @@ type title =
   | Release of string (** Release. *)
 (** The origin of the title. *)
 
+val title_to_string : title -> string
+(** Just the title, ignoring the origin. *)
+
 type trackset =
   { offset : int; (** Number of earlier tracks stored on other CDs. *)
     first : int; (** First track to be included
@@ -73,9 +76,6 @@ val composer_prefix : string -> t -> (t, string) result
 
 val performer_prefix : string -> t -> (t, string) result
 (** (Interactively?) select top billed performer by matching prefix. *)
-
-val script : t -> (unit, string) result
-(** Write a shell script for ripping, encoding and tagging. *)
 
 val print : t -> unit
 (** Exploration, WIP ... *)

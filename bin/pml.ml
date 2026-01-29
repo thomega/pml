@@ -376,7 +376,7 @@ module Ripper : Exit_Cmd =
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = apply_edits editing (Tagged.of_mb disc) in
-      Tagged.script tagged
+      Rip.script tagged
 
     let cmd =
       let open Cmd in
