@@ -12,7 +12,7 @@ You can also jump immediately to the wrapped API modules
 {!modules:Pml.Musicbrainz Pml.Tags}
 
 {3 Musicbrainz Response}
-{!modules:Pml.Mb_artist Pml.Mb_artist_credit}
+{!modules:Pml.Mb_recording Pml.Mb_artist Pml.Mb_artist_credit}
 
 {3 Artist Classification}
 {!modules:Pml.Artist_type Pml.Lifespan Pml.Date}

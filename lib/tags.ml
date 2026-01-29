@@ -110,7 +110,7 @@ module Track =
 
     let of_mb mb =
       let module T = Musicbrainz.Track in
-      let module R = Musicbrainz.Recording in
+      let module R = Mb_recording in
       let id = mb.T.id
       and number = Option.value mb.T.position ~default:0 in
       let number_on_disc = number in
