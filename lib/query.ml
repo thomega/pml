@@ -1,4 +1,4 @@
-let client_version = "0.0.6"
+let client_version = "0.0.7"
 let client_name = "Physical Media Library"
 let contact = "ohl@physik.uni-wuerzburg.de"
 
