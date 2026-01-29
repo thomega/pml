@@ -1,10 +1,4 @@
-#! /bin/sh
-
-add_gpl () {
-  path="$1"
-  file="`basename $path`"
-  cat <<EOF >$path.new
-(* $file -- part of PML (Physical Media Library)
+(* version.ml -- part of PML (Physical Media Library)
 
    Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
@@ -21,11 +15,9 @@ add_gpl () {
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
-EOF
-  cat $path >>$path.new
-  mv $path.new $path
-}
-
-for i in "$@"; do
-  add_gpl "$i"
-done	  
+let version = "0.0.7"
+let copyright = "2026"
+let name = "PML"
+let long_name = "Physical Media Library"
+let author = "Thorsten Ohl"
+let email = "ohl@physik.uni-wuerzburg.de"

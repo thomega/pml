@@ -1,19 +1,19 @@
 (* pml.ml -- part of PML (Physical Media Library)
 
-  Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
+   Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
 let default_cache = "mb-cache"
 
@@ -500,6 +500,46 @@ module Curl : Exit_Cmd =
 
 end
 
+module Version : Exit_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "Print version information." ] @ Common.man_footer
+
+    let license =
+      let doc = "Print license information." in
+      Arg.(value & flag & info ["l"; "license"] ~doc)
+
+    let version ~license =
+      let open Version in
+      if license then
+        let gpl =
+          "you can redistribute
+it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+             
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>." in
+        Printf.printf "Copyright (C) %s %s <%s>\n\n" copyright author email;
+        Printf.printf "%s (%s) is free software: %s\n" name long_name gpl
+      else
+        print_endline version;
+      0
+    
+    let cmd =
+      let open Cmd in
+      make (info "version" ~man) @@
+        let+ license in
+        version ~license
+
+end
+
 module Main : Exit_Cmd =
   struct
 
@@ -522,7 +562,8 @@ module Main : Exit_Cmd =
           Explore.cmd;
           Ripper.cmd;
           Cachetest.cmd;
-          Curl.cmd]
+          Curl.cmd;
+          Version.cmd]
 
   end
 

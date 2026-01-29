@@ -8,7 +8,7 @@
     Mb_error Mb_raw Cached
     Artist_type Lifespan Date
     Libdiscid Query
-    Edit Sets Cache Result_list Option_syntax)
+    Edit Sets Cache Result_list Option_syntax Version)
   (private_modules )
   ; (wrapped false)
   (inline_tests)

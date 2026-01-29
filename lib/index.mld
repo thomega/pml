@@ -28,5 +28,5 @@ You can also jump immediately to the wrapped API modules
 {!modules:Pml.Libdiscid}
 
 {3 (More or Less) General Purpose Libraries}
-{!modules:Pml.Edit Pml.Sets Pml.Cache Pml.Result_list Pml.Option_syntax}
+{!modules:Pml.Edit Pml.Sets Pml.Cache Pml.Result_list Pml.Option_syntax Pml.Version}
 
