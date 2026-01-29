@@ -90,48 +90,47 @@ module Cachetest : Exit_Cmd =
 
     let cache_tool ~root ~normalize ~remote ~print ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list () =
-      let open Musicbrainz in
       let open Result.Syntax in
       let result =
         if discid_list then
-          let* discids = Discid_cached.all_local ~root in
+          let* discids = Cached.Discid.all_local ~root in
           Ok (print_keys discids)
         else if release_list then
-          let* releases = Release_cached.all_local ~root in
+          let* releases = Cached.Release.all_local ~root in
           Ok (print_keys releases)
         else if artist_list then
-          let* artists = Artist_cached.all_local ~root in
+          let* artists = Cached.Artist.all_local ~root in
           Ok (print_keys artists)
         else
           let* _ =
             match discid with
             | Some discid ->
                if normalize then
-                 Discid_cached.Internal.map ~root discid Mb_raw.normalize
+                 Cached.Discid.Internal.map ~root discid Mb_raw.normalize
                else if remote then
-                 Discid_cached.get ~root discid |> Result.map (fun _ -> ())
+                 Cached.Discid.get ~root discid |> Result.map (fun _ -> ())
                else
-                 Discid_cached.local ~root discid |> found print "discid" discid
+                 Cached.Discid.local ~root discid |> found print "discid" discid
             | None -> Ok ()
           and* _ =
             match release with
             | Some release ->
                if normalize then
-                 Release_cached.Internal.map ~root release Mb_raw.normalize
+                 Cached.Release.Internal.map ~root release Mb_raw.normalize
                else if remote then
-                 Release_cached.get ~root release |> Result.map (fun _ -> ())
+                 Cached.Release.get ~root release |> Result.map (fun _ -> ())
                else
-                 Release_cached.local ~root release |> found print "release" release
+                 Cached.Release.local ~root release |> found print "release" release
             | None -> Ok ()
           and* _ =
             match artist with
             | Some artist ->
                if normalize then
-                 Artist_cached.Internal.map ~root artist Mb_raw.normalize
+                 Cached.Artist.Internal.map ~root artist Mb_raw.normalize
                else if remote then
-                 Artist_cached.get ~root artist |> Result.map (fun _ -> ())
+                 Cached.Artist.get ~root artist |> Result.map (fun _ -> ())
                else
-                 Artist_cached.local ~root artist |> found print "artist" artist
+                 Cached.Artist.local ~root artist |> found print "artist" artist
             | None -> Ok () in
           Ok () in
       match result with
@@ -186,7 +185,7 @@ module JSON : Exit_Cmd =
   end
 
 let default_device =
-  Discid.default_device ()
+  Libdiscid.default_device ()
 
 let device =
   let doc = Printf.sprintf "Choose CD-ROM device." in
@@ -312,8 +311,8 @@ let get_discid ?device ?discid () =
   match discid with
   | Some discid -> Ok discid
   | None ->
-     let* ids = Discid.get ?device () in
-     Ok (ids.Discid.id)
+     let* ids = Libdiscid.get ?device () in
+     Ok (ids.Libdiscid.id)
 
 let exit_result = function
   | Error msg -> prerr_endline msg; 1
@@ -418,13 +417,13 @@ module Disc : Exit_Cmd =
     let query_disc ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url =
       if verbose then
         Printf.printf "querying %s ...\n" device;
-      match Discid.get ~device () with
+      match Libdiscid.get ~device () with
       | Ok ids ->
          begin
            if not lookup && not print_id && not print_toc && not print_submission_url then
              Printf.printf "id = %s\ntoc = %s\nsubmit = %s\n" ids.id ids.toc ids.submission_url
            else if lookup then
-             begin match Musicbrainz.Discid_cached.get ~root ids.id with
+             begin match Cached.Discid.get ~root ids.id with
              | Error msg -> Printf.eprintf "error: %s\n" msg
              | Ok json ->
                 Printf.printf

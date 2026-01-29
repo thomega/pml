@@ -1,86 +1,3 @@
-module type Cached =
-  sig
-
-    val get : root:string -> string -> (string, string) result
-    (** Return the JSON for the given key, preferring the cache located at [root].
-        If there is no local entry for the key, it will be created from the
-        result of the remote lookup. *)
-
-    val local : root:string -> string -> (string option, string) result
-    (** Return the JSON for the given key, using only the cache located at [root]. *)
-
-    val remote : string -> (string, string) result
-    (** Return the JSON for the given key, ignoring any cache. *)
-
-    val all_local : root:string -> ((string * string) list, string) result
-    (** Return the cached [key] JSON pairs. *)
-
-    val url : string -> (string, string) result
-    (** Return the URL for querying Musicbrainz for the entry corresponding to a key. *)
-
-    module M : Map.S with type key = string
-
-    val map_of_ids : root:string -> (string -> ('a, string) result) ->
-                     string list -> ('a M.t, string) result
-
-    module Internal : Cache.T with type key = string and type value = string
-    (** Access the public interface of the [Cache.T] used to implement
-        this cached table. *)
-
-  end
-(** Query the Musicbrainz database with local caching to avoid excessive network
-    traffic when finetuning the tagging of tracks. *)
-
-module Discid_cached : Cached
-(** Access information about a disc, in particular the MBIDs of the
-    releases containing the disc, by the [discid]. *)
-
-(** {v
-     <element name="disc">
-         <attribute name="id">
-             <data type="string">
-                 <param name="pattern">[a-zA-Z0-9._]{27}-</param>
-             </data>
-         </attribute>
-         ...    
-     </element>
-     v} *)
-
-(** The
-    {{: https://github.com/metabrainz/libmusicbrainz/blob/master/examples/cdlookup_c.c }old example}
-    in the MusicBrainz sources suggests that it is impossible to
-    get all information from a single [discid] lookup.  This is (no longer?)
-    correct: we could access all required information in one step by
-    adding [inc=artist-credits+recordings] to the request.   However,
-    this results in substational redundancy, whenever a release contains
-    many discs, as the information is repeated for every disc in the release.
-
-    Therefore, we continue to use the two step approach suggested by the example. *)
-
-val releases_of_discid : root:string -> string -> (string list, string) result
-(** There can be more than one release of a given disc.  Return
-    them as a list of MBID strings. *)
-
-val valid_mbid : string -> (string, string) result
-(** Check that a string is a MBID (i.e. UUID)
-    {v
-     <define name="def_uuid">
-         <data type="string">
-             <param name="pattern">[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}</param>
-         </data>
-     </define>
-     v}
-     Note that this does not reject upper case hexadecimals and
-     silently changes them to lowercase instead. *)
-
-module Release_cached : Cached
-(** Access more detailled information about a release from its MBID: tracks, artists, etc. *)
-
-module Artist_cached : Cached
-(** Access more detailled information about an artist: life span and aliases.
-    {b The lifespan can be used for distinguishing composers from performers!} *)
-
-
 module MBID_Set : Set.S with type elt = string
 
 (** Note that we {e must not} replace [artist] elements by their MBID, since there can
@@ -241,7 +158,7 @@ module Artist : sig
 
   val compare : t -> t -> int
 
-  val update : t Artist_cached.M.t -> t -> (t, string) result
+  val update : t Cached.Artist.M.t -> t -> (t, string) result
   (** Find the artist with the same MBID in the dictionary.
       This is used to replace the artist record without
       lifespan included in releases by the artist record with
@@ -289,7 +206,7 @@ module Artist_Credit : sig
   val artist_id : t -> MBID_Set.t
   (** Extract the artist's MBID inside the artist credit. *)
 
-  val update_artist : Artist.t Artist_cached.M.t -> t -> (t, string) result
+  val update_artist : Artist.t Cached.Artist.M.t -> t -> (t, string) result
   (** Do a [Artist.update] inside, if applicable. *)
 
   val to_string : t -> string
@@ -382,7 +299,7 @@ module Recording : sig
   val artist_ids : t -> MBID_Set.t
   (** Extract the MBID of all credited artists. *)
 
-  val update_artists : Artist.t Artist_cached.M.t -> t -> (t, string) result
+  val update_artists : Artist.t Cached.Artist.M.t -> t -> (t, string) result
   (** Do a [Artist.update] on all credited artists. *)
 
 end
@@ -434,7 +351,7 @@ module Track : sig
   val artist_ids : t -> MBID_Set.t
   (** Extract the MBID of all credited artists. *)
 
-  val update_artists : Artist.t Artist_cached.M.t -> t -> (t, string) result
+  val update_artists : Artist.t Cached.Artist.M.t -> t -> (t, string) result
   (** Do a [Artist.update] on all credited artists. *)
 
 end
@@ -522,7 +439,7 @@ module Medium : sig
   val artist_ids : t -> MBID_Set.t
   (** Extract the MBID of all credited artists. *)
 
-  val update_artists : Artist.t Artist_cached.M.t -> t -> (t, string) result
+  val update_artists : Artist.t Cached.Artist.M.t -> t -> (t, string) result
   (** Do a [Artist.update] on all credited artists. *)
 
   val print : t -> unit
