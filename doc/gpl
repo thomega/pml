@@ -1,4 +1,10 @@
-(* clibdiscid_type_specs.ml -- part of PML (Physical Media Library)
+#! /bin/sh
+
+add_gpl () {
+  path="$1"
+  file="`basename $path`"
+  cat <<EOF >$path.new
+(* $file -- part of PML (Physical Media Library)
 
   Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
@@ -15,11 +21,11 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
-(* open Ctypes *)
+EOF
+  cat $path >>$path.new
+  mv $path.new $path
+}
 
-module Types (F : Ctypes.TYPE) = struct
-  open F
-
-  let discid_version_num = constant "DISCID_VERSION_NUM" int
-
-end
+for i in "$@"; do
+  add_gpl "$i"
+done	  
