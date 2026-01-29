@@ -3,7 +3,7 @@
   (public_name pml)
   (modules
     Tags
-    Track Artist
+    Medium Track Artist
     Taggable
     Mb_release Mb_medium Mb_disc
     Mb_track Mb_recording

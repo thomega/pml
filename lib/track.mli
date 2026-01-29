@@ -1,4 +1,4 @@
-(** All we know about a track. *)
+(** All we know about a track/recording. *)
 
 type t =
   { number : int;  (** Overall position of the track in the whole work, counting from 1. *)

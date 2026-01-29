@@ -33,14 +33,6 @@
            and recording.}}
  *)
 
-module Medium : sig
-  type t =
-    { title : string option;
-      tracks : Track.t list;
-      id : string }
-  val of_mb : Mb_medium.t -> t
-end
-
 module Release : sig
   type t =
     { title : string option; (** The title of the whole work. *)
