@@ -1,9 +1,3 @@
-let artists_of_credits credits =
-  List.filter_map
-    (fun c -> Option.map Tag_artist.of_mb c.Mb_artist_credit.artist)
-    credits
-  |> Tag_artist.Collection.of_list
-
 module Track =
   struct
 
@@ -42,10 +36,10 @@ module Track =
         | None, None -> ("(untitled)", None) in
 
       let artists =
-        artists_of_credits mb.T.artist_credits in
+        Tag_artist.of_credits mb.T.artist_credits in
       let artists =
         match mb.T.recording with
-        | Some r -> Tag_artist.Collection.union (artists_of_credits r.R.artist_credits) artists
+        | Some r -> Tag_artist.Collection.union (Tag_artist.of_credits r.R.artist_credits) artists
         | None -> artists in
 
       { id; number; number_on_disc; title; recording_title; artists }
@@ -87,7 +81,7 @@ module Release =
       let module R = Mb_release in
       let id = mb.R.id
       and title = mb.R.title
-      and artists = artists_of_credits mb.R.artist_credits
+      and artists = Tag_artist.of_credits mb.R.artist_credits
       and media = List.map Medium.of_mb mb.R.media in
       { id; title; artists; media }
 

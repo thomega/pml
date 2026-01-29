@@ -88,3 +88,7 @@ let lifespan_gaps artists =
          | After | Overlap -> false)
   |> List.map Collection.of_list
 
+let of_credits credits =
+  List.filter_map (fun c -> Option.map of_mb c.Mb_artist_credit.artist) credits
+  |> Collection.of_list
+
