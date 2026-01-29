@@ -74,10 +74,10 @@ module Roles = Set.Make (struct type t = role let compare = compare_roles end)
 
 let no_role = Roles.empty
 
-let roles_to_string roles =
-  Roles.elements roles
-  |> List.map role_to_string
-  |> String.concat "/"
+let roles_to_string_opt roles =
+  match Roles.elements roles with
+  | [] -> None
+  | roles -> Some (String.concat "/" (List.map role_to_string roles))
 
 let string_role_alist =
   [("composer", Composer);
@@ -113,12 +113,12 @@ let%test_module _ =
   (module struct
 
      let normalize s_in s_out =
-       roles_of_string s_in |> roles_to_string = s_out
+       roles_of_string s_in |> roles_to_string_opt = s_out
 
-     let%test _ = normalize "" ""
-     let%test _ = normalize "composer and soprano" "comp./S."
-     let%test _ = normalize "baritone and pianist" "Bar./p."
-     let%test _ = normalize "violinist, conductor, tenor, composer" "comp./cond./T./vln."
+     let%test _ = normalize "" None
+     let%test _ = normalize "composer and soprano" (Some "comp./S.")
+     let%test _ = normalize "baritone and pianist" (Some "Bar./p.")
+     let%test _ = normalize "violinist, conductor, tenor, composer" (Some "comp./cond./T./vln.")
 
    end)
 
@@ -140,26 +140,26 @@ let of_string roles = function
   | "Other" -> Other
   | s -> Unknown s
 
-let to_rank_and_string = function
+let to_rank_and_string_opt = function
   | Person roles ->
      begin match Roles.min_elt_opt roles with
-     | None -> ([1; 5], "")
+     | None -> ([1; 5], None)
      | Some role ->
         let r, _ = role_to_rank_and_string role in
-        (1 :: r, roles_to_string roles)
+        (1 :: r, roles_to_string_opt roles)
      end
-  | Group -> ([2], "")
-  | Orchestra -> ([3], "")
-  | Choir -> ([4], "")
-  | Character -> ([5], "")
-  | Other -> ([6], "")
-  | Unknown s -> ([7], "?" ^ s ^ "?")
+  | Group -> ([2], None)
+  | Orchestra -> ([3], None)
+  | Choir -> ([4], None)
+  | Character -> ([5], None)
+  | Other -> ([6], None)
+  | Unknown _ -> ([7], None)
 
 let to_rank artist_type =
-  to_rank_and_string artist_type |> fst
+  to_rank_and_string_opt artist_type |> fst
 
-let to_string artist_type =
-  to_rank_and_string artist_type |> snd
+let to_string_opt artist_type =
+  to_rank_and_string_opt artist_type |> snd
 
 let compare t1 t2 =
   List.compare Int.compare (to_rank t1) (to_rank t2)

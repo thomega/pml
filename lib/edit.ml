@@ -73,10 +73,13 @@ let re_quotes =
   Re.(set {|"'|} |> compile)
 
 let re_white =
-  Re.(rep1 blank |> compile)
+  Re.(rep1 (set " \t\n\r") |> compile)
+
+let re_slash =
+  Re.(set "\\/" |> compile)
 
 let filename_safe s =
   Ubase.from_utf8 s
-  |> String.map (function '/' -> '-' | c -> c)
+  |> Re.replace_string re_slash ~by:"-"
   |> Re.replace_string re_quotes ~by:""
   |> Re.replace_string re_white ~by:" "

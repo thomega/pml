@@ -1,19 +1,19 @@
 (* tagged.ml -- part of PML (Physical Media Library)
 
-  Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
+   Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
 type title =
   | User of string
@@ -261,6 +261,11 @@ let performer_prefix pfx d =
   let* name = match_performer pfx d in
   user_performer name d
 
+let list_artists artists =
+  Artist.Collection.iter
+    (fun a -> Printf.printf "            > '%s'\n" (Artist.to_string a))
+    artists
+
 let print d =
   let open Printf in
   printf "Discid: '%s'\n" d.discid;
@@ -269,8 +274,8 @@ let print d =
   begin match d.composer with
   | Some composer ->
      begin match d.performer with
-     | Some _ -> printf "Composer: '%s'\n" composer.Artist.name
-     | None -> printf "Artist: '%s'\n" composer.Artist.name
+     | Some _ -> printf "Composer: '%s'\n" (Artist.to_string composer)
+     | None -> printf "Artist: '%s'\n" (Artist.to_string composer)
      end
   | None -> ()
   end;
@@ -279,10 +284,10 @@ let print d =
       printf "Title(%s): '%s'\n" (title_kind_to_string t) (title_to_string t))
     d.titles;
   begin match d.performer with
-  | Some p -> printf "Performer: '%s'\n" p.Artist.name
+  | Some p -> printf "Performer: '%s'\n" (Artist.to_string p)
   | None -> ()
   end;
-  Artist.Collection.iter (fun a -> printf "            > '%s'\n" a.Artist.name) d.artists;
+  list_artists d.artists;
   begin match d.tracks_orig with
   | Some tracks_orig ->
      List.iter2
@@ -293,17 +298,17 @@ let print d =
          | Some t -> printf "       recording: '%s'\n" t
          | None -> ()
          end;
-         Artist.Collection.iter (fun a -> printf "       > '%s'\n" a.Artist.name) t.Track.artists)
+         list_artists t.Track.artists)
        d.tracks tracks_orig
   | None ->
      List.iter
        (fun t ->
          printf "  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
          begin match t.recording_title with
-         | Some t -> printf "     = '%s'\n" t
+         | Some t -> printf "       recording: '%s'\n" t
          | None -> ()
          end;
-         Artist.Collection.iter (fun a -> printf "       > '%s'\n" a.Artist.name) t.Track.artists)
+         list_artists t.Track.artists)
        d.tracks
   end
 

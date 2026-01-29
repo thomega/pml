@@ -109,3 +109,13 @@ let of_credits credits =
   List.filter_map (fun c -> Option.map of_mb c.Mb_artist_credit.artist) credits
   |> Collection.of_list
 
+let to_string a =
+  let artist_type =
+    match Artist_type.to_string_opt a.artist_type with
+    | None -> ""
+    | Some s -> " (" ^ s ^ ")"
+  and lifespan =
+    match Lifespan.to_string_opt a.lifespan with
+    | None -> ""
+    | Some lifespan -> " [" ^ lifespan ^ "]" in
+  a.name ^ artist_type ^ lifespan

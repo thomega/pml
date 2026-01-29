@@ -1,19 +1,19 @@
 (* artist_type.mli -- part of PML (Physical Media Library)
 
-  Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
+   Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
 (** Classify artists for tagging. *)
 
@@ -69,7 +69,10 @@ val compare : t -> t -> int
     next and ensembles, orchestras and choirs last.*)
 
 val of_string : Roles.t -> string -> t
-val to_string : t -> string
+(** Heuristically try to infer the roles from the [disambiguation] element. *)
+
+val to_string_opt : t -> string option
+(** Return [None] if no roles could be infered. *)
 
 val is_composer : t -> bool
 val is_conductor : t -> bool

@@ -40,3 +40,6 @@ val lifespan_gaps : Collection.t -> Collection.t list
 
 val of_credits : Mb_artist_credit.t list -> Collection.t
 (** Follow MusicBrainz' indirections. *)
+
+val to_string : t -> string
+(** Format [name], [artist_type], and [lifespan]. *)

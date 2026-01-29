@@ -90,9 +90,9 @@ let to_string a =
     match a.artist_type with
     | None -> ""
     | Some artist_type ->
-       begin match Artist_type.to_string artist_type with
-       | "" -> ""
-       | s -> " (" ^ s ^ ")"
+       begin match Artist_type.to_string_opt artist_type with
+       | None -> ""
+       | Some s -> " (" ^ s ^ ")"
        end
   and lifespan =
     match a.lifespan with
