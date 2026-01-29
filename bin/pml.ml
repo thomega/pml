@@ -229,27 +229,27 @@ let performer_prefix =
 
 let offset =
   let doc = Printf.sprintf "Apply an offset to the track numbers." in
-  Arg.(value & opt int Tags.(default_trackset.offset) & info ["o"; "offset"] ~docv:"n" ~doc)
+  Arg.(value & opt int Tagged.(default_trackset.offset) & info ["o"; "offset"] ~docv:"n" ~doc)
 
 let first =
   let doc = Printf.sprintf "First track to select (counting from 1,
                             $(b,before) applying offset)." in
-  Arg.(value & opt int Tags.(default_trackset.first) & info ["f"; "first"] ~docv:"n" ~doc)
+  Arg.(value & opt int Tagged.(default_trackset.first) & info ["f"; "first"] ~docv:"n" ~doc)
 
 let last =
   let doc = Printf.sprintf "Last track to select (counting from 1,
                             $(b,before) applying offset)." in
-  Arg.(value & opt (some int) Tags.(default_trackset.last) & info ["l"; "last"] ~docv:"n" ~doc)
+  Arg.(value & opt (some int) Tagged.(default_trackset.last) & info ["l"; "last"] ~docv:"n" ~doc)
 
 let width =
   let doc = Printf.sprintf "The width of the printed track number,
                             including leading zeros." in
-  Arg.(value & opt int Tags.(default_trackset.width) & info ["w"; "width"] ~docv:"n" ~doc)
+  Arg.(value & opt int Tagged.(default_trackset.width) & info ["w"; "width"] ~docv:"n" ~doc)
 
 let trackset =
   let+ offset and+ first and+ last and+ width in
-  let ts = Tags.{ offset; first; last; width } in
-  if ts = Tags.default_trackset then
+  let ts = Tagged.{ offset; first; last; width } in
+  if ts = Tagged.default_trackset then
     None
   else
     Some ts
@@ -263,7 +263,7 @@ type editing =
     composer_prefix : string option;
     performer : string option;
     performer_prefix : string option;
-    trackset : Tags.trackset option }
+    trackset : Tagged.trackset option }
 
 let editing =
   let+ title and+ recording_titles and+ release_title and+ medium_title
@@ -290,15 +290,15 @@ let apply_edit_if flag f tagged =
 (** The order is very significant! *)
 let apply_edits e tagged =
   Ok tagged
-  |> apply_edit Tags.select_tracks e.trackset
-  |> apply_edit_if e.recording_titles Tags.recording_titles
-  |> apply_edit_if e.release_title Tags.release_title
-  |> apply_edit_if e.medium_title Tags.medium_title
-  |> apply_edit Tags.user_title e.title
-  |> apply_edit Tags.composer_prefix e.composer_prefix
-  |> apply_edit Tags.performer_prefix e.performer_prefix
-  |> apply_edit Tags.user_composer e.composer
-  |> apply_edit Tags.user_performer e.performer
+  |> apply_edit Tagged.select_tracks e.trackset
+  |> apply_edit_if e.recording_titles Tagged.recording_titles
+  |> apply_edit_if e.release_title Tagged.release_title
+  |> apply_edit_if e.medium_title Tagged.medium_title
+  |> apply_edit Tagged.user_title e.title
+  |> apply_edit Tagged.composer_prefix e.composer_prefix
+  |> apply_edit Tagged.performer_prefix e.performer_prefix
+  |> apply_edit Tagged.user_composer e.composer
+  |> apply_edit Tagged.user_performer e.performer
 
 let medium =
   let doc =
@@ -353,8 +353,8 @@ module Explore : Exit_Cmd =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
-      let* tagged = apply_edits editing (Tags.of_mb disc) in
-      Ok (Tags.print tagged)
+      let* tagged = apply_edits editing (Tagged.of_mb disc) in
+      Ok (Tagged.print tagged)
 
     let cmd =
       let open Cmd in
@@ -375,8 +375,8 @@ module Ripper : Exit_Cmd =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
-      let* tagged = apply_edits editing (Tags.of_mb disc) in
-      Tags.script tagged
+      let* tagged = apply_edits editing (Tagged.of_mb disc) in
+      Tagged.script tagged
 
     let cmd =
       let open Cmd in
