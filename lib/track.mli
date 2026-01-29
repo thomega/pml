@@ -5,7 +5,7 @@ type t =
     number_on_disc : int;
     title : string;
     recording_title : string option;
-    artists : Tag_artist.Collection.t;
+    artists : Artist.Collection.t;
     id : string }
 
 val of_mb : Mb_track.t -> t

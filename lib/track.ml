@@ -3,7 +3,7 @@ type t =
     number_on_disc : int;
     title : string;
     recording_title : string option;
-    artists : Tag_artist.Collection.t;
+    artists : Artist.Collection.t;
     id : string }
 
 let of_mb mb =
@@ -33,10 +33,10 @@ let of_mb mb =
     | None, None -> ("(untitled)", None) in
 
   let artists =
-    Tag_artist.of_credits mb.T.artist_credits in
+    Artist.of_credits mb.T.artist_credits in
   let artists =
     match mb.T.recording with
-    | Some r -> Tag_artist.Collection.union (Tag_artist.of_credits r.R.artist_credits) artists
+    | Some r -> Artist.Collection.union (Artist.of_credits r.R.artist_credits) artists
     | None -> artists in
 
   { id; number; number_on_disc; title; recording_title; artists }

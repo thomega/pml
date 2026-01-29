@@ -23,7 +23,7 @@ let compare a1 a2 =
         String.compare a1.id a2.id
 
 let of_mb mb =
-  let module AT = Artist_type in
+  let module T = Artist_type in
   let id = mb.Mb_artist.id
   and name =
     match mb.Mb_artist.sort_name, mb.Mb_artist.name with
@@ -32,7 +32,7 @@ let of_mb mb =
     | None, Some name -> sort_name_of_name name
     | None, None -> "(anonymous)"
   and artist_type =
-    Option.value mb.Mb_artist.artist_type ~default:(AT.Person AT.Roles.empty)
+    Option.value mb.Mb_artist.artist_type ~default:(T.Person T.Roles.empty)
   and lifespan =
     Option.value mb.Mb_artist.lifespan ~default:Lifespan.Limbo in
   { id; name; artist_type; lifespan }

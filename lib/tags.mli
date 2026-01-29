@@ -36,7 +36,7 @@
 module Medium : sig
   type t =
     { title : string option;
-      tracks : Tag_track.t list;
+      tracks : Track.t list;
       id : string }
   val of_mb : Mb_medium.t -> t
 end
@@ -44,7 +44,7 @@ end
 module Release : sig
   type t =
     { title : string option; (** The title of the whole work. *)
-      artists : Tag_artist.Collection.t; (** Composers of a work that is expected to be performed
+      artists : Artist.Collection.t; (** Composers of a work that is expected to be performed
                                by others.  This will usually be left empty for
                                popular music.
                                Performers: instrumentalists, singers, conductors, etc. *)
@@ -75,7 +75,7 @@ module Disc : sig
   val default_trackset : trackset
 
   type t =
-    { composer : Tag_artist.t option; (** The primary sorting key for the ripped files.
+    { composer : Artist.t option; (** The primary sorting key for the ripped files.
                                       From this, we will derive the name of the top
                                       level directory for storing the files.
                                       For classical music, this will be the composer.
@@ -85,12 +85,12 @@ module Disc : sig
                                From this and the [performer], if present,
                                we will derive the name of the second level
                                directory for storing the files. *)
-      performer : Tag_artist.t option; (** The top billed performer for classical music, 
+      performer : Artist.t option; (** The top billed performer for classical music, 
                                        to distinguish different interpretations.
                                        Empty for popular music. *)
-      artists : Tag_artist.Collection.t;
-      tracks : Tag_track.t list;
-      tracks_orig : Tag_track.t list option; (** The tracks with the original names iff a common
+      artists : Artist.Collection.t;
+      tracks : Track.t list;
+      tracks_orig : Track.t list option; (** The tracks with the original names iff a common
                                              prefix has been stripped to be used as title. *)
       track_width : int; (** The width of the printed track number, including leading zeros. *)
       discid : string; (** The discid from which the audio was ripped. *)

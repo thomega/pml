@@ -3,14 +3,14 @@ module Medium =
 
     type t =
       { title : string option;
-        tracks : Tag_track.t list;
+        tracks : Track.t list;
         id : string }
 
     let of_mb mb =
       let module M = Mb_medium in
       let id = mb.M.id
       and title = mb.M.title
-      and tracks = List.map Tag_track.of_mb mb.M.tracks in
+      and tracks = List.map Track.of_mb mb.M.tracks in
       { id; title; tracks }
 
   end
@@ -20,7 +20,7 @@ module Release =
 
     type t =
       { title : string option;
-        artists : Tag_artist.Collection.t;
+        artists : Artist.Collection.t;
         media : Medium.t list;
         id : string }
 
@@ -28,7 +28,7 @@ module Release =
       let module R = Mb_release in
       let id = mb.R.id
       and title = mb.R.title
-      and artists = Tag_artist.of_credits mb.R.artist_credits
+      and artists = Artist.of_credits mb.R.artist_credits
       and media = List.map Medium.of_mb mb.R.media in
       { id; title; artists; media }
 
@@ -62,12 +62,12 @@ module Disc =
       | User s | Tracks s | Medium s | Release s -> s
 
     type t =
-      { composer : Tag_artist.t option;
+      { composer : Artist.t option;
         titles : title list;
-        performer : Tag_artist.t option;
-        artists : Tag_artist.Collection.t;
-        tracks : Tag_track.t list;
-        tracks_orig : Tag_track.t list option;
+        performer : Artist.t option;
+        artists : Artist.Collection.t;
+        tracks : Track.t list;
+        tracks_orig : Track.t list option;
         track_width : int;
         discid : string;
         medium_title : string option;
@@ -78,16 +78,16 @@ module Disc =
     (** TODO: sanitize titles for filenames, rotate articles, ... *)
 
     (** Heuristics for selecting composer and top billed performer.
-        This relies on the ordering in [Tag_artist_types]. *)
+        This relies on the ordering in [Artist_types]. *)
     let make_artists artists =
-      match Tag_artist.Collection.min_elt_opt artists with
+      match Artist.Collection.min_elt_opt artists with
       | None -> (None, None)
       | Some composer ->
-         let performer_opt = Tag_artist.Collection.min_elt_opt (Tag_artist.Collection.remove composer artists) in
+         let performer_opt = Artist.Collection.min_elt_opt (Artist.Collection.remove composer artists) in
          (Some composer, performer_opt)
 
     let replace_track_titles strings tracks =
-      List.map2 (fun s t -> { t with Tag_track.title = s }) strings tracks
+      List.map2 (fun s t -> { t with Track.title = s }) strings tracks
 
     let punctuation = ":;.-_/"
 
@@ -122,7 +122,7 @@ module Disc =
     (** Heuristics for selecting the title. *)
     let make_titles ~release_title ~medium_title tracks =
       let prefix, tracks, tracks_orig =
-        match List.map (fun t -> t.Tag_track.title) tracks |> Edit.common_prefix with
+        match List.map (fun t -> t.Track.title) tracks |> Edit.common_prefix with
         | "" , _ ->
            (None, tracks, None)
         | pfx, tails ->
@@ -139,7 +139,7 @@ module Disc =
 
     let add_tracks_artists artists tracks =
       List.fold_left
-        (fun acc track -> Tag_artist.Collection.union acc track.Tag_track.artists)
+        (fun acc track -> Artist.Collection.union acc track.Track.artists)
         artists tracks
 
     let of_mb mb =
@@ -194,7 +194,7 @@ module Disc =
 
     let select_tracklist subset tracks =
       sublist subset.first subset.last tracks
-      |> List.map (fun t -> Tag_track.{ t with number = t.number + subset.offset - subset.first + 1 })
+      |> List.map (fun t -> Track.{ t with number = t.number + subset.offset - subset.first + 1 })
 
     let orig_tracks d =
       match d.tracks_orig with
@@ -213,7 +213,7 @@ module Disc =
     let recording_titles d =
       let release_title = d.release_title
       and medium_title = d.medium_title in
-      let tracks = orig_tracks d |> List.map Tag_track.recording_title in
+      let tracks = orig_tracks d |> List.map Track.recording_title in
       let titles, tracks, tracks_orig =
         make_titles ~release_title ~medium_title tracks in
       Ok { d with titles; tracks; tracks_orig }
@@ -228,7 +228,7 @@ module Disc =
       String.sub s n (String.length s - n) |> strip_leading_punctuation
 
     let chop_prefixes n tracks =
-      List.map (fun t -> { t with Tag_track.title = chop_prefix n t.Tag_track.title }) tracks
+      List.map (fun t -> { t with Track.title = chop_prefix n t.Track.title }) tracks
 
     let user_title title d =
       let title = strip_trailing_punctuation title in
@@ -264,15 +264,15 @@ module Disc =
       user_title title d
 
     let user_composer name d =
-      Ok { d with composer = Some (Tag_artist.of_name name) }
+      Ok { d with composer = Some (Artist.of_name name) }
 
     let user_performer name d =
-      Ok { d with performer = Some (Tag_artist.of_name name) }
+      Ok { d with performer = Some (Artist.of_name name) }
 
     let match_performer pfx d =
       let prefix = String.lowercase_ascii (Ubase.from_utf8 pfx) in
       let artist =
-        Tag_artist.Collection.find_first_opt
+        Artist.Collection.find_first_opt
           (fun a ->
             String.starts_with ~prefix (String.lowercase_ascii (Ubase.from_utf8 a.name)))
           d.artists in
@@ -318,7 +318,7 @@ module Disc =
       printf "\n";
       List.iter
         (fun t ->
-          let n = t.Tag_track.number_on_disc in
+          let n = t.Track.number_on_disc in
           printf "rip_track %2d %s\n" n (wav_name n))
         d.tracks;
       printf "\n";
@@ -328,15 +328,15 @@ module Disc =
       printf "\n";
       let root =
         match d.composer with
-        | Some c -> c.Tag_artist.name
+        | Some c -> c.Artist.name
         | None -> "Anonymous" in
       printf "ROOT=\"%s\"\n" root;
       let subdir =
         match d.titles, d.performer with
         | [], None -> "Unnamed"
         | t :: _, None -> title_to_string t
-        | [], Some p -> p.Tag_artist.name
-        | t :: _, Some p -> sprintf "%s - %s" (title_to_string t) p.Tag_artist.name in
+        | [], Some p -> p.Artist.name
+        | t :: _, Some p -> sprintf "%s - %s" (title_to_string t) p.Artist.name in
       printf "SUBDIR=\"%s\"\n" subdir;
       printf "DIR=\"$ROOT/$SUBDIR\"\n";
       printf "mkdir -p \"$DIR\"\n";
@@ -347,8 +347,8 @@ module Disc =
       printf "\n";
       List.iter
         (fun t ->
-          printf "WAV=%s\n" (wav_name t.Tag_track.number_on_disc);
-          printf "TITLE=\"%0*d %s\"\n" d.track_width t.Tag_track.number t.Tag_track.title;
+          printf "WAV=%s\n" (wav_name t.Track.number_on_disc);
+          printf "TITLE=\"%0*d %s\"\n" d.track_width t.Track.number t.Track.title;
           printf "\n")
         d.tracks;
       Ok ()
@@ -361,8 +361,8 @@ module Disc =
       begin match d.composer with
       | Some composer ->
          begin match d.performer with
-         | Some _ -> printf "Composer: '%s'\n" composer.Tag_artist.name
-         | None -> printf "Artist: '%s'\n" composer.Tag_artist.name
+         | Some _ -> printf "Composer: '%s'\n" composer.Artist.name
+         | None -> printf "Artist: '%s'\n" composer.Artist.name
          end
       | None -> ()
       end;
@@ -371,31 +371,31 @@ module Disc =
           printf "Title(%s): '%s'\n" (title_kind_to_string t) (title_to_string t))
         d.titles;
       begin match d.performer with
-      | Some p -> printf "Performer: '%s'\n" p.Tag_artist.name
+      | Some p -> printf "Performer: '%s'\n" p.Artist.name
       | None -> ()
       end;
-      Tag_artist.Collection.iter (fun a -> printf "            > '%s'\n" a.Tag_artist.name) d.artists;
+      Artist.Collection.iter (fun a -> printf "            > '%s'\n" a.Artist.name) d.artists;
       begin match d.tracks_orig with
       | Some tracks_orig ->
          List.iter2
            (fun t ot ->
-             printf "  #%0*d: '%s'\n" d.track_width t.Tag_track.number t.Tag_track.title;
-             printf "       original:  '%s'\n" ot.Tag_track.title;
+             printf "  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
+             printf "       original:  '%s'\n" ot.Track.title;
              begin match t.recording_title with
              | Some t -> printf "       recording: '%s'\n" t
              | None -> ()
              end;
-             Tag_artist.Collection.iter (fun a -> printf "       > '%s'\n" a.Tag_artist.name) t.Tag_track.artists)
+             Artist.Collection.iter (fun a -> printf "       > '%s'\n" a.Artist.name) t.Track.artists)
            d.tracks tracks_orig
       | None ->
          List.iter
            (fun t ->
-             printf "  #%0*d: '%s'\n" d.track_width t.Tag_track.number t.Tag_track.title;
+             printf "  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
              begin match t.recording_title with
              | Some t -> printf "     = '%s'\n" t
              | None -> ()
              end;
-             Tag_artist.Collection.iter (fun a -> printf "       > '%s'\n" a.Tag_artist.name) t.Tag_track.artists)
+             Artist.Collection.iter (fun a -> printf "       > '%s'\n" a.Artist.name) t.Track.artists)
            d.tracks
       end
 
