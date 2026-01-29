@@ -107,7 +107,7 @@ module Cachetest : Exit_Cmd =
             match discid with
             | Some discid ->
                if normalize then
-                 Discid_cached.Internal.map ~root discid Raw.normalize
+                 Discid_cached.Internal.map ~root discid Mb_raw.normalize
                else if remote then
                  Discid_cached.get ~root discid |> Result.map (fun _ -> ())
                else
@@ -117,7 +117,7 @@ module Cachetest : Exit_Cmd =
             match release with
             | Some release ->
                if normalize then
-                 Release_cached.Internal.map ~root release Raw.normalize
+                 Release_cached.Internal.map ~root release Mb_raw.normalize
                else if remote then
                  Release_cached.get ~root release |> Result.map (fun _ -> ())
                else
@@ -127,7 +127,7 @@ module Cachetest : Exit_Cmd =
             match artist with
             | Some artist ->
                if normalize then
-                 Artist_cached.Internal.map ~root artist Raw.normalize
+                 Artist_cached.Internal.map ~root artist Mb_raw.normalize
                else if remote then
                  Artist_cached.get ~root artist |> Result.map (fun _ -> ())
                else
@@ -171,9 +171,9 @@ module JSON : Exit_Cmd =
     let parse_json ~root ~file ~schema ~pretty () =
       ignore root;
       if schema then
-        try Musicbrainz.Raw.dump_schema_file file; 0 with _ -> 1
+        try Mb_raw.dump_schema_file file; 0 with _ -> 1
       else if pretty then
-        try Musicbrainz.Raw.print_file file; 0 with _ -> 1
+        try Mb_raw.print_file file; 0 with _ -> 1
       else
         0
 

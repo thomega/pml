@@ -1,5 +1,6 @@
-(** JSON error response from Musicbrainz.
-    Use [Error.get_error_opt] to test if the response contains
+(** JSON error response from Musicbrainz. *)
+
+(** Use [Error.get_error_opt] to test if the response contains
     an [error] element with a message. *)
 
 type t = private { error : string; help : string option }
