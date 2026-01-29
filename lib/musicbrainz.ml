@@ -1,52 +1,16 @@
 open Result.Syntax
 
-module Release =
-  struct
-
-    type t =
-      { id : string (** While this is optional in the DTD, it should be there anyway. *);
-        title : string option;
-        artist_credits : Mb_artist_credit.t list;
-        media : Mb_medium.t list }
-
-    let make id title artist_credits media =
-      let title = Edit.blank_to_none title
-      and artist_credits = Option.value ~default:[] artist_credits
-      and media = Option.value ~default:[] media in
-      { id; title; artist_credits; media }
-
-    let jsont =
-      Jsont.Object.map ~kind:"Release" make
-      |> Jsont.Object.mem "id" Jsont.string
-      |> Jsont.Object.opt_mem "title" Jsont.string
-      |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Mb_artist_credit.jsont)
-      |> Jsont.Object.opt_mem "media" Jsont.(list Mb_medium.jsont)
-      |> Jsont.Object.finish
-
-    let artist_ids r =
-      Sets.MBID.union
-        (List.map Mb_artist_credit.artist_id r.artist_credits |> Sets.mbid_union)
-        (List.map Mb_medium.artist_ids r.media |> Sets.mbid_union)
-
-    let update_artists map r =
-      let* artist_credits =
-        Result_list.map (Mb_artist_credit.update_artist map) r.artist_credits
-      and* media = Result_list.map (Mb_medium.update_artists map) r.media in
-      Ok { r with artist_credits; media }
-
-  end
-
 module Taggable =
   struct
 
     type t =
       { medium : Mb_medium.t;
-        release : Release.t;
+        release : Mb_release.t;
         discid : string }
 
     let release_of_mbid ~root mbid =
       let* text = Cached.Release.get ~root mbid in
-      Jsont_bytesrw.decode_string Release.jsont text
+      Jsont_bytesrw.decode_string Mb_release.jsont text
 
     let contains_discid discid medium =
       List.exists (fun disc -> discid = disc.Mb_disc.id) medium.Mb_medium.discs
@@ -57,7 +21,7 @@ module Taggable =
         Result_list.map
           (fun mbid ->
             let* release = release_of_mbid ~root mbid in
-            let media = List.filter (contains_discid discid) release.Release.media in
+            let media = List.filter (contains_discid discid) release.Mb_release.media in
             Ok (List.map (fun medium -> { medium; release; discid }) media))
           releases in
       Ok (List.concat discs)
@@ -65,11 +29,11 @@ module Taggable =
     let artist_ids d =
       Sets.MBID.union
         (Mb_medium.artist_ids d.medium)
-        (Release.artist_ids d.release)
+        (Mb_release.artist_ids d.release)
 
     let update_artists map d =
       let* medium = Mb_medium.update_artists map d.medium
-      and* release = Release.update_artists map d.release in
+      and* release = Mb_release.update_artists map d.release in
       Ok { d with medium; release }
 
     let add_lifespans ~root disc =
@@ -94,10 +58,10 @@ module Taggable =
       pr b "\n  %-36s %-36s" "MEDIUM" "RELEASE";
       List.iter
         (fun d ->
-          pr b "\n/ %-36s %-36s \\" d.medium.Mb_medium.id d.release.Release.id;
+          pr b "\n/ %-36s %-36s \\" d.medium.Mb_medium.id d.release.Mb_release.id;
           pr b "\n\\ %-36s %-36s /"
             (truncate 36 (Option.value ~default:"???" d.medium.Mb_medium.title))
-            (truncate 36 (Option.value ~default:"???" d.release.Release.title)))
+            (truncate 36 (Option.value ~default:"???" d.release.Mb_release.title)))
         discs;
       Buffer.contents b
 
@@ -131,8 +95,8 @@ module Taggable =
     let print disc =
       let open Printf in
       printf "Discid: %s\n" disc.discid;
-      printf "Release: %s\n" (Option.value disc.release.Release.title ~default:"(no title)");
-      begin match disc.release.Release.artist_credits with
+      printf "Release: %s\n" (Option.value disc.release.Mb_release.title ~default:"(no title)");
+      begin match disc.release.Mb_release.artist_credits with
       | [] -> ()
       | c :: clist ->
          printf "Artists: %s\n" (Mb_artist_credit.to_string c);

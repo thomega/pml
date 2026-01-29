@@ -177,11 +177,11 @@ module Release =
         id : string }
 
     let of_mb mb =
-      let module MB = Musicbrainz.Release in
-      let id = mb.MB.id
-      and title = mb.MB.title
-      and artists = artists_of_credits mb.MB.artist_credits
-      and media = List.map Medium.of_mb mb.MB.media in
+      let module R = Mb_release in
+      let id = mb.R.id
+      and title = mb.R.title
+      and artists = artists_of_credits mb.R.artist_credits
+      and media = List.map Medium.of_mb mb.R.media in
       { id; title; artists; media }
 
   end

@@ -91,7 +91,7 @@ module Release : sig
                                Performers: instrumentalists, singers, conductors, etc. *)
       media : Medium.t list;
       id : string }
-  val of_mb : Musicbrainz.Release.t -> t
+  val of_mb : Mb_release.t -> t
 end
 
 module Disc : sig
