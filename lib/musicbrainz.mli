@@ -1,54 +1,9 @@
-module Artist_Credit : sig
-
-  type t =
-    { name : string option;
-      artist : Mb_artist.t option }
-(** Essentially an indirection with the opportunity to give a
-    shorter name for the artist.
-    {v
-     <define name="def_artist-credit">
-         <element name="artist-credit">
-             <optional>
-                 <attribute name="id">
-                     <ref name="def_uuid"/>
-                 </attribute>
-             </optional>
-             <oneOrMore>
-                 <element name="name-credit">
-                     <optional>
-                         <attribute name="joinphrase">
-                             <text/>
-                         </attribute>
-                     </optional>
-                     <optional>
-                         <element name="name">
-                             <text/>
-                         </element>
-                     </optional>
-                     <ref name="def_artist-element"/>
-                 </element>
-             </oneOrMore>
-         </element>
-     </define>
-     v} *)
-
-  val artist_id : t -> Sets.MBID.t
-  (** Extract the artist's MBID inside the artist credit. *)
-
-  val update_artist : Mb_artist.t Cached.Artist.M.t -> t -> (t, string) result
-  (** Do a [Mb_artist.update] inside, if applicable. *)
-
-  val to_string : t -> string
-  (** Exploration, debugging, etc. *)
-
-end
-
 module Recording : sig
 
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       title : string option;
-      artist_credits : Artist_Credit.t list }
+      artist_credits : Mb_artist_credit.t list }
 (** {v
      <define name="def_recording-element">
          <element name="recording">
@@ -139,7 +94,7 @@ module Track : sig
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       position : int option;
       title : string option;
-      artist_credits : Artist_Credit.t list;
+      artist_credits : Mb_artist_credit.t list;
       recording : Recording.t option }
 (** {v
      <define name="def_track-data">
@@ -280,7 +235,7 @@ module Release : sig
   type t =
     { id : string (** While this is optional in the DTD, it should be there anyway. *);
       title : string option;
-      artist_credits : Artist_Credit.t list;
+      artist_credits : Mb_artist_credit.t list;
       media : Medium.t list }
 (** {v
      <define name="def_release-element">

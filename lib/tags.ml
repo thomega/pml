@@ -93,7 +93,7 @@ let lifespan_gaps artists =
 
 let artists_of_credits credits =
   List.filter_map
-    (fun c -> Option.map Artist.of_mb c.Musicbrainz.Artist_Credit.artist)
+    (fun c -> Option.map Artist.of_mb c.Mb_artist_credit.artist)
     credits
   |> Artists.of_list
 
