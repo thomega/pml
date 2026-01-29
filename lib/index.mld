@@ -8,7 +8,9 @@ implementing access to Musicbrainz in order to organize a Physical Media Library
 {2 API}
 You can also jump immediately to the wrapped API modules
 {3 Building Blocks}
-{!modules:Pml.Musicbrainz Pml.Tags Pml.Discid Pml.Query}
+{!modules:Pml.Musicbrainz Pml.Tags
+          Pml.Mb_error
+          Pml.Discid Pml.Query}
 {3 Artist Classification}
 {!modules:Pml.Artist_type Pml.Lifespan Pml.Date}
 {3 General Purpose Libraries}

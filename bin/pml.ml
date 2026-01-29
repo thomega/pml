@@ -81,7 +81,7 @@ module Cachetest : Exit_Cmd =
 
     let found print kind key = function
       | Ok (Some json) ->
-         begin match Musicbrainz.Error.get_error_opt json with
+         begin match Mb_error.get_error_opt json with
          | None -> if print then print_endline json; Ok ()
          | Some msg -> Error (Printf.sprintf "%s key '%s' points to error object: '%s'" kind key msg)
          end

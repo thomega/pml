@@ -1,31 +1,5 @@
 open Result.Syntax
 
-module type Error =
-  sig
-    type t = private { error : string; help : string option }
-    val get_error_opt : string -> string option
-  end
-
-module Error : Error =
-  struct
-
-    type t = { error : string; help : string option }
-
-    let make error help = { error; help }
-
-    let jsont =
-      Jsont.Object.map ~kind:"Error" make
-      |> Jsont.Object.mem "error" Jsont.string
-      |> Jsont.Object.opt_mem "help" Jsont.string
-      |> Jsont.Object.finish
-
-    let get_error_opt text =
-      match Jsont_bytesrw.decode_string jsont text with
-      | Error _ -> None
-      | Ok json -> Some json.error
-
-  end
-
 module type Raw =
   sig
     val normalize : string -> (string, string) result
@@ -245,7 +219,7 @@ module Cached (Table : Table) : Cached =
 
     let get ~root key =
       let* text = C.lookup ~root key remote_unsafe in
-      match Error.get_error_opt text with
+      match Mb_error.get_error_opt text with
       | Some msg -> Error (Printf.sprintf "get '%s' returns error object: %s" key msg)
       | None -> Ok text
 
