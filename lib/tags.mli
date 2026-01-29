@@ -1,4 +1,4 @@
-(** WIP: tags and file system layout for musical works ripped from disc(s). *)
+(** Tags and file system layout for musical works ripped from disc(s). *)
 
 (** The data structures in [Musicbrains] are a slightly embellished translation
     of the JSON response for the [release] containing a particular disc.
@@ -33,87 +33,82 @@
            and recording.}}
  *)
 
-module Disc : sig
+type title =
+  | User of string (** User selected. *)
+  | Tracks of string (** Longest common prefix of the tracks *)
+  | Medium of string (** Disc. *)
+  | Release of string (** Release. *)
+(** The origin of the title. *)
 
-  type title =
-    | User of string (** User selected. *)
-    | Tracks of string (** Longest common prefix of the tracks *)
-    | Medium of string (** Disc. *)
-    | Release of string (** Release. *)
-  (** The origin of the title. *)
+type trackset =
+  { offset : int; (** Number of earlier tracks stored on other CDs. *)
+    first : int; (** First track to be included
+                     (counting from 1, {e before} applying the offset). *)
+    last : int option; (** Last track to be included
+                           (counting from 1, {e before} applying the offset). *)
+    width : int (** The width of the printed track number, including leading zeros. *)
+  }
+(** Track subset selection. *)
 
-  type trackset =
-    { offset : int; (** Number of earlier tracks stored on other CDs. *)
-      first : int; (** First track to be included
-                       (counting from 1, {e before} applying the offset). *)
-      last : int option; (** Last track to be included
-                             (counting from 1, {e before} applying the offset). *)
-      width : int (** The width of the printed track number, including leading zeros. *)
-    }
-  (** Track subset selection. *)
+val default_trackset : trackset
 
-  val default_trackset : trackset
+type t =
+  { composer : Artist.t option; (** The primary sorting key for the ripped files.
+                                    From this, we will derive the name of the top
+                                    level directory for storing the files.
+                                    For classical music, this will be the composer.
+                                    For popular music, it will be the top billed
+                                    performer. *) 
+    titles : title list; (** Possible titles of the work.
+                             From this and the [performer], if present,
+                             we will derive the name of the second level
+                             directory for storing the files. *)
+    performer : Artist.t option; (** The top billed performer for classical music, 
+                                     to distinguish different interpretations.
+                                     Empty for popular music. *)
+    artists : Artist.Collection.t;
+    tracks : Track.t list;
+    tracks_orig : Track.t list option; (** The tracks with the original names iff a common
+                                           prefix has been stripped to be used as title. *)
+    track_width : int; (** The width of the printed track number, including leading zeros. *)
+    discid : string; (** The discid from which the audio was ripped. *)
+    medium_title : string option;
+    medium_id : string;
+    release_title : string option;
+    release_id : string
+  }
 
-  type t =
-    { composer : Artist.t option; (** The primary sorting key for the ripped files.
-                                      From this, we will derive the name of the top
-                                      level directory for storing the files.
-                                      For classical music, this will be the composer.
-                                      For popular music, it will be the top billed
-                                      performer. *) 
-      titles : title list; (** Possible titles of the work.
-                               From this and the [performer], if present,
-                               we will derive the name of the second level
-                               directory for storing the files. *)
-      performer : Artist.t option; (** The top billed performer for classical music, 
-                                       to distinguish different interpretations.
-                                       Empty for popular music. *)
-      artists : Artist.Collection.t;
-      tracks : Track.t list;
-      tracks_orig : Track.t list option; (** The tracks with the original names iff a common
-                                             prefix has been stripped to be used as title. *)
-      track_width : int; (** The width of the printed track number, including leading zeros. *)
-      discid : string; (** The discid from which the audio was ripped. *)
-      medium_title : string option;
-      medium_id : string;
-      release_title : string option;
-      release_id : string
-    }
+val of_mb : Taggable.t -> t
 
-  val of_mb : Taggable.t -> t
+val select_tracks : trackset -> t -> (t, string) result
+(** (Interactively?) select tracks and apply offsets. *)
 
-  val select_tracks : trackset -> t -> (t, string) result
-  (** (Interactively?) select tracks and apply offsets. *)
+val recording_titles : t -> (t, string) result
+(** (Interactively?) replace the track titles by the recording titles. *)
 
-  val recording_titles : t -> (t, string) result
-  (** (Interactively?) replace the track titles by the recording titles. *)
+val user_title : string -> t -> (t, string) result
+(** (Interactively?) set the title. *)
+  
+val medium_title : t -> (t, string) result
+(** (Interactively?) select the medium title as the title. *)
 
-  val user_title : string -> t -> (t, string) result
-  (** (Interactively?) set the title. *)
+val release_title : t -> (t, string) result
+(** (Interactively?) select the release title as the title. *)
 
-  val medium_title : t -> (t, string) result
-  (** (Interactively?) select the medium title as the title. *)
+val user_composer : string -> t -> (t, string) result
+(** (Interactively?) name composer. *)
 
-  val release_title : t -> (t, string) result
-  (** (Interactively?) select the release title as the title. *)
+val user_performer : string -> t -> (t, string) result
+(** (Interactively?) name top billed performer. *)
 
-  val user_composer : string -> t -> (t, string) result
-  (** (Interactively?) name composer. *)
+val composer_prefix : string -> t -> (t, string) result
+(** (Interactively?) select composer by matching prefix. *)
 
-  val user_performer : string -> t -> (t, string) result
-  (** (Interactively?) name top billed performer. *)
+val performer_prefix : string -> t -> (t, string) result
+(** (Interactively?) select top billed performer by matching prefix. *)
 
-  val composer_prefix : string -> t -> (t, string) result
-  (** (Interactively?) select composer by matching prefix. *)
+val script : t -> (unit, string) result
+(** Write a shell script for ripping, encoding and tagging. *)
 
-  val performer_prefix : string -> t -> (t, string) result
-  (** (Interactively?) select top billed performer by matching prefix. *)
-
-  val script : t -> (unit, string) result
-  (** Write a shell script for ripping, encoding and tagging. *)
-
-  val print : t -> unit
-  (** Exploration, WIP ... *)
-
-end
-
+val print : t -> unit
+(** Exploration, WIP ... *)
