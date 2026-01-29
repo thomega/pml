@@ -38,3 +38,17 @@ let%test _ =
 
 let%test _ =
   common_prefix ["abc"; ""; "abd"] = ("", ["abc"; ""; "abd"])
+
+let re_blank =
+  Re.(seq [start; rep blank; stop] |> compile)
+
+let is_blank s =
+  Re.execp re_blank s
+
+let blank_to_none = function
+  | None | Some "" -> None
+  | Some s as string_option ->
+     if is_blank s then
+       None
+     else
+       string_option

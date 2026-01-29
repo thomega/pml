@@ -1,5 +1,3 @@
-module MBID_Set : Set.S with type elt = string
-
 (** Note that we {e must not} replace [artist] elements by their MBID, since there can
     be additional elements, in particular [disambiguation].
 
@@ -152,7 +150,7 @@ module Artist : sig
      </define>
      v} *)
 
-  val id : t -> MBID_Set.t
+  val id : t -> Sets.MBID.t
   (** Wrap the MBID in a set so that we can easily form sets without
       duplicates. *)
 
@@ -203,7 +201,7 @@ module Artist_Credit : sig
      </define>
      v} *)
 
-  val artist_id : t -> MBID_Set.t
+  val artist_id : t -> Sets.MBID.t
   (** Extract the artist's MBID inside the artist credit. *)
 
   val update_artist : Artist.t Cached.Artist.M.t -> t -> (t, string) result
@@ -296,7 +294,7 @@ module Recording : sig
      </define>
      v} *)
 
-  val artist_ids : t -> MBID_Set.t
+  val artist_ids : t -> Sets.MBID.t
   (** Extract the MBID of all credited artists. *)
 
   val update_artists : Artist.t Cached.Artist.M.t -> t -> (t, string) result
@@ -348,7 +346,7 @@ module Track : sig
      </define>
      v} *)
 
-  val artist_ids : t -> MBID_Set.t
+  val artist_ids : t -> Sets.MBID.t
   (** Extract the MBID of all credited artists. *)
 
   val update_artists : Artist.t Cached.Artist.M.t -> t -> (t, string) result
@@ -436,7 +434,7 @@ module Medium : sig
      </define>
      v} *)
 
-  val artist_ids : t -> MBID_Set.t
+  val artist_ids : t -> Sets.MBID.t
   (** Extract the MBID of all credited artists. *)
 
   val update_artists : Artist.t Cached.Artist.M.t -> t -> (t, string) result
@@ -576,7 +574,7 @@ module Release : sig
      </define>
      v} *)
 
-  val artist_ids : t -> MBID_Set.t
+  val artist_ids : t -> Sets.MBID.t
   (** Extract the MBID of all credited artists. *)
 
 end

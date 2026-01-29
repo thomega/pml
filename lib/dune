@@ -3,7 +3,8 @@
   (public_name pml)
   (modules
     Mb_error Mb_raw Cached
-    Musicbrainz Tags Libdiscid Query Cache
+    Musicbrainz Tags
+    Libdiscid Query Sets Cache
     Artist_type Lifespan Date
     Edit Result_list Option_syntax)
   (private_modules )

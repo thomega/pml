@@ -170,10 +170,6 @@ module Discid = Make (Discid_table)
 module Release = Make (Release_table)
 module Artist = Make (Artist_table)
 
-let opt_list = function
-  | Some l -> l
-  | None -> []
-
 module Release_Short =
   struct
     type t =
@@ -192,7 +188,7 @@ module Discid_short =
       { id : string;
         releases : Release_Short.t list }
     let make id releases =
-      let releases = opt_list releases in
+      let releases = Option.value ~default:[] releases in
       { id; releases }
     let jsont =
       Jsont.Object.map ~kind:"Discid" make

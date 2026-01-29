@@ -1,24 +1,5 @@
 open Result.Syntax
 
-let opt_list = function
-  | Some l -> l
-  | None -> []
-
-module MBID_Set = Set.Make (String)
-
-let mbid_union sets =
-  List.fold_left MBID_Set.union MBID_Set.empty sets
-
-let re_blank =
-  Re.(seq [start; rep blank; stop] |> compile)
-
-let is_blank s =
-  Re.execp re_blank s
-
-let blank_to_none = function
-  | None | Some "" -> None
-  | Some s as string_option -> if is_blank s then None else string_option
-
 module Artist =
   struct
 
@@ -31,8 +12,8 @@ module Artist =
         disambiguation : string option }
 
     let make id name sort_name artist_type lifespan disambiguation =
-      let name = blank_to_none name
-      and sort_name = blank_to_none sort_name in
+      let name = Edit.blank_to_none name
+      and sort_name = Edit.blank_to_none sort_name in
       let roles =
         match disambiguation with
         | None -> Artist_type.no_role
@@ -50,7 +31,7 @@ module Artist =
       |> Jsont.Object.opt_mem "disambiguation" Jsont.string
       |> Jsont.Object.finish
 
-    let id a = MBID_Set.singleton a.id
+    let id a = Sets.MBID.singleton a.id
 
     let update map a =
       (* List.iter (fun (s, _) -> Printf.printf "key: %s\n" s) (Cached.Artist.M.bindings map); *)
@@ -106,7 +87,7 @@ module Artist_Credit =
         artist : Artist.t option }
 
     let make name artist =
-      let name = blank_to_none name in
+      let name = Edit.blank_to_none name in
       { name; artist }
 
     let jsont =
@@ -117,7 +98,7 @@ module Artist_Credit =
 
     let artist_id c =
       match c.artist with
-      | None -> MBID_Set.empty
+      | None -> Sets.MBID.empty
       | Some artist -> Artist.id artist
       
     let update_artist map c =
@@ -143,8 +124,8 @@ module Recording =
         artist_credits : Artist_Credit.t list }
 
     let make id title artist_credits =
-      let title = blank_to_none title
-      and artist_credits = opt_list artist_credits in
+      let title = Edit.blank_to_none title
+      and artist_credits = Option.value ~default:[] artist_credits in
       { id; title; artist_credits }
 
     let jsont =
@@ -155,7 +136,7 @@ module Recording =
       |> Jsont.Object.finish
 
     let artist_ids r =
-      List.map Artist_Credit.artist_id r.artist_credits |> mbid_union
+      List.map Artist_Credit.artist_id r.artist_credits |> Sets.mbid_union
 
     let update_artists map r =
       let* artist_credits =
@@ -189,8 +170,8 @@ module Track =
         recording : Recording.t option }
 
     let make id position title artist_credits recording =
-      let title = blank_to_none title
-      and artist_credits = opt_list artist_credits in
+      let title = Edit.blank_to_none title
+      and artist_credits = Option.value ~default:[] artist_credits in
       { id; position; title; artist_credits; recording }
 
     let jsont =
@@ -204,10 +185,10 @@ module Track =
 
     let artist_ids t =
       let artist_credits =
-        List.map Artist_Credit.artist_id t.artist_credits |> mbid_union in
+        List.map Artist_Credit.artist_id t.artist_credits |> Sets.mbid_union in
       match t.recording with
       | None -> artist_credits
-      | Some recording -> MBID_Set.union (Recording.artist_ids recording) artist_credits
+      | Some recording -> Sets.MBID.union (Recording.artist_ids recording) artist_credits
 
     let print n t =
       let open Printf in
@@ -265,9 +246,9 @@ module Medium =
         tracks : Track.t list }
 
     let make id position title discs tracks =
-      let discs = opt_list discs
-      and tracks = opt_list tracks
-      and title = blank_to_none title in
+      let discs = Option.value ~default:[] discs
+      and tracks = Option.value ~default:[] tracks
+      and title = Edit.blank_to_none title in
       { id; position; title; discs; tracks }
 
     let jsont =
@@ -280,7 +261,7 @@ module Medium =
       |> Jsont.Object.finish
 
     let artist_ids m =
-      List.map Track.artist_ids m.tracks |> mbid_union
+      List.map Track.artist_ids m.tracks |> Sets.mbid_union
 
     let update_artists map m =
       let* tracks =
@@ -310,9 +291,9 @@ module Release =
         media : Medium.t list }
 
     let make id title artist_credits media =
-      let title = blank_to_none title
-      and artist_credits = opt_list artist_credits
-      and media = opt_list media in
+      let title = Edit.blank_to_none title
+      and artist_credits = Option.value ~default:[] artist_credits
+      and media = Option.value ~default:[] media in
       { id; title; artist_credits; media }
 
     let jsont =
@@ -324,9 +305,9 @@ module Release =
       |> Jsont.Object.finish
 
     let artist_ids r =
-      MBID_Set.union
-        (List.map Artist_Credit.artist_id r.artist_credits |> mbid_union)
-        (List.map Medium.artist_ids r.media |> mbid_union)
+      Sets.MBID.union
+        (List.map Artist_Credit.artist_id r.artist_credits |> Sets.mbid_union)
+        (List.map Medium.artist_ids r.media |> Sets.mbid_union)
 
     let update_artists map r =
       let* artist_credits =
@@ -363,7 +344,7 @@ module Taggable =
       Ok (List.concat discs)
 
     let artist_ids d =
-      MBID_Set.union
+      Sets.MBID.union
         (Medium.artist_ids d.medium)
         (Release.artist_ids d.release)
 
@@ -373,7 +354,7 @@ module Taggable =
       Ok { d with medium; release }
 
     let add_lifespans ~root disc =
-      let ids = artist_ids disc |> MBID_Set.elements in
+      let ids = artist_ids disc |> Sets.MBID.elements in
       let* artist_map =
         Cached.Artist.map_of_ids ~root (Jsont_bytesrw.decode_string Artist.jsont) ids in
       update_artists artist_map disc

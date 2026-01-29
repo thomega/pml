@@ -16,5 +16,5 @@ You can also jump immediately to the wrapped API modules
 {3 Disc Identification}
 {!modules:Pml.Libdiscid}
 {3 General Purpose Libraries}
-{!modules:Pml.Edit Pml.Cache Pml.Result_list Pml.Option_syntax}
+{!modules:Pml.Edit Pml.Sets Pml.Cache Pml.Result_list Pml.Option_syntax}
 
