@@ -109,7 +109,7 @@ module Track =
         id : string }
 
     let of_mb mb =
-      let module T = Musicbrainz.Track in
+      let module T = Mb_track in
       let module R = Mb_recording in
       let id = mb.T.id
       and number = Option.value mb.T.position ~default:0 in

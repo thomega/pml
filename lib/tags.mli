@@ -67,7 +67,7 @@ module Track : sig
       artists : Artists.t;
       id : string }
 
-  val of_mb : Musicbrainz.Track.t -> t
+  val of_mb : Mb_track.t -> t
 
   val recording_title : t -> t
   (** If [recording_title] exists, replace [title] by it and set it to [None]. *)
