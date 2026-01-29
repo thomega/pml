@@ -33,30 +33,6 @@
            and recording.}}
  *)
 
-module Artist : sig
-
-  type t =
-    { name : string; (** The [sort_name] if available, accept [name] as substitute. *)
-      artist_type : Artist_type.t; (** Determines the credit order. *)
-      lifespan : Lifespan.t; (** Can separate composers from performers. *)
-      id : string (** MBID *) }
-
-  val compare : t -> t -> int
-  (** Compare artists by [artist_type] and use [lifespan] and [name] as a tie breakers. *)
-
-  val of_mb : Mb_artist.t -> t
-  (** Translate and replace [None] by defaults.  *)
-
-  val of_name : string -> t
-
-end
-
-module Artists : Set.S with type elt = Artist.t
-
-val lifespan_gaps : Artists.t -> Artists.t list
-(** Check if there is are artists, who died before others where born.
-    Such artists must be the composer(s). *)
-
 module Track : sig
 
   type t =
@@ -64,7 +40,7 @@ module Track : sig
       number_on_disc : int;
       title : string;
       recording_title : string option;
-      artists : Artists.t;
+      artists : Tag_artist.Collection.t;
       id : string }
 
   val of_mb : Mb_track.t -> t
@@ -85,7 +61,7 @@ end
 module Release : sig
   type t =
     { title : string option; (** The title of the whole work. *)
-      artists : Artists.t; (** Composers of a work that is expected to be performed
+      artists : Tag_artist.Collection.t; (** Composers of a work that is expected to be performed
                                by others.  This will usually be left empty for
                                popular music.
                                Performers: instrumentalists, singers, conductors, etc. *)
@@ -116,7 +92,7 @@ module Disc : sig
   val default_trackset : trackset
 
   type t =
-    { composer : Artist.t option; (** The primary sorting key for the ripped files.
+    { composer : Tag_artist.t option; (** The primary sorting key for the ripped files.
                                       From this, we will derive the name of the top
                                       level directory for storing the files.
                                       For classical music, this will be the composer.
@@ -126,10 +102,10 @@ module Disc : sig
                                From this and the [performer], if present,
                                we will derive the name of the second level
                                directory for storing the files. *)
-      performer : Artist.t option; (** The top billed performer for classical music, 
+      performer : Tag_artist.t option; (** The top billed performer for classical music, 
                                        to distinguish different interpretations.
                                        Empty for popular music. *)
-      artists : Artists.t;
+      artists : Tag_artist.Collection.t;
       tracks : Track.t list;
       tracks_orig : Track.t list option; (** The tracks with the original names iff a common
                                              prefix has been stripped to be used as title. *)

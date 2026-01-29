@@ -1,101 +1,8 @@
-module Artist =
-  struct
-
-    type t =
-      { name : string;
-        artist_type : Artist_type.t;
-        lifespan : Lifespan.t;
-        id : string }
-
-    let sort_name_of_name name =
-      name
-
-    let compare a1 a2 =
-      let c = Artist_type.compare a1.artist_type a2.artist_type in
-      if c <> 0 then
-        c
-      else
-        let c = Lifespan.compare a1.lifespan a2.lifespan in
-        if c <> 0 then
-          c
-        else
-          let c = String.compare a1.name a2.name in
-          if c <> 0 then
-            c
-          else
-            String.compare a1.id a2.id
-
-    let of_mb mb =
-      let module AT = Artist_type in
-      let id = mb.Mb_artist.id
-      and name =
-        match mb.Mb_artist.sort_name, mb.Mb_artist.name with
-        | Some sort_name, Some _name -> sort_name
-        | Some sort_name, None -> sort_name
-        | None, Some name -> sort_name_of_name name
-        | None, None -> "(anonymous)"
-      and artist_type =
-        Option.value mb.Mb_artist.artist_type ~default:(AT.Person AT.Roles.empty)
-      and lifespan =
-        Option.value mb.Mb_artist.lifespan ~default:Lifespan.Limbo in
-      { id; name; artist_type; lifespan }
-
-    let of_name name =
-      let artist_type = Artist_type.(Person Roles.empty)
-      and lifespan = Lifespan.Limbo
-      and id = "" in
-      {name; artist_type; lifespan; id }
-
-  end
-
-module Artists = Set.Make (struct type t = Artist.t let compare = Artist.compare end)
-
-let find_gaps is_gap sorted_list =
-  let open List in
-  let rec find_gaps' groups_rev group_rev = function
-    | [] -> rev_append groups_rev [rev group_rev]
-    | [_] as a -> rev_append groups_rev [rev_append group_rev a]
-    | a1 :: (a2 :: _ as a2_etc) ->
-       if is_gap a1 a2 then
-         find_gaps' (rev_append group_rev [a1] :: groups_rev) [] a2_etc
-       else
-         find_gaps' groups_rev (a1 :: group_rev) a2_etc in
-  find_gaps' [] [] sorted_list
-
-let%test_module _ =
-  (module struct
-
-     let is_gap x y = y > x + 1
-
-     let test_gaps alist groups =
-       find_gaps is_gap alist = groups
-
-     let%test _ = test_gaps [] [[]]
-     let%test _ = test_gaps [1] [[1]]
-     let%test _ = test_gaps [1;2] [[1;2]]
-     let%test _ = test_gaps [1;3] [[1];[3]]
-     let%test _ = test_gaps [1;3;5] [[1];[3];[5]]
-     let%test _ = test_gaps [1;2;4;5;6;8;9] [[1;2];[4;5;6];[8;9]]
-     let%test _ = test_gaps [1;3;2] [[1];[3;2]]
-
-   end)
-
-let lifespan_gaps artists =
-  let open Artist in
-  Artists.elements artists
-  |> List.sort (fun a1 a2 -> Lifespan.compare a1.lifespan a2.lifespan)
-  |> find_gaps
-       (fun a1 a2 ->
-         match Lifespan.relation a1.lifespan a2.lifespan with
-         | Before -> true
-         | After | Overlap -> false)
-  |> List.map Artists.of_list
-
 let artists_of_credits credits =
   List.filter_map
-    (fun c -> Option.map Artist.of_mb c.Mb_artist_credit.artist)
+    (fun c -> Option.map Tag_artist.of_mb c.Mb_artist_credit.artist)
     credits
-  |> Artists.of_list
+  |> Tag_artist.Collection.of_list
 
 module Track =
   struct
@@ -105,7 +12,7 @@ module Track =
         number_on_disc : int;
         title : string;
         recording_title : string option;
-        artists : Artists.t;
+        artists : Tag_artist.Collection.t;
         id : string }
 
     let of_mb mb =
@@ -138,7 +45,7 @@ module Track =
         artists_of_credits mb.T.artist_credits in
       let artists =
         match mb.T.recording with
-        | Some r -> Artists.union (artists_of_credits r.R.artist_credits) artists
+        | Some r -> Tag_artist.Collection.union (artists_of_credits r.R.artist_credits) artists
         | None -> artists in
 
       { id; number; number_on_disc; title; recording_title; artists }
@@ -172,7 +79,7 @@ module Release =
 
     type t =
       { title : string option;
-        artists : Artists.t;
+        artists : Tag_artist.Collection.t;
         media : Medium.t list;
         id : string }
 
@@ -214,10 +121,10 @@ module Disc =
       | User s | Tracks s | Medium s | Release s -> s
 
     type t =
-      { composer : Artist.t option;
+      { composer : Tag_artist.t option;
         titles : title list;
-        performer : Artist.t option;
-        artists : Artists.t;
+        performer : Tag_artist.t option;
+        artists : Tag_artist.Collection.t;
         tracks : Track.t list;
         tracks_orig : Track.t list option;
         track_width : int;
@@ -230,12 +137,12 @@ module Disc =
     (** TODO: sanitize titles for filenames, rotate articles, ... *)
 
     (** Heuristics for selecting composer and top billed performer.
-        This relies on the ordering in [Artist_types]. *)
+        This relies on the ordering in [Tag_artist_types]. *)
     let make_artists artists =
-      match Artists.min_elt_opt artists with
+      match Tag_artist.Collection.min_elt_opt artists with
       | None -> (None, None)
       | Some composer ->
-         let performer_opt = Artists.min_elt_opt (Artists.remove composer artists) in
+         let performer_opt = Tag_artist.Collection.min_elt_opt (Tag_artist.Collection.remove composer artists) in
          (Some composer, performer_opt)
 
     let replace_track_titles strings tracks =
@@ -291,7 +198,7 @@ module Disc =
 
     let add_tracks_artists artists tracks =
       List.fold_left
-        (fun acc track -> Artists.union acc track.Track.artists)
+        (fun acc track -> Tag_artist.Collection.union acc track.Track.artists)
         artists tracks
 
     let of_mb mb =
@@ -416,15 +323,15 @@ module Disc =
       user_title title d
 
     let user_composer name d =
-      Ok { d with composer = Some (Artist.of_name name) }
+      Ok { d with composer = Some (Tag_artist.of_name name) }
 
     let user_performer name d =
-      Ok { d with performer = Some (Artist.of_name name) }
+      Ok { d with performer = Some (Tag_artist.of_name name) }
 
     let match_performer pfx d =
       let prefix = String.lowercase_ascii (Ubase.from_utf8 pfx) in
       let artist =
-        Artists.find_first_opt
+        Tag_artist.Collection.find_first_opt
           (fun a ->
             String.starts_with ~prefix (String.lowercase_ascii (Ubase.from_utf8 a.name)))
           d.artists in
@@ -480,15 +387,15 @@ module Disc =
       printf "\n";
       let root =
         match d.composer with
-        | Some c -> c.Artist.name
+        | Some c -> c.Tag_artist.name
         | None -> "Anonymous" in
       printf "ROOT=\"%s\"\n" root;
       let subdir =
         match d.titles, d.performer with
         | [], None -> "Unnamed"
         | t :: _, None -> title_to_string t
-        | [], Some p -> p.Artist.name
-        | t :: _, Some p -> sprintf "%s - %s" (title_to_string t) p.Artist.name in
+        | [], Some p -> p.Tag_artist.name
+        | t :: _, Some p -> sprintf "%s - %s" (title_to_string t) p.Tag_artist.name in
       printf "SUBDIR=\"%s\"\n" subdir;
       printf "DIR=\"$ROOT/$SUBDIR\"\n";
       printf "mkdir -p \"$DIR\"\n";
@@ -513,8 +420,8 @@ module Disc =
       begin match d.composer with
       | Some composer ->
          begin match d.performer with
-         | Some _ -> printf "Composer: '%s'\n" composer.Artist.name
-         | None -> printf "Artist: '%s'\n" composer.Artist.name
+         | Some _ -> printf "Composer: '%s'\n" composer.Tag_artist.name
+         | None -> printf "Artist: '%s'\n" composer.Tag_artist.name
          end
       | None -> ()
       end;
@@ -523,10 +430,10 @@ module Disc =
           printf "Title(%s): '%s'\n" (title_kind_to_string t) (title_to_string t))
         d.titles;
       begin match d.performer with
-      | Some p -> printf "Performer: '%s'\n" p.Artist.name
+      | Some p -> printf "Performer: '%s'\n" p.Tag_artist.name
       | None -> ()
       end;
-      Artists.iter (fun a -> printf "            > '%s'\n" a.Artist.name) d.artists;
+      Tag_artist.Collection.iter (fun a -> printf "            > '%s'\n" a.Tag_artist.name) d.artists;
       begin match d.tracks_orig with
       | Some tracks_orig ->
          List.iter2
@@ -537,7 +444,7 @@ module Disc =
              | Some t -> printf "       recording: '%s'\n" t
              | None -> ()
              end;
-             Artists.iter (fun a -> printf "       > '%s'\n" a.Artist.name) t.Track.artists)
+             Tag_artist.Collection.iter (fun a -> printf "       > '%s'\n" a.Tag_artist.name) t.Track.artists)
            d.tracks tracks_orig
       | None ->
          List.iter
@@ -547,7 +454,7 @@ module Disc =
              | Some t -> printf "     = '%s'\n" t
              | None -> ()
              end;
-             Artists.iter (fun a -> printf "       > '%s'\n" a.Artist.name) t.Track.artists)
+             Tag_artist.Collection.iter (fun a -> printf "       > '%s'\n" a.Tag_artist.name) t.Track.artists)
            d.tracks
       end
 

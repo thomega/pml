@@ -2,7 +2,9 @@
   (name pml)
   (public_name pml)
   (modules
-    Tags Taggable
+    Tags
+    Tag_artist
+    Taggable
     Mb_release Mb_medium Mb_disc
     Mb_track Mb_recording
     Mb_artist Mb_artist_credit
