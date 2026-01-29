@@ -295,10 +295,9 @@ module Disc =
         artists tracks
 
     let of_mb mb =
-      let module MB = Musicbrainz.Taggable in
-      let medium = Medium.of_mb mb.MB.medium
-      and release = Release.of_mb mb.MB.release
-      and discid = mb.MB.discid
+      let medium = Medium.of_mb mb.Taggable.medium
+      and release = Release.of_mb mb.Taggable.release
+      and discid = mb.Taggable.discid
       and track_width = 2 in
       let medium_id = medium.Medium.id
       and medium_title = medium.Medium.title

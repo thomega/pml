@@ -329,8 +329,8 @@ module Medium : Exit_Cmd =
     let f ~root ?medium ?discid ?device () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
-      let* disc = Musicbrainz.Taggable.of_discid ~root ?medium id in
-      Ok (Musicbrainz.Taggable.print disc)
+      let* disc = Taggable.of_discid ~root ?medium id in
+      Ok (Taggable.print disc)
 
     let cmd =
       let open Cmd in
@@ -352,7 +352,7 @@ module Explore : Exit_Cmd =
     let f ~root ?medium ?discid ?device ~editing () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
-      let* disc = Musicbrainz.Taggable.of_discid ~root ?medium id in
+      let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = apply_edits editing (Tags.Disc.of_mb disc) in
       Ok (Tags.Disc.print tagged)
 
@@ -374,7 +374,7 @@ module Ripper : Exit_Cmd =
     let f ~root ?medium ?discid ?device ~editing () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
-      let* disc = Musicbrainz.Taggable.of_discid ~root ?medium id in
+      let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = apply_edits editing (Tags.Disc.of_mb disc) in
       Tags.Disc.script tagged
 

@@ -141,7 +141,7 @@ module Disc : sig
       release_id : string
     }
 
-  val of_mb : Musicbrainz.Taggable.t -> t
+  val of_mb : Taggable.t -> t
 
   val select_tracks : trackset -> t -> (t, string) result
   (** (Interactively?) select tracks and apply offsets. *)
