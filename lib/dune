@@ -2,6 +2,7 @@
   (name pml)
   (public_name pml)
   (modules
+    Mb_artist
     Mb_error Mb_raw Cached
     Musicbrainz Tags
     Libdiscid Query Sets Cache

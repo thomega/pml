@@ -44,7 +44,7 @@ module Artist : sig
   val compare : t -> t -> int
   (** Compare artists by [artist_type] and use [lifespan] and [name] as a tie breakers. *)
 
-  val of_mb : Musicbrainz.Artist.t -> t
+  val of_mb : Mb_artist.t -> t
   (** Translate and replace [None] by defaults.  *)
 
   val of_name : string -> t

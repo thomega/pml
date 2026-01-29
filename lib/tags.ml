@@ -1,8 +1,6 @@
 module Artist =
   struct
 
-    module A = Musicbrainz.Artist
-
     type t =
       { name : string;
         artist_type : Artist_type.t;
@@ -28,19 +26,18 @@ module Artist =
             String.compare a1.id a2.id
 
     let of_mb mb =
-      let module A = Musicbrainz.Artist in
       let module AT = Artist_type in
-      let id = mb.A.id
+      let id = mb.Mb_artist.id
       and name =
-        match mb.A.sort_name, mb.A.name with
+        match mb.Mb_artist.sort_name, mb.Mb_artist.name with
         | Some sort_name, Some _name -> sort_name
         | Some sort_name, None -> sort_name
         | None, Some name -> sort_name_of_name name
         | None, None -> "(anonymous)"
       and artist_type =
-        Option.value mb.A.artist_type ~default:(AT.Person AT.Roles.empty)
+        Option.value mb.Mb_artist.artist_type ~default:(AT.Person AT.Roles.empty)
       and lifespan =
-        Option.value mb.A.lifespan ~default:Lifespan.Limbo in
+        Option.value mb.Mb_artist.lifespan ~default:Lifespan.Limbo in
       { id; name; artist_type; lifespan }
 
     let of_name name =
