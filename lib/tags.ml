@@ -159,10 +159,10 @@ module Medium =
         id : string }
 
     let of_mb mb =
-      let module MB = Musicbrainz.Medium in
-      let id = mb.MB.id
-      and title = mb.MB.title
-      and tracks = List.map Track.of_mb mb.MB.tracks in
+      let module M = Mb_medium in
+      let id = mb.M.id
+      and title = mb.M.title
+      and tracks = List.map Track.of_mb mb.M.tracks in
       { id; title; tracks }
 
   end
