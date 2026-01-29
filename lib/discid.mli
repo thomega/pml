@@ -1,6 +1,6 @@
 (** Compute the disc identifier(s) used by thr MusicBrainz database. *)
 
-type t =
+type t = private
   { id : string; (** The disc identifier used by MusicBrainz.
                      It is a 28 character BASE64 string
                      made URL safe by replacing ['+'], ['/']

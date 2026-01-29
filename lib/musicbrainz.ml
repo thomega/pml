@@ -2,7 +2,7 @@ open Result.Syntax
 
 module type Error =
   sig
-    type t = { error : string; help : string option }
+    type t = private { error : string; help : string option }
     val get_error_opt : string -> string option
   end
 

@@ -3,7 +3,7 @@
 module type Error =
   sig
 
-    type t = { error : string; help : string option }
+    type t = private { error : string; help : string option }
     (** On Error, Musicbrainz returns and error message *)
 
     val get_error_opt : string -> string option
