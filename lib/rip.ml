@@ -39,7 +39,7 @@ let encode_track d t =
       (List.hd d.Tagged.titles |> Tagged.title_to_string) t.Track.title in
   printf "  --title %s \\\n" (shell_quote track);
   Artist.Collection.iter
-    (fun p -> printf "  --artist %s \\\n" (Artist.to_string p |> shell_quote))
+    (fun p -> printf "  --comment performer=%s \\\n" (Artist.to_string p |> shell_quote))
     t.Track.artists;
   printf "  \"$WAV\" \"$DIR/$TRACK.opus\"\n"
 
@@ -104,3 +104,27 @@ let script d =
     d.tracks;
   Ok ()
 
+let synchronously program args =
+  let open Unix in
+  let open Printf in
+  let pid = create_process program (program :: args |> Array.of_list) stdin stdout stderr in
+  match waitpid [] pid with
+  | _, WEXITED 0 -> Ok ()
+  | _, WEXITED rc -> Error (sprintf "%s returned %d" program rc)
+  | _, WSTOPPED s -> Error (sprintf "%s stopped by signal %s" program (Sys.signal_to_string s))
+  | _, WSIGNALED s -> Error (sprintf "%s killed by signal %s" program (Sys.signal_to_string s))
+
+let opusenc ~bitrate ~tracknumber ~artist ~title ~performers ~input ~output () =
+  let performers = List.concat_map (fun performer -> ["--performer"; performer]) performers in
+  synchronously "opusenc"
+    (["--bitrate"; string_of_int bitrate;
+      "--tracknumber"; string_of_int tracknumber;
+      "--artist"; artist; "--title"; title] @ performers @ [input; output])
+
+let execute d =
+  let wav_name i = Printf.sprintf "%s%s%02d.wav" wav_prefix d.Tagged.discid i in
+  ignore wav_name;
+  ignore opusenc;
+  Ok ()
+
+  
