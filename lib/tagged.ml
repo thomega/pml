@@ -67,13 +67,15 @@ let make_artists artists =
 let replace_track_titles strings tracks =
   List.map2 (fun s t -> { t with Track.title = s }) strings tracks
 
+let white = " \t\n\r"
 let punctuation = ":;.-_/"
+let white_or_punctuation = white ^ punctuation
 
 let re_trailing_punctuation =
-  Re.(seq [rep1 (alt [blank; set punctuation]); stop] |> compile)
+  Re.(seq [rep1 (set white_or_punctuation); stop] |> compile)
 
 let re_leading_punctuation =
-  Re.(seq [start; rep1 (alt [blank; set punctuation])] |> compile)
+  Re.(seq [start; rep1 (set white_or_punctuation)] |> compile)
 
 let strip_trailing_punctuation s =
   Re.replace_string re_trailing_punctuation ~by:"" s

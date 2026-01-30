@@ -18,6 +18,12 @@
 (** We use a prefix for the WAV file, because discids can start with a period. *)
 let wav_prefix = "cd-"
 
+let shell_quote =
+  Edit.shell_single_quote
+
+let quoted_filename s =
+  Edit.filename_safe s |> shell_quote
+
 let script d =
   let open Printf in
   let wav_name i = sprintf "%s%s%02d.wav" wav_prefix d.Tagged.discid i in
@@ -25,9 +31,9 @@ let script d =
     printf "########################################################################\n" in
   printf "#! /bin/sh\n";
   separator ();
-  printf "DISCID='%s'\n" d.Tagged.discid;
-  printf "MEDIUM='%s'\n" d.Tagged.medium_id;
-  printf "RELEASE='%s'\n" d.Tagged.release_id;
+  printf "DISCID=%s\n" d.Tagged.discid;
+  printf "MEDIUM=%s\n" d.Tagged.medium_id;
+  printf "RELEASE=%s\n" d.Tagged.release_id;
   separator ();
   printf "\n";
   separator ();
@@ -54,15 +60,14 @@ let script d =
     match d.composer with
     | Some c -> c.Artist.name
     | None -> "Anonymous" in
-  printf "ROOT='%s'\n" root;
+  printf "ROOT=%s\n" (shell_quote root);
   let subdir =
     match d.Tagged.titles, d.Tagged.performer with
     | [], None -> "Unnamed"
-    | t :: _, None -> (Tagged.title_to_string t |> Edit.filename_safe)
+    | t :: _, None -> (Tagged.title_to_string t)
     | [], Some p -> p.Artist.name
-    | t :: _, Some p ->
-       sprintf "%s - %s" (Tagged.title_to_string t |> Edit.filename_safe) p.Artist.name in
-  printf "SUBDIR='%s'\n" subdir;
+    | t :: _, Some p -> sprintf "%s - %s" (Tagged.title_to_string t) p.Artist.name in
+  printf "SUBDIR=%s\n" (quoted_filename subdir);
   printf "DIR=\"$ROOT/$SUBDIR\"\n";
   printf "mkdir -p \"$DIR\"\n";
   printf "\n";
@@ -73,7 +78,8 @@ let script d =
   List.iter
     (fun t ->
       printf "WAV=%s\n" (wav_name t.Track.number_on_disc);
-      printf "TRACK='%0*d %s'\n" d.track_width t.Track.number (Edit.filename_safe t.Track.title);
+      let track = sprintf "%0*d %s" d.track_width t.Track.number t.Track.title in
+      printf "TRACK=%s" (quoted_filename track);
       printf "\n")
     d.tracks;
   Ok ()

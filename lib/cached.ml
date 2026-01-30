@@ -1,19 +1,19 @@
 (* cached.ml -- part of PML (Physical Media Library)
 
-  Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
+   Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
 module type Table =
   sig
@@ -23,13 +23,13 @@ module type Table =
         lookups of invalid key. *)
 
     val query : Query.query
-    (** What to ask Musicbrainz. *)
+                  (** What to ask Musicbrainz. *)
 
   end
 
 (* A sequence of exactly 28 characters from the set [A-Za-z0-9._-]. *)
 
-(* [Re.alnum] contains accented characters! *)
+(* [Re.alnum] contains accented characters and is not UTF-8 safe! *)
 
 let alphanum =
   Re.(alt [rg 'A' 'Z'; rg 'a' 'z'; rg '0' '9'])

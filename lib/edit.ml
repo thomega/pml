@@ -38,25 +38,18 @@ let common_prefix = function
        List.fold_left (fun acc s -> min acc (String.length s)) (String.length s1) slist in
      common_prefix' min_len s1 slist
 
-let%test _ =
-  common_prefix [] = ("", [])
+let%test _ = common_prefix [] = ("", [])
+let%test _ = common_prefix ["abc"] = ("abc", [""])
+let%test _ = common_prefix ["abc"; "abd"] = ("ab", ["c"; "d"])
+let%test _ = common_prefix ["abc"; "abd"] = ("ab", ["c"; "d"])
+let%test _ = common_prefix ["abc"; "a"; "abd"] = ("a", ["bc"; ""; "bd"])
+let%test _ = common_prefix ["abc"; ""; "abd"] = ("", ["abc"; ""; "abd"])
 
-let%test _ =
-  common_prefix ["abc"] = ("abc", [""])
-
-let%test _ =
-  common_prefix ["abc"; "abd"] = ("ab", ["c"; "d"])
-let%test _ =
-  common_prefix ["abc"; "abd"] = ("ab", ["c"; "d"])
-
-let%test _ =
-  common_prefix ["abc"; "a"; "abd"] = ("a", ["bc"; ""; "bd"])
-
-let%test _ =
-  common_prefix ["abc"; ""; "abd"] = ("", ["abc"; ""; "abd"])
+let set_white =
+  Re.set " \t\n\r"
 
 let re_blank =
-  Re.(seq [start; rep blank; stop] |> compile)
+  Re.(seq [start; rep set_white; stop] |> compile)
 
 let is_blank s =
   Re.execp re_blank s
@@ -72,14 +65,60 @@ let blank_to_none = function
 let re_quotes =
   Re.(set {|"'|} |> compile)
 
-let re_white =
-  Re.(rep1 (set " \t\n\r") |> compile)
+let re_rep_white =
+  Re.(rep1 set_white |> compile)
 
+let re_boundary_white =
+  Re.(alt [seq [start; rep1 set_white]; seq [rep1 set_white; stop]] |> compile)
+
+(** Concession to Windows: also replace backslashs.*)
 let re_slash =
-  Re.(set "\\/" |> compile)
+  Re.(set {|/\|} |> compile)
 
 let filename_safe s =
+  s
+  |> Re.replace_string re_slash ~by:"-"
+  |> Re.replace_string re_rep_white ~by:" "
+  |> Re.replace_string re_boundary_white ~by:""
+
+let _filename_safe s =
   Ubase.from_utf8 s
   |> Re.replace_string re_slash ~by:"-"
   |> Re.replace_string re_quotes ~by:""
-  |> Re.replace_string re_white ~by:" "
+  |> Re.replace_string re_rep_white ~by:" "
+  |> Re.replace_string re_boundary_white ~by:""
+
+let%test _ = filename_safe {|a  /  b|} = {|a - b|}
+let%test _ = filename_safe {| a  \  b|} = {|a - b|}
+let%test _ =
+filename_safe {|a
+\/  b
+c |} = {|a -- b c|}
+
+let sq = {|'|}
+let dq = {|"|}
+
+let re_single_quote =
+  Re.(set sq |> compile)
+  
+let shell_single_quote s =
+  sq ^ Re.replace_string re_single_quote ~by:{|'"'"'|} s ^ sq
+  
+let%test _ = shell_single_quote {|abc|} = {|'abc'|}
+let%test _ = shell_single_quote {|$abc|} = {|'$abc'|}
+let%test _ = shell_single_quote {|a'b|} = {|'a'"'"'b'|}
+let%test _ = shell_single_quote {|'ab|} = {|''"'"'ab'|}
+let%test _ = shell_single_quote {|ab'|} = {|'ab'"'"''|}
+let%test _ = shell_single_quote {|'|} = {|''"'"''|}
+let%test _ = shell_single_quote {|a''b|} = {|'a'"'"''"'"'b'|}
+
+let re_double_quote_escape =
+  Re.(set {|"$`\|} |> compile)
+  
+let shell_double_quote s =
+  dq ^ Re.replace re_double_quote_escape ~f:(fun group -> {|\|} ^ Re.Group.get group 0) s ^ dq
+
+let%test _ = shell_double_quote {|abc|} = {|"abc"|}
+let%test _ = shell_double_quote {|$abc|} = {|"\$abc"|}
+let%test _ = shell_double_quote {|$a"b`c|} = {|"\$a\"b\`c"|}
+let%test _ = shell_double_quote {|\$a""b`c|} = {|"\\\$a\"\"b\`c"|}

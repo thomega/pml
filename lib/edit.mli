@@ -26,3 +26,6 @@ val blank_to_none : string option -> string option
 
 val filename_safe : string -> string
 (** Sanitize filename. *)
+
+val shell_single_quote : string -> string
+val shell_double_quote : string -> string
