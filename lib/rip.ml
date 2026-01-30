@@ -15,14 +15,33 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
+let bitrate = 128
 (** We use a prefix for the WAV file, because discids can start with a period. *)
 let wav_prefix = "cd-"
 
 let shell_quote =
-  Edit.shell_single_quote
+  Edit.shell_double_quote
 
 let quoted_filename s =
   Edit.filename_safe s |> shell_quote
+
+let encode_track d t =
+  let open Printf in
+  printf "opusenc --bitrate %d \\\n" bitrate;
+  printf "  --tracknumber %d \\\n" t.Track.number;
+  begin match d.Tagged.composer with
+  | Some a -> printf "  --artist %s \\\n" (shell_quote a.Artist.name)
+  | None -> ()
+  end;
+  let track =
+    sprintf "%0*d %s: %s"
+      d.track_width t.Track.number
+      (List.hd d.Tagged.titles |> Tagged.title_to_string) t.Track.title in
+  printf "  --title %s \\\n" (shell_quote track);
+  Artist.Collection.iter
+    (fun p -> printf "  --artist %s \\\n" (Artist.to_string p |> shell_quote))
+    t.Track.artists;
+  printf "  \"$WAV\" \"$DIR/$TRACK.opus\"\n"
 
 let script d =
   let open Printf in
@@ -79,7 +98,8 @@ let script d =
     (fun t ->
       printf "WAV=%s\n" (wav_name t.Track.number_on_disc);
       let track = sprintf "%0*d %s" d.track_width t.Track.number t.Track.title in
-      printf "TRACK=%s" (quoted_filename track);
+      printf "TRACK=%s\n" (quoted_filename track);
+      encode_track d t;
       printf "\n")
     d.tracks;
   Ok ()

@@ -62,12 +62,17 @@ let blank_to_none = function
      else
        string_option
 
+let re_double_quote =
+  Re.(set {|"|} |> compile)
+
 let re_quotes =
   Re.(set {|"'|} |> compile)
 
+(** Compress all whitespace, including newlines, to a single blank. *)
 let re_rep_white =
   Re.(rep1 set_white |> compile)
 
+(** Whitespace at the beginning or end is not illegal, but superfluous. *)
 let re_boundary_white =
   Re.(alt [seq [start; rep1 set_white]; seq [rep1 set_white; stop]] |> compile)
 
@@ -75,9 +80,18 @@ let re_boundary_white =
 let re_slash =
   Re.(set {|/\|} |> compile)
 
+let _filename_safe s =
+  s
+  |> Re.replace_string re_slash ~by:"-"
+  |> Re.replace_string re_rep_white ~by:" "
+  |> Re.replace_string re_boundary_white ~by:""
+
+(** Android appears wants us to kill double quotes. *)
+(** TODO: What about colons? *)
 let filename_safe s =
   s
   |> Re.replace_string re_slash ~by:"-"
+  |> Re.replace_string re_double_quote ~by:"'"
   |> Re.replace_string re_rep_white ~by:" "
   |> Re.replace_string re_boundary_white ~by:""
 
