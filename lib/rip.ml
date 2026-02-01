@@ -201,7 +201,8 @@ let target_dir d =
     | t :: _, None -> (Tagged.title_to_string t)
     | [], Some p -> p.Artist.sort_name
     | t :: _, Some p -> Tagged.title_to_string t ^ " - " ^ p.Artist.sort_name in
-  (root, Filename.concat root subdir)
+  (Edit.filename_safe root,
+   Filename.concat root (Edit.filename_safe subdir))
 
 let execute ?dry ?verbose ?directory d =
   let open Result.Syntax in
