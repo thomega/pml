@@ -182,11 +182,12 @@ let of_credits credits =
   List.filter_map (fun c -> Option.map of_mb c.Mb_artist_credit.artist) credits
   |> Collection.of_list
 
-let to_string ?sortable a =
+let to_string ?(sortable=false) a =
   let name =
-    match sortable with
-    | Some true -> a.sort_name
-    | Some false | None -> a.name
+    if sortable then
+      a.sort_name
+    else
+      a.name
   and artist_type =
     match Artist_type.to_string_opt a.artist_type with
     | None -> ""

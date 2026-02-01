@@ -388,18 +388,38 @@ module Ripper : Exit_Cmd =
         `S Manpage.s_description;
         `P "Write a ripping/tagging script." ] @ Common.man_footer
 
-    let f ~root ?medium ?discid ?device ~editing () =
+    let dry =
+      let doc = "Don't execute external programs." in
+      Arg.(value & flag & info ["d"; "dryrun"] ~doc)
+
+    let verbose =
+      let doc = "Echo command lines of execute external programs." in
+      Arg.(value & flag & info ["v"; "verbose"] ~doc)
+
+    let script =
+      let doc = "Write script instead of executing external programs." in
+      Arg.(value & flag & info ["s"; "script"] ~doc)
+
+    let directory =
+      let doc = "The directory to execute the external programs in." in
+      Arg.(value & opt (some dirpath) None & info ["D"; "dir"] ~docv:"name" ~doc)
+
+    let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ~script ~editing () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = apply_edits editing (Tagged.of_mb disc) in
-      Rip.script tagged
+      if script then
+        Rip.script tagged
+      else
+        Rip.execute ~dry ~verbose ?directory tagged
 
     let cmd =
       let open Cmd in
       make (info "ripper" ~man) @@
-        let+ root and+ medium and+ discid and+ device and+ editing in
-        f ~root ?medium ?discid ~device ~editing () |> exit_result
+        let+ dry and+ verbose and+ directory and+ script
+           and+ root and+ medium and+ discid and+ device and+ editing in
+        f ~root ~dry ~verbose ~script ?directory ?medium ?discid ~device ~editing () |> exit_result
 
   end
 
