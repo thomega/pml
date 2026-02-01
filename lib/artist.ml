@@ -22,11 +22,66 @@ type t =
     lifespan : Lifespan.t;
     id : string }
 
-let sort_name_of_name name =
-  name
+let set_white =
+  Re.set " \t\n\r"
 
-let name_of_sort_name name =
-  name
+let set_not_white =
+  Re.(compl [set_white])
+
+let set_comma =
+  Re.set ","
+
+let set_not_comma =
+  Re.(compl [set_comma])
+
+let set_not_comma_white =
+  Re.(compl [set_comma; set_white])
+
+let re_name =
+  Re.(seq [start;
+           rep set_white;
+           group (alt [rep1 set_not_white;
+                       seq [set_not_white; rep any; set_not_white]]);
+           rep set_white;
+           group (rep1 set_not_white);
+           rep set_white;
+           stop] |> compile)
+
+let sort_name_of_name name =
+  match Re.exec_opt re_name name with
+  | None -> name
+  | Some groups ->
+     let first = Re.Group.get groups 1
+     and last = Re.Group.get groups 2 in
+     last ^ ", " ^ first
+
+let%test _ = sort_name_of_name "a b" = "b, a"
+let%test _ = sort_name_of_name " a b c " = "c, a b"
+
+let re_sort_name =
+  Re.(seq [start;
+           rep set_white;
+           group (alt [set_not_comma_white;
+                       seq [set_not_comma_white; rep set_not_comma; set_not_comma_white]]);
+           rep set_white;
+           rep set_comma;
+           rep set_white;
+           group (seq [rep set_not_comma; set_not_comma_white]);
+           rep set_white;
+           stop] |> compile)
+
+let name_of_sort_name sort_name =
+  match Re.exec_opt re_sort_name sort_name with
+  | None -> sort_name
+  | Some groups ->
+     let last = Re.Group.get groups 1
+     and first = Re.Group.get groups 2 in
+     first ^ " " ^ last
+
+let%test _ = name_of_sort_name "a, b" = "b a"
+let%test _ = name_of_sort_name "a, b " = "b a"
+let%test _ = name_of_sort_name " a, b " = "b a"
+let%test _ = name_of_sort_name " a , b " = "b a"
 
 let compare a1 a2 =
   let c = Artist_type.compare a1.artist_type a2.artist_type in
