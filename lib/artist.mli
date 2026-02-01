@@ -18,7 +18,8 @@
 (** All we know about an artist. *)
 
 type t =
-  { name : string; (** The [sort_name] if available, accept [name] as substitute. *)
+  { name : string; (** Used in tags. *)
+    sort_name : string; (** Used in directory names. *)
     artist_type : Artist_type.t; (** Determines the credit order. *)
     lifespan : Lifespan.t; (** Can separate composers from performers. *)
     id : string (** MBID *) }
@@ -32,6 +33,12 @@ val of_mb : Mb_artist.t -> t
 val of_name : string -> t
 (** Make up a name, without further information. *)
 
+val of_sort_name : string -> t
+(** Make up a name, without further information. *)
+
+val of_name_sort_name : string -> string -> t
+(** Make up a name, without further information. *)
+
 module Collection : Set.S with type elt = t
 
 val lifespan_gaps : Collection.t -> Collection.t list
@@ -41,5 +48,5 @@ val lifespan_gaps : Collection.t -> Collection.t list
 val of_credits : Mb_artist_credit.t list -> Collection.t
 (** Follow MusicBrainz' indirections. *)
 
-val to_string : t -> string
+val to_string : ?sortable:bool -> t -> string
 (** Format [name], [artist_type], and [lifespan]. *)

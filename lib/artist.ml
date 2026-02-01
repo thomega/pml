@@ -17,11 +17,15 @@
 
 type t =
   { name : string;
+    sort_name : string;
     artist_type : Artist_type.t;
     lifespan : Lifespan.t;
     id : string }
 
 let sort_name_of_name name =
+  name
+
+let name_of_sort_name name =
   name
 
 let compare a1 a2 =
@@ -42,23 +46,37 @@ let compare a1 a2 =
 let of_mb mb =
   let module T = Artist_type in
   let id = mb.Mb_artist.id
-  and name =
-    match mb.Mb_artist.sort_name, mb.Mb_artist.name with
-    | Some sort_name, Some _name -> sort_name
-    | Some sort_name, None -> sort_name
-    | None, Some name -> sort_name_of_name name
-    | None, None -> "(anonymous)"
+  and name, sort_name =
+    match mb.Mb_artist.name, mb.Mb_artist.sort_name with
+    | Some name, Some sort_name -> name, sort_name
+    | Some name, None -> name, sort_name_of_name name
+    | None, Some sort_name -> name_of_sort_name sort_name, sort_name
+    | None, None -> "Anonymous", "Anonymous"
   and artist_type =
     Option.value mb.Mb_artist.artist_type ~default:(T.Person T.Roles.empty)
   and lifespan =
     Option.value mb.Mb_artist.lifespan ~default:Lifespan.Limbo in
-  { id; name; artist_type; lifespan }
+  { id; name; sort_name; artist_type; lifespan }
 
 let of_name name =
+  let sort_name = sort_name_of_name name
+  and artist_type = Artist_type.(Person Roles.empty)
+  and lifespan = Lifespan.Limbo
+  and id = "" in
+  {name; sort_name; artist_type; lifespan; id }
+
+let of_sort_name sort_name =
+  let name = name_of_sort_name sort_name
+  and artist_type = Artist_type.(Person Roles.empty)
+  and lifespan = Lifespan.Limbo
+  and id = "" in
+  {name; sort_name; artist_type; lifespan; id }
+
+let of_name_sort_name name sort_name =
   let artist_type = Artist_type.(Person Roles.empty)
   and lifespan = Lifespan.Limbo
   and id = "" in
-  {name; artist_type; lifespan; id }
+  {name; sort_name; artist_type; lifespan; id }
 
 type artist_t = t
 (** We can't write [type t = t] below. *)
@@ -109,8 +127,12 @@ let of_credits credits =
   List.filter_map (fun c -> Option.map of_mb c.Mb_artist_credit.artist) credits
   |> Collection.of_list
 
-let to_string a =
-  let artist_type =
+let to_string ?sortable a =
+  let name =
+    match sortable with
+    | Some true -> a.sort_name
+    | Some false | None -> a.name
+  and artist_type =
     match Artist_type.to_string_opt a.artist_type with
     | None -> ""
     | Some s -> " (" ^ s ^ ")"
@@ -118,4 +140,4 @@ let to_string a =
     match Lifespan.to_string_opt a.lifespan with
     | None -> ""
     | Some lifespan -> " [" ^ lifespan ^ "]" in
-  a.name ^ artist_type ^ lifespan
+  name ^ artist_type ^ lifespan

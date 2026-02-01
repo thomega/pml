@@ -77,15 +77,15 @@ let script d =
   printf "\n";
   let root =
     match d.composer with
-    | Some c -> c.Artist.name
+    | Some c -> c.Artist.sort_name
     | None -> "Anonymous" in
   printf "ROOT=%s\n" (shell_quote root);
   let subdir =
     match d.Tagged.titles, d.Tagged.performer with
     | [], None -> "Unnamed"
     | t :: _, None -> (Tagged.title_to_string t)
-    | [], Some p -> p.Artist.name
-    | t :: _, Some p -> sprintf "%s - %s" (Tagged.title_to_string t) p.Artist.name in
+    | [], Some p -> p.Artist.sort_name
+    | t :: _, Some p -> sprintf "%s - %s" (Tagged.title_to_string t) p.Artist.sort_name in
   printf "SUBDIR=%s\n" (quoted_filename subdir);
   printf "DIR=\"$ROOT/$SUBDIR\"\n";
   printf "mkdir -p \"$DIR\"\n";
