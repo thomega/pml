@@ -120,7 +120,8 @@ let synchronously ?(verbose=false) ?(dry=false) program args =
   if verbose then
     begin
       let args = List.map quote_if_white args |> String.concat " " in
-      printf "executing: %s %s\n" program args
+      printf "executing: %s %s\n" program args;
+      flush Stdlib.stdout
     end;
   if dry then
     Ok ()
@@ -143,7 +144,7 @@ let opusenc ?verbose ?dry ~bitrate ~tracknumber ~artist ~title ~performers ~inpu
 let wav_name d i =
   Printf.sprintf "%s%s%02d.wav" wav_prefix d.Tagged.discid i
 
-let encode_track ?dry ?verbose bitrate d t =
+let encode_track ?dry ?verbose bitrate dir d t =
   let tracknumber = t.Track.number in
   let input = wav_name d tracknumber
   and output =
@@ -164,7 +165,20 @@ let encode_track ?dry ?verbose bitrate d t =
   and performers =
     Artist.Collection.to_list t.Track.artists
     |> List.map Artist.to_string in
+  let output = Filename.concat dir output in
   opusenc ?verbose ?dry ~bitrate ~tracknumber ~artist ~title ~performers ~input ~output ()
+
+let mkdir name =
+  if Sys.file_exists name then
+    if Sys.is_directory name then
+      Ok ()
+    else
+      Error ("not a directory: " ^ name)
+  else
+    try
+      Ok (Sys.mkdir name 0o755)
+    with
+    | e -> Error (Printexc.to_string e)
 
 let chdir ?directory () =
   match directory with
@@ -176,8 +190,27 @@ let chdir ?directory () =
      with
      | e -> Error (Printexc.to_string e)
 
+let target_dir d =
+  let root =
+    match d.Tagged.composer with
+    | Some c -> c.Artist.sort_name
+    | None -> "Anonymous"
+  and subdir =
+    match d.Tagged.titles, d.Tagged.performer with
+    | [], None -> "Unnamed"
+    | t :: _, None -> (Tagged.title_to_string t)
+    | [], Some p -> p.Artist.sort_name
+    | t :: _, Some p -> Tagged.title_to_string t ^ " - " ^ p.Artist.sort_name in
+  (root, Filename.concat root subdir)
+
 let execute ?dry ?verbose ?directory d =
   let open Result.Syntax in
   let* _ = chdir ?directory () in
-  let* _ = Result_list.fold_left (fun _ -> encode_track ?dry ?verbose bitrate d) () d.tracks in
+  let root, dir = target_dir d in
+  let* _ = mkdir root in
+  let* _ = mkdir dir in
+  let* _ =
+    Result_list.fold_left
+      (fun _ -> encode_track ?dry ?verbose bitrate dir d)
+      () d.tracks in
   Ok ()

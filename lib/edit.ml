@@ -65,7 +65,7 @@ let blank_to_none = function
 let re_double_quote =
   Re.(set {|"|} |> compile)
 
-let re_quotes =
+let _re_quotes =
   Re.(set {|"'|} |> compile)
 
 (** Compress all whitespace, including newlines, to a single blank. *)
@@ -76,32 +76,23 @@ let re_rep_white =
 let re_boundary_white =
   Re.(alt [seq [start; rep1 set_white]; seq [rep1 set_white; stop]] |> compile)
 
-(** Concession to Windows: also replace backslashs.*)
+(** Concession to Windows: also replace backslashes and colons.*)
 let re_slash =
   Re.(set {|/\|} |> compile)
 
-let _filename_safe s =
-  s
-  |> Re.replace_string re_slash ~by:"-"
-  |> Re.replace_string re_rep_white ~by:" "
-  |> Re.replace_string re_boundary_white ~by:""
+let re_colon =
+  Re.(set {|:|} |> compile)
 
 (** Android appears wants us to kill double quotes. *)
-(** TODO: What about colons? *)
 let filename_safe s =
   s
   |> Re.replace_string re_slash ~by:"-"
+  |> Re.replace_string re_colon ~by:" -"
   |> Re.replace_string re_double_quote ~by:"'"
   |> Re.replace_string re_rep_white ~by:" "
   |> Re.replace_string re_boundary_white ~by:""
 
-let _filename_safe s =
-  Ubase.from_utf8 s
-  |> Re.replace_string re_slash ~by:"-"
-  |> Re.replace_string re_quotes ~by:""
-  |> Re.replace_string re_rep_white ~by:" "
-  |> Re.replace_string re_boundary_white ~by:""
-
+let%test _ = filename_safe {|a: b|} = {|a - b|}
 let%test _ = filename_safe {|a  /  b|} = {|a - b|}
 let%test _ = filename_safe {| a  \  b|} = {|a - b|}
 let%test _ =
