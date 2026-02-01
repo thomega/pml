@@ -17,9 +17,13 @@
 
 (** Ripping and tagging. *)
 
-val script : Tagged.t -> (unit, string) result
-(** Write a shell script for ripping, encoding and tagging. *)
-
 val execute : ?dry:bool -> ?verbose:bool -> ?directory:string ->
               Tagged.t -> (unit, string) result
 (** Execute the external programs for ripping, encoding and tagging. *)
+
+(* ********************************************************************** *)
+(** Obsolescent: *)
+
+val script : Tagged.t -> (unit, string) result
+(** Write a shell script for ripping, encoding and tagging. *)
+
