@@ -69,13 +69,13 @@ let _walk_file f path name =
   let* json = of_file name in
   Ok (walk f path json)
 
-let grep ~rex path text =
+let grep ~rex root text =
   let open Result.Syntax in
   let print_match path s =
     if Pcre2.pmatch ~rex s then
       Printf.printf "%s: %s\n" (List.rev path |> String.concat ".") s in
   let* json = Jsont_bytesrw.decode_string jsont text in
-  Ok (walk print_match path json)
+  Ok (walk print_match root json)
 
 let indent pfx = pfx ^ "  "
 
