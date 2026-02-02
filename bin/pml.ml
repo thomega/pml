@@ -285,11 +285,11 @@ let performer =
   Arg.(value & opt (some string) None & info ["p"; "performer"] ~docv:"name" ~doc)
 
 let composer_prefix =
-  let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
+  let doc = Printf.sprintf "Overwrite derived composer (top billing) by matching prefix." in
   Arg.(value & opt (some string) None & info ["C"; "Composer"] ~docv:"prefix" ~doc)
 
 let performer_prefix =
-  let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
+  let doc = Printf.sprintf "Overwrite derived performer (top billing) by matching prefix." in
   Arg.(value & opt (some string) None & info ["P"; "Performer"] ~docv:"prefix" ~doc)
 
 let offset =
@@ -452,7 +452,24 @@ module Ripper : Exit_Cmd =
       let doc = "The directory to execute the external programs in." in
       Arg.(value & opt (some dirpath) None & info ["D"; "dir"] ~docv:"name" ~doc)
 
-    let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ~script ~editing () =
+    let default_bitrate = 128
+
+    let bitrate =
+      let doc = "Choose bitrate." in
+      Arg.(value & opt int default_bitrate & info ["b"; "bitrate"] ~docv:"bits/sec" ~doc)
+
+    let encoders =
+      let doc = "$(docv) select encoders from the list [" ^
+                  String.concat ", " (List.map Pml.Rip.encoder_to_string Pml.Rip.encoders) ^
+                    "]. The default is \"opus\"." in
+      let encoders =
+        List.map (fun enc -> (Pml.Rip.encoder_to_string enc, enc)) Pml.Rip.encoders in
+      Arg.(value & opt_all (enum encoders) [Pml.Rip.Opus] & info ["e"; "encoder"] ~doc ~docv:"encoder")
+
+    module ESet = Set.Make (struct type t = Pml.Rip.encoder let compare = Stdlib.compare end)
+
+    let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ~script ~editing
+          ~bitrate ~encoders () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
@@ -460,14 +477,17 @@ module Ripper : Exit_Cmd =
       if script then
         Rip.script tagged
       else
-        Rip.execute ~dry ~verbose ?directory tagged
+        let encoders = ESet.of_list encoders |> ESet.elements in
+        Rip.execute ~dry ~verbose ?directory ~bitrate encoders tagged
 
     let cmd =
       let open Cmd in
       make (info "ripper" ~man) @@
         let+ dry and+ verbose and+ directory and+ script
-           and+ root and+ medium and+ discid and+ device and+ editing in
-        f ~root ~dry ~verbose ~script ?directory ?medium ?discid ~device ~editing () |> exit_result
+           and+ root and+ medium and+ discid and+ device
+           and+ bitrate and+ encoders and+ editing in
+        f ~root ~dry ~verbose ~script ?directory ?medium ?discid ~device ~bitrate ~encoders ~editing ()
+        |> exit_result
 
   end
 

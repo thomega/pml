@@ -149,8 +149,8 @@ let to_rank_and_string_opt = function
         (1 :: r, roles_to_string_opt roles)
      end
   | Group -> ([2], None)
-  | Orchestra -> ([3], None)
-  | Choir -> ([4], None)
+  | Choir -> ([3], None)
+  | Orchestra -> ([4], None)
   | Character -> ([5], None)
   | Other -> ([6], None)
   | Unknown _ -> ([7], None)

@@ -42,7 +42,7 @@ let re_name =
            rep set_white;
            group (alt [rep1 set_not_white;
                        seq [set_not_white; rep any; set_not_white]]);
-           rep set_white;
+           rep1 set_white;
            group (rep1 set_not_white);
            rep set_white;
            stop] |> compile)
@@ -57,6 +57,7 @@ let sort_name_of_name name =
 
 let%test _ = sort_name_of_name "a b" = "b, a"
 let%test _ = sort_name_of_name " a b c " = "c, a b"
+let%test _ = sort_name_of_name "ab" = "ab"
 
 let re_sort_name =
   Re.(seq [start;

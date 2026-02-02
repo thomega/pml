@@ -15,10 +15,23 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
+type encoder =
+  | Opus
+  | Vorbis
+  | Flac
+  | Mp3
+
+let encoder_to_string = function
+  | Opus -> "opus"
+  | Vorbis -> "vorbis"
+  | Flac -> "flac"
+  | Mp3 -> "mp3"
+
+let encoders =
+  [Opus; Vorbis; Flac; Mp3]
+
 (** We use a prefix for the WAV file, because discids can start with a period. *)
 let wav_prefix = "cd-"
-
-let bitrate = 128
 
 let re_white =
   Re.(set " \t\n\r" |> compile)
@@ -52,10 +65,33 @@ let synchronously ?(verbose=false) ?(dry=false) program args =
 let opusenc ?verbose ?dry ~bitrate ~tracknumber ~artist ~title ~performers ~input ~output () =
   let performers =
     List.concat_map (fun performer -> ["--comment"; "performer=" ^ performer]) performers in
+  let output = output ^ ".opus" in
   synchronously ?verbose ?dry "opusenc"
-    (["--bitrate"; string_of_int bitrate;
+    (["--quiet";
+      "--bitrate"; string_of_int bitrate;
       "--tracknumber"; string_of_int tracknumber;
       "--artist"; artist; "--title"; title] @ performers @ [input; output])
+
+let vorbisenc ?verbose ?dry ~bitrate ~tracknumber ~artist ~title ~performers ~input ~output () =
+  ignore tracknumber;
+  let performers =
+    List.concat_map (fun performer -> ["--comment"; "performer=" ^ performer]) performers in
+  let output = output ^ ".ogg" in
+  synchronously ?verbose ?dry "oggenc"
+    (["--quiet";
+      "--bitrate"; string_of_int bitrate;
+      "--artist"; artist; "--title"; title] @ performers @ ["--output"; output; input])
+
+let flacenc ?verbose ?dry ~tracknumber ~artist ~title ~performers ~input ~output () =
+  let performers =
+    List.concat_map (fun performer -> ["--tag"; "PERFORMER=" ^ performer]) performers in
+  let output = output ^ ".oga" in
+  synchronously ?verbose ?dry "flac"
+    (["--silent";
+      "--tag"; "TRACKNUMBER=" ^ string_of_int tracknumber;
+      "--tag"; "ARTIST=" ^ artist;
+      "--tag"; "TITLE=" ^title] @
+       performers @ ["--output-name"; output; input])
 
 let wav_name d i =
   Printf.sprintf "%s%s%02d.wav" wav_prefix d.Tagged.discid i
@@ -78,11 +114,11 @@ let rip_track ?(force=false) d i =
   else
     synchronously "cdparanoia" args
 
-let encode_track ?dry ?verbose bitrate dir d t =
+let encode_track ?dry ?verbose bitrate encoders dir d t =
   let tracknumber = t.Track.number in
   let input = wav_name d tracknumber
   and output =
-    Printf.sprintf "%0*d %s.opus" d.track_width tracknumber t.Track.title
+    Printf.sprintf "%0*d %s" d.track_width tracknumber t.Track.title
     |> Edit.filename_safe in
   let artist =
     match d.Tagged.composer with
@@ -100,7 +136,16 @@ let encode_track ?dry ?verbose bitrate dir d t =
     Artist.Collection.to_list t.Track.artists
     |> List.map Artist.to_string in
   let output = Filename.concat dir output in
-  opusenc ?verbose ?dry ~bitrate ~tracknumber ~artist ~title ~performers ~input ~output ()
+  Result_list.iter
+    (function
+     | Opus ->
+        opusenc ?verbose ?dry ~bitrate ~tracknumber ~artist ~title ~performers ~input ~output ()
+     | Vorbis ->
+        vorbisenc ?verbose ?dry ~bitrate ~tracknumber ~artist ~title ~performers ~input ~output ()
+     | Flac ->
+        flacenc ?verbose ?dry ~tracknumber ~artist ~title ~performers ~input ~output ()
+     | Mp3 -> Error "mp3 encoder not implemented yet")
+    encoders
 
 let mkdir name =
   if Sys.file_exists name then
@@ -135,20 +180,23 @@ let target_dir d =
     | t :: _, None -> (Tagged.title_to_string t)
     | [], Some p -> p.Artist.sort_name
     | t :: _, Some p -> Tagged.title_to_string t ^ " - " ^ p.Artist.sort_name in
-  (Edit.filename_safe root,
-   Filename.concat root (Edit.filename_safe subdir))
+  let root = Edit.filename_safe root
+  and subdir = Edit.filename_safe subdir in
+  (root, Filename.concat root subdir)
 
-let execute ?dry ?verbose ?directory d =
+let execute ?dry ?verbose ?directory ~bitrate encoders d =
   let open Result.Syntax in
   let* () = chdir ?directory () in
   let* () = Result_list.iter (fun t -> t.Track.number_on_disc |> rip_track d) d.Tagged.tracks in
   let root, dir = target_dir d in
   let* () = mkdir root in
   let* () = mkdir dir in
-  Result_list.iter (encode_track ?dry ?verbose bitrate dir d) d.tracks
+  Result_list.iter (encode_track ?dry ?verbose bitrate encoders dir d) d.tracks
 
 (* ********************************************************************** *)
 (* Obsolescent: *)
+let bitrate = 128
+
 let shell_quote =
   Edit.shell_double_quote
 
