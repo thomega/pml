@@ -88,10 +88,62 @@ let flacenc ?verbose ?dry ~tracknumber ~artist ~title ~performers ~input ~output
   let output = output ^ ".oga" in
   synchronously ?verbose ?dry "flac"
     (["--silent";
+      "--force";
+      "--ogg";
       "--tag"; "TRACKNUMBER=" ^ string_of_int tracknumber;
       "--tag"; "ARTIST=" ^ artist;
       "--tag"; "TITLE=" ^title] @
        performers @ ["--output-name"; output; input])
+
+(** Derive lame quality option from [bitrate] *)
+(** German Wikipedia: https://de.wikipedia.org/wiki/LAME *)
+let lame_quality_bitrate =
+  [(0, 245);
+   (1, 225);
+   (2, 190);
+   (3, 175);
+   (4, 165);
+   (5, 130);
+   (6, 115);
+   (7, 100);
+   (8,  85)]
+
+let lame_quality_of_bitrate bitrate =
+  let rec lame_quality_of_bitrate' = function
+    | [] -> 9.999
+    | [(_, _b)] -> 9.999
+    | (qhi, bhi) :: ((qlo, blo) :: _ as remaining) ->
+       if bitrate > bhi then
+         float_of_int qhi
+       else if bitrate >= blo then
+         let frac = float_of_int (bitrate - blo) /. float_of_int (bhi - blo) in
+         float_of_int qlo +. frac *. float_of_int (qhi - qlo)
+       else
+         lame_quality_of_bitrate' remaining in
+  lame_quality_of_bitrate' lame_quality_bitrate
+
+let%test _ = lame_quality_of_bitrate 320 = 0.
+let%test _ = lame_quality_of_bitrate 245 = 0.
+let%test _ = lame_quality_of_bitrate 225 = 1.
+let%test _ = lame_quality_of_bitrate 190 = 2.
+let%test _ = lame_quality_of_bitrate 175 = 3.
+let%test _ = lame_quality_of_bitrate 165 = 4.
+let%test _ = lame_quality_of_bitrate 130 = 5.
+let%test _ = lame_quality_of_bitrate 115 = 6.
+let%test _ = lame_quality_of_bitrate 100 = 7.
+let%test _ = lame_quality_of_bitrate 85 = 8.
+
+let mp3enc ?verbose ?dry ~bitrate ~tracknumber ~artist ~title ~performers ~input ~output () =
+  let quality = lame_quality_of_bitrate bitrate in
+  let output = output ^ ".mp3" in
+  synchronously ?verbose ?dry "lame"
+    (["--quiet";
+      (* "--id3v2-only"; *)
+      "-V"; string_of_float quality;
+      "--tn"; string_of_int tracknumber;
+      "--ta"; artist;
+      "--tt"; title;
+      "--tc"; String.concat "; " performers] @ [input; output])
 
 let wav_name d i =
   Printf.sprintf "%s%s%02d.wav" wav_prefix d.Tagged.discid i
@@ -129,12 +181,9 @@ let encode_track ?dry ?verbose bitrate encoders dir d t =
        | None -> "Anonymous"
        end
   and title =
-    Printf.sprintf "%0*d %s: %s"
-      d.track_width t.Track.number
-      (List.hd d.Tagged.titles |> Tagged.title_to_string) t.Track.title
+    Printf.sprintf "%s: %s" (List.hd d.Tagged.titles |> Tagged.title_to_string) t.Track.title
   and performers =
-    Artist.Collection.to_list t.Track.artists
-    |> List.map Artist.to_string in
+    Artist.Collection.to_list t.Track.artists |> List.map Artist.to_string in
   let output = Filename.concat dir output in
   Result_list.iter
     (function
@@ -144,7 +193,8 @@ let encode_track ?dry ?verbose bitrate encoders dir d t =
         vorbisenc ?verbose ?dry ~bitrate ~tracknumber ~artist ~title ~performers ~input ~output ()
      | Flac ->
         flacenc ?verbose ?dry ~tracknumber ~artist ~title ~performers ~input ~output ()
-     | Mp3 -> Error "mp3 encoder not implemented yet")
+     | Mp3 ->
+        mp3enc ?verbose ?dry ~bitrate ~tracknumber ~artist ~title ~performers ~input ~output ())
     encoders
 
 let mkdir name =
