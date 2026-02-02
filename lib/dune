@@ -5,7 +5,7 @@
     Rip Tagged Release Medium Track Artist Taggable
     Mb_release Mb_medium Mb_disc Mb_track Mb_recording
     Mb_artist Mb_artist_credit
-    Mb_error Mb_raw Cached
+    Mb_error Json Cached
     Artist_type Lifespan Date
     Libdiscid Query
     Edit Sets Cache Result_list Option_syntax Version)

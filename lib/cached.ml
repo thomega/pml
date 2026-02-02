@@ -150,7 +150,7 @@ module Make (Table : Table) : T =
        because the argument has been checked. *)
     let remote_unsafe key =
       let* text = Query.(exec musicbrainz Table.query key) in
-      Mb_raw.normalize text
+      Json.normalize text
 
     let remote key =
       let* key = Table.valid_key key in

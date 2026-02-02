@@ -123,7 +123,7 @@ module Cachetest : Exit_Cmd =
             match discid with
             | Some discid ->
                if normalize then
-                 Cached.Discid.Internal.map ~root discid Mb_raw.normalize
+                 Cached.Discid.Internal.map ~root discid Json.normalize
                else if remote then
                  Cached.Discid.get ~root discid |> Result.map (fun _ -> ())
                else
@@ -133,7 +133,7 @@ module Cachetest : Exit_Cmd =
             match release with
             | Some release ->
                if normalize then
-                 Cached.Release.Internal.map ~root release Mb_raw.normalize
+                 Cached.Release.Internal.map ~root release Json.normalize
                else if remote then
                  Cached.Release.get ~root release |> Result.map (fun _ -> ())
                else
@@ -143,7 +143,7 @@ module Cachetest : Exit_Cmd =
             match artist with
             | Some artist ->
                if normalize then
-                 Cached.Artist.Internal.map ~root artist Mb_raw.normalize
+                 Cached.Artist.Internal.map ~root artist Json.normalize
                else if remote then
                  Cached.Artist.get ~root artist |> Result.map (fun _ -> ())
                else
@@ -181,7 +181,7 @@ module Grep : Exit_Cmd =
       Arg.(value & pos 0 (some string) None & info [] ~docv:"regexp" ~doc)
 
     let grep1 ~rex name entries =
-      Result_list.iter (fun (id, json) -> Mb_raw.grep ~rex [name ^ "/" ^ id] json) entries
+      Result_list.iter (fun (id, json) -> Json.grep ~rex [name ^ "/" ^ id] json) entries
 
     let grep ~root ~caseless ~regexp () =
       let result =
@@ -235,9 +235,9 @@ module JSON : Exit_Cmd =
     let parse_json ~root ~file ~schema ~pretty () =
       ignore root;
       if schema then
-        try Mb_raw.dump_schema_file file; 0 with _ -> 1
+        try Json.dump_schema_file file; 0 with _ -> 1
       else if pretty then
-        try Mb_raw.print_file file; 0 with _ -> 1
+        try Json.print_file file; 0 with _ -> 1
       else
         0
 

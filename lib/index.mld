@@ -22,11 +22,14 @@ You can also jump immediately to the wrapped API modules
 	   Pml.Mb_track Pml.Mb_recording Pml.Mb_artist Pml.Mb_artist_credit}
 
 {3 Database Access}
-{!modules:Pml.Cached Pml.Query Pml.Mb_error Pml.Mb_raw}
+{!modules:Pml.Cached Pml.Query Pml.Mb_error}
 
 {3 Disc Identification}
 {!modules:Pml.Libdiscid}
 
+{3 Trivia}
+{!modules:Pml.Sets Pml.Version}
+
 {3 (More or Less) General Purpose Libraries}
-{!modules:Pml.Edit Pml.Sets Pml.Cache Pml.Result_list Pml.Option_syntax Pml.Version}
+{!modules:Pml.Json Pml.Edit Pml.Cache Pml.Result_list Pml.Option_syntax}
 
