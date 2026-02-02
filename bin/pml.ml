@@ -172,6 +172,10 @@ module Grep : Exit_Cmd =
         `S Manpage.s_description;
         `P "Testing." ] @ Common.man_footer
 
+    let caseless =
+      let doc = Printf.sprintf "Match case insensitively." in
+      Arg.(value & flag & info ["i"; "caseless"] ~doc)
+
     let regexp =
       let doc = "Regular expression (PCRE2 syntax)." in
       Arg.(value & pos 0 (some string) None & info [] ~docv:"regexp" ~doc)
@@ -179,13 +183,18 @@ module Grep : Exit_Cmd =
     let grep1 ~rex name entries =
       Result_list.iter (fun (id, json) -> Mb_raw.grep ~rex [name ^ "/" ^ id] json) entries
 
-    let grep ~root ~regexp () =
+    let grep ~root ~caseless ~regexp () =
       let result =
         match regexp with
         | None -> Ok ()
         | Some regexp ->
            let open Result.Syntax in
-           let* rex = try Ok (Pcre2.regexp regexp) with e -> Error (Printexc.to_string e) in
+           let flags =
+             if caseless then
+               [`CASELESS]
+             else
+               [] in
+           let* rex = try Ok (Pcre2.regexp ~flags regexp) with e -> Error (Printexc.to_string e) in
            let* discids = Cached.Discid.all_local ~root in
            let* () = grep1 ~rex "discid" discids in
            let* releases = Cached.Release.all_local ~root in
@@ -199,8 +208,8 @@ module Grep : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "grep" ~man) @@
-        let+ root and+ regexp in
-        grep ~root ~regexp ()
+        let+ root and+ caseless and+ regexp in
+        grep ~root ~caseless ~regexp ()
 
   end
 
