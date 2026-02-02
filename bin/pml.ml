@@ -165,6 +165,45 @@ module Cachetest : Exit_Cmd =
 
   end
 
+module Grep : Exit_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "Testing." ] @ Common.man_footer
+
+    let regexp =
+      let doc = "Regular expression (PCRE2 syntax)." in
+      Arg.(value & pos 0 (some string) None & info [] ~docv:"regexp" ~doc)
+
+    let grep1 ~rex name entries =
+      Result_list.iter (fun (id, json) -> Mb_raw.grep ~rex [name ^ "/" ^ id] json) entries
+
+    let grep ~root ~regexp () =
+      let result =
+        match regexp with
+        | None -> Ok ()
+        | Some regexp ->
+           let open Result.Syntax in
+           let* rex = try Ok (Pcre2.regexp regexp) with e -> Error (Printexc.to_string e) in
+           let* discids = Cached.Discid.all_local ~root in
+           let* () = grep1 ~rex "discid" discids in
+           let* releases = Cached.Release.all_local ~root in
+           let* () = grep1 ~rex "release" releases in
+           let* artists = Cached.Artist.all_local ~root in 
+           grep1 ~rex "artist" artists in
+      match result with
+      | Error msg -> prerr_endline msg; 1
+      | Ok _ -> 0
+
+    let cmd =
+      let open Cmd in
+      make (info "grep" ~man) @@
+        let+ root and+ regexp in
+        grep ~root ~regexp ()
+
+  end
+
 module JSON : Exit_Cmd =
   struct
 
@@ -581,6 +620,7 @@ module Main : Exit_Cmd =
           Medium.cmd;
           Explore.cmd;
           Ripper.cmd;
+          Grep.cmd;
           Cachetest.cmd;
           Curl.cmd;
           Version.cmd]

@@ -1,19 +1,19 @@
 (* mb_raw.ml -- part of PML (Physical Media Library)
 
-  Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
+   Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
 let jsont =
   Jsont.Object.map Fun.id
@@ -54,6 +54,28 @@ let normalize text =
   let open Result.Syntax in
   let* json = Jsont_bytesrw.decode_string jsont text in
   Jsont_bytesrw.encode_string ~format:Jsont.Indent jsont (sort_json json)
+
+let rec walk f path = function
+  | Jsont.Null ((), _meta) -> ()
+  | Jsont.Bool (_, _meta) -> ()
+  | Jsont.Number (_, _meta) -> ()
+  | Jsont.String (s, _meta) -> f path s
+  | Jsont.Array (a, _meta) -> List.iter (walk f path) a
+  | Jsont.Object (members, _meta) ->
+     List.iter (fun ((name, _meta), json) -> walk f (name :: path) json) members
+
+let _walk_file f path name =
+  let open Result.Syntax in
+  let* json = of_file name in
+  Ok (walk f path json)
+
+let grep ~rex path text =
+  let open Result.Syntax in
+  let print_match path s =
+    if Pcre2.pmatch ~rex s then
+      Printf.printf "%s: %s\n" (List.rev path |> String.concat ".") s in
+  let* json = Jsont_bytesrw.decode_string jsont text in
+  Ok (walk print_match path json)
 
 let indent pfx = pfx ^ "  "
 

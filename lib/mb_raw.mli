@@ -1,19 +1,19 @@
 (* mb_raw.mli -- part of PML (Physical Media Library)
 
-  Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
+   Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
 (** Cache and process JSON responses of the MusicBrainz database. *)
 
@@ -30,6 +30,12 @@ val of_file : string -> (Jsont.json, string) result
 val print_file : string -> unit
 (** Decode a JSON stored in a file, encode it and write it to
     standard output. *)
+
+val grep : rex:Pcre2.regexp -> string list -> string -> (unit, string) result
+(** [grep ~rex path json] prints string values matching the compiled
+    regular expression [rex] in the textual representation [json] of a
+    JSON.  Prefix the matches by a dot-separated object name path
+    rooted at [path]. *)
 
 val dump_schema_file : string -> unit
 (** Decode a JSON stored in a file and write the structure to standard

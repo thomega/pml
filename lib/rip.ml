@@ -140,19 +140,12 @@ let target_dir d =
 
 let execute ?dry ?verbose ?directory d =
   let open Result.Syntax in
-  let* _ = chdir ?directory () in
-  let* _ =
-    Result_list.fold_left
-      (fun _ t -> t.Track.number_on_disc |> rip_track d)
-      () d.Tagged.tracks in
+  let* () = chdir ?directory () in
+  let* () = Result_list.iter (fun t -> t.Track.number_on_disc |> rip_track d) d.Tagged.tracks in
   let root, dir = target_dir d in
-  let* _ = mkdir root in
-  let* _ = mkdir dir in
-  let* _ =
-    Result_list.fold_left
-      (fun _ -> encode_track ?dry ?verbose bitrate dir d)
-      () d.tracks in
-  Ok ()
+  let* () = mkdir root in
+  let* () = mkdir dir in
+  Result_list.iter (encode_track ?dry ?verbose bitrate dir d) d.tracks
 
 (* ********************************************************************** *)
 (* Obsolescent: *)
