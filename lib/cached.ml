@@ -187,6 +187,11 @@ module Discid = Make (Discid_table)
 module Release = Make (Release_table)
 module Artist = Make (Artist_table)
 
+let init ~root =
+  let* () = Discid.Internal.init ~root in
+  let* () = Release.Internal.init ~root in
+  Artist.Internal.init ~root
+
 module Release_Short =
   struct
     type t =

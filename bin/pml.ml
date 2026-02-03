@@ -15,7 +15,10 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
-let default_cache = "mb-cache"
+let default_cache =
+  match Sys.getenv_opt "HOME" with
+  | Some home -> Filename.concat home ".local/share/pml/cache"
+  | None -> "pml-cache"
 
 open Pml
 open Cmdliner
@@ -50,12 +53,29 @@ let root =
   and env = Cmd.Env.info "MUSICBRAINZ_CACHE" in
   Arg.(value & opt dirpath default_cache & info ["cache"] ~docv:"path" ~doc ~env)
 
+module Init : Exit_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "Initialize the cache." ] @ Common.man_footer
+
+    let cmd =
+      let open Cmd in
+      make (info "cache" ~man) @@
+        let+ root in
+        match Cached.init ~root with
+        | Error msg -> prerr_endline msg; 1
+        | Ok () -> 0
+
+  end
+
 module Cachetest : Exit_Cmd =
   struct
 
     let man = [
         `S Manpage.s_description;
-        `P "Testing." ] @ Common.man_footer
+        `P "Test and explore the cache." ] @ Common.man_footer
 
     let print =
       let doc = "Print the JSON file." in
@@ -170,7 +190,7 @@ module Grep : Exit_Cmd =
 
     let man = [
         `S Manpage.s_description;
-        `P "Testing." ] @ Common.man_footer
+        `P "Search for strings in the local cache." ] @ Common.man_footer
 
     let caseless =
       let doc = Printf.sprintf "Match case insensitively." in
@@ -488,7 +508,7 @@ module Ripper : Exit_Cmd =
 
     let man = [
         `S Manpage.s_description;
-        `P "Write a ripping/tagging script." ] @ Common.man_footer
+        `P "Rip and encode tracks from a CD." ] @ Common.man_footer
 
     let dry =
       let doc = "Don't execute external programs." in
@@ -704,6 +724,7 @@ module Main : Exit_Cmd =
           Explore.cmd;
           Ripper.cmd;
           Grep.cmd;
+          Init.cmd;
           Cachetest.cmd;
           Curl.cmd;
           Version.cmd]

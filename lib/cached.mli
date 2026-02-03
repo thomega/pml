@@ -101,3 +101,6 @@ module Release : T
 module Artist : T
 (** Access more detailled information about an artist: life span and aliases.
     {b The lifespan can be used for distinguishing composers from performers!} *)
+
+val init : root:string -> (unit, string) result
+(** Initialize the cache beneath directory [root]. *)
