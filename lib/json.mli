@@ -37,6 +37,15 @@ val grep : rex:Pcre2.regexp -> string list -> string -> (unit, string) result
     JSON.  Prefix the matches by a dot-separated object name path
     rooted at [path]. *)
 
+module MMap : Map.S with type key = string
+module PSet : Set.S with type elt = string list
+
+val matches : rex:Pcre2.regexp -> string list -> string -> (PSet.t MMap.t, string) result
+(** [matches ~rex path json] collects all string values matching the compiled
+    regular expression [rex] in the textual representation [json] of a JSON.
+    They are returned as a map from the matching string to sets of dot-separated
+    object name paths rooted at [path]. *)
+
 val dump_schema_file : string -> unit
 (** Decode a JSON stored in a file and write the structure to standard
     output. *)

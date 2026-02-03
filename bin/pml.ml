@@ -180,8 +180,30 @@ module Grep : Exit_Cmd =
       let doc = "Regular expression (PCRE2 syntax)." in
       Arg.(value & pos 0 (some string) None & info [] ~docv:"regexp" ~doc)
 
+    let combine_match_pair map1 map2 =
+      Json.MMap.union (fun _key paths1 paths2 -> Some (Json.PSet.union paths1 paths2)) map1 map2
+
+    let combine_matches maps =
+      List.fold_left combine_match_pair Json.MMap.empty maps
+
     let grep1 ~rex name entries =
-      Result_list.iter (fun (id, json) -> Json.grep ~rex [name ^ "/" ^ id] json) entries
+      let open Result.Syntax in
+      let* matches =
+        Result_list.map (fun (id, json) -> Json.matches ~rex [name ^ "/" ^ id] json) entries in
+      Ok (combine_matches matches)
+
+    let print_paths paths =
+      Json.PSet.to_list paths
+      |> List.map List.rev
+      |> List.sort (List.compare String.compare)
+      |> List.iter (fun path -> Printf.printf "  %s\n" (String.concat "." path))
+
+    let print_matches matches =
+      Json.MMap.iter
+        (fun m paths ->
+          Printf.printf "%s:\n" m;
+          print_paths paths)
+        matches
 
     let grep ~root ~caseless ~regexp () =
       let result =
@@ -195,12 +217,15 @@ module Grep : Exit_Cmd =
              else
                [] in
            let* rex = try Ok (Pcre2.regexp ~flags regexp) with e -> Error (Printexc.to_string e) in
-           let* discids = Cached.Discid.all_local ~root in
-           let* () = grep1 ~rex "discid" discids in
-           let* releases = Cached.Release.all_local ~root in
-           let* () = grep1 ~rex "release" releases in
-           let* artists = Cached.Artist.all_local ~root in 
-           grep1 ~rex "artist" artists in
+           let* discids = Cached.Discid.all_local ~root
+           and* releases = Cached.Release.all_local ~root
+           and* artists = Cached.Artist.all_local ~root in 
+           let* discid_matches = grep1 ~rex "discid" discids
+           and* release_matches = grep1 ~rex "release" releases
+           and* artist_matches = grep1 ~rex "artist" artists in
+           combine_matches [discid_matches; release_matches; artist_matches]
+           |> print_matches;
+           Ok () in
       match result with
       | Error msg -> prerr_endline msg; 1
       | Ok _ -> 0

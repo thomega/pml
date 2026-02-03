@@ -77,6 +77,35 @@ let grep ~rex root text =
   let* json = Jsont_bytesrw.decode_string jsont text in
   Ok (walk print_match root json)
 
+let collect empty leaf node path json =
+  let rec collect' path = function
+    | Jsont.Null ((), _meta) -> empty
+    | Jsont.Bool (_, _meta) -> empty
+    | Jsont.Number (_, _meta) -> empty
+    | Jsont.String (s, _meta) -> leaf path s
+    | Jsont.Array (a, _meta) -> node path (List.map (collect' path) a)
+    | Jsont.Object (members, _meta) ->
+       node path (List.map (fun ((name, _meta), json) -> collect' (name :: path) json) members) in
+  collect' path json
+
+module MMap = Map.Make (String)
+module PSet = Set.Make (struct type t = string list let compare = List.compare String.compare end)
+
+let matches ~rex root text =
+  let open Result.Syntax in
+  let empty = MMap.empty
+  and grab_match path s =
+    if Pcre2.pmatch ~rex s then
+      MMap.singleton s (PSet.singleton path)
+    else
+      MMap.empty
+  and combine_match_pair map1 map2 =
+    MMap.union (fun _key paths1 paths2 -> Some (PSet.union paths1 paths2)) map1 map2 in
+  let combine_matches _path maps =
+    List.fold_left combine_match_pair empty maps in
+  let* json = Jsont_bytesrw.decode_string jsont text in
+  Ok (collect empty grab_match combine_matches root json)
+
 let indent pfx = pfx ^ "  "
 
 let rec dump_schema_json pfx = function

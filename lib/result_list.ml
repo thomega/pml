@@ -37,6 +37,22 @@ let tl err alist =
   | [] -> Error err
   | _ :: alist -> Ok alist
 
+let rec all_ok' acc_rev = function
+  | [] -> Ok (List.rev acc_rev)
+  | Error _ as e :: _ -> e
+  | Ok a :: result_list -> all_ok' (a :: acc_rev) result_list
+
+let all_ok result_list =
+  all_ok' [] result_list
+
+let%test _ = all_ok [] = Ok []
+let%test _ = all_ok [Ok 1] = Ok [1]
+let%test _ = all_ok [Ok 1; Ok 2] = Ok [1; 2]
+let%test _ = all_ok [Error 13] = Error 13
+let%test _ = all_ok [Error 13; Error 14] = Error 13
+let%test _ = all_ok [Error 13; Ok 2] = Error 13
+let%test _ = all_ok [Ok 1; Error 13] = Error 13
+
 let rec map f = function
   | [] -> Ok []
   | a :: alist ->
