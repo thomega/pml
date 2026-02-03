@@ -180,13 +180,13 @@ module Grep : Exit_Cmd =
       let doc = "Regular expression (PCRE2 syntax)." in
       Arg.(value & pos 0 (some string) None & info [] ~docv:"regexp" ~doc)
 
-    let short =
-      let doc = Printf.sprintf "Abbreviate paths." in
-      Arg.(value & flag & info ["s"; "short"] ~doc)
+    let long =
+      let doc = Printf.sprintf "Print the complete paths." in
+      Arg.(value & flag & info ["l"; "long"] ~doc)
 
-    let very_short =
-      let doc = Printf.sprintf "Only keep filenames in outpur paths." in
-      Arg.(value & flag & info ["S"; "very_short"] ~doc)
+    let short =
+      let doc = Printf.sprintf "Only keep filenames in output paths." in
+      Arg.(value & flag & info ["s"; "short"] ~doc)
 
     let combine_match_pair map1 map2 =
       Json.MMap.union (fun _key paths1 paths2 -> Some (Json.PSet.union paths1 paths2)) map1 map2
@@ -225,15 +225,15 @@ module Grep : Exit_Cmd =
 
     let chop_paths = Json.MMap.map (Json.PSet.map chop_path)
 
-    let abbreviate_paths ~short ~very_short paths =
-      if very_short then
+    let abbreviate_paths ~short ~long paths =
+      if short then
         chop_paths paths
-      else if short then
-        shorten_paths paths
-      else
+      else if long then
         paths
+      else
+        shorten_paths paths
 
-    let grep ~root ~caseless ~regexp ~short ~very_short () =
+    let grep ~root ~caseless ~regexp ~short ~long () =
       let result =
         match regexp with
         | None -> Ok ()
@@ -252,7 +252,7 @@ module Grep : Exit_Cmd =
            let* artists = Cached.Artist.all_local ~root in
            let* artist_matches = grep1 ~rex "artist" artists in
            combine_matches [discid_matches; release_matches; artist_matches]
-           |> abbreviate_paths ~short ~very_short
+           |> abbreviate_paths ~short ~long
            |> print_matches;
            Ok () in
       match result with
@@ -262,8 +262,8 @@ module Grep : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "grep" ~man) @@
-        let+ root and+ caseless and+ regexp and+ short and+ very_short in
-        grep ~root ~caseless ~regexp ~short ~very_short ()
+        let+ root and+ caseless and+ regexp and+ short and+ long in
+        grep ~root ~caseless ~regexp ~short ~long ()
 
   end
 
