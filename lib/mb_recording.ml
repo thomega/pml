@@ -21,15 +21,14 @@ type t =
     artist_credits : Mb_artist_credit.t list }
 
 let make id title artist_credits =
-  let title = Edit.blank_to_none title
-  and artist_credits = Option.value ~default:[] artist_credits in
+  let title = Edit.blank_to_none title in
   { id; title; artist_credits }
 
 let jsont =
   Jsont.Object.map ~kind:"Recording" make
   |> Jsont.Object.mem "id" Jsont.string
   |> Jsont.Object.opt_mem "title" Jsont.string
-  |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Mb_artist_credit.jsont)
+  |> Jsont.Object.mem "artist-credit" Jsont.(list Mb_artist_credit.jsont) ~dec_absent:[]
   |> Jsont.Object.finish
 
 let artist_ids r =

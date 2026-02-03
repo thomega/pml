@@ -23,9 +23,7 @@ type t =
     tracks : Mb_track.t list }
 
 let make id position title discs tracks =
-  let discs = Option.value ~default:[] discs
-  and tracks = Option.value ~default:[] tracks
-  and title = Edit.blank_to_none title in
+  let title = Edit.blank_to_none title in
   { id; position; title; discs; tracks }
 
 let jsont =
@@ -33,8 +31,8 @@ let jsont =
   |> Jsont.Object.mem "id" Jsont.string
   |> Jsont.Object.opt_mem "position" Jsont.int
   |> Jsont.Object.opt_mem "title" Jsont.string
-  |> Jsont.Object.opt_mem "discs" Jsont.(list Mb_disc.jsont)
-  |> Jsont.Object.opt_mem "tracks" Jsont.(list Mb_track.jsont)
+  |> Jsont.Object.mem "discs" Jsont.(list Mb_disc.jsont) ~dec_absent:[]
+  |> Jsont.Object.mem "tracks" Jsont.(list Mb_track.jsont) ~dec_absent:[]
   |> Jsont.Object.finish
 
 let artist_ids m =

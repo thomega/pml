@@ -23,8 +23,7 @@ type t =
     recording : Mb_recording.t option }
 
 let make id position title artist_credits recording =
-  let title = Edit.blank_to_none title
-  and artist_credits = Option.value ~default:[] artist_credits in
+  let title = Edit.blank_to_none title in
   { id; position; title; artist_credits; recording }
 
 let jsont =
@@ -32,7 +31,7 @@ let jsont =
   |> Jsont.Object.mem "id" Jsont.string
   |> Jsont.Object.opt_mem "position" Jsont.int
   |> Jsont.Object.opt_mem "title" Jsont.string
-  |> Jsont.Object.opt_mem "artist-credit" Jsont.(list Mb_artist_credit.jsont)
+  |> Jsont.Object.mem "artist-credit" Jsont.(list Mb_artist_credit.jsont) ~dec_absent:[]
   |> Jsont.Object.opt_mem "recording" Mb_recording.jsont
   |> Jsont.Object.finish
 

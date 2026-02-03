@@ -62,7 +62,7 @@ module Init : Exit_Cmd =
 
     let cmd =
       let open Cmd in
-      make (info "cache" ~man) @@
+      make (info "init" ~man) @@
         let+ root in
         match Cached.init ~root with
         | Error msg -> prerr_endline msg; 1

@@ -210,12 +210,11 @@ module Discid_short =
       { id : string;
         releases : Release_Short.t list }
     let make id releases =
-      let releases = Option.value ~default:[] releases in
       { id; releases }
     let jsont =
       Jsont.Object.map ~kind:"Discid" make
       |> Jsont.Object.mem "id" Jsont.string
-      |> Jsont.Object.opt_mem "releases" Jsont.(list Release_Short.jsont)
+      |> Jsont.Object.mem "releases" Jsont.(list Release_Short.jsont) ~dec_absent:[]
       |> Jsont.Object.finish
 
   end
