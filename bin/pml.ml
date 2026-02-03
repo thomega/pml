@@ -180,6 +180,14 @@ module Grep : Exit_Cmd =
       let doc = "Regular expression (PCRE2 syntax)." in
       Arg.(value & pos 0 (some string) None & info [] ~docv:"regexp" ~doc)
 
+    let short =
+      let doc = Printf.sprintf "Abbreviate paths." in
+      Arg.(value & flag & info ["s"; "short"] ~doc)
+
+    let very_short =
+      let doc = Printf.sprintf "Only keep filenames in outpur paths." in
+      Arg.(value & flag & info ["S"; "very_short"] ~doc)
+
     let combine_match_pair map1 map2 =
       Json.MMap.union (fun _key paths1 paths2 -> Some (Json.PSet.union paths1 paths2)) map1 map2
 
@@ -205,7 +213,27 @@ module Grep : Exit_Cmd =
           print_paths paths)
         matches
 
-    let grep ~root ~caseless ~regexp () =
+    let shorten_path = function
+      | [] | [_] | [_; _] as path -> path
+      | a :: path -> [a; "."; List.hd (List.rev path)]
+
+    let shorten_paths = Json.MMap.map (Json.PSet.map shorten_path)
+
+    let chop_path = function
+      | [] -> []
+      | _ :: path -> [List.hd (List.rev path)]
+
+    let chop_paths = Json.MMap.map (Json.PSet.map chop_path)
+
+    let abbreviate_paths ~short ~very_short paths =
+      if very_short then
+        chop_paths paths
+      else if short then
+        shorten_paths paths
+      else
+        paths
+
+    let grep ~root ~caseless ~regexp ~short ~very_short () =
       let result =
         match regexp with
         | None -> Ok ()
@@ -217,13 +245,14 @@ module Grep : Exit_Cmd =
              else
                [] in
            let* rex = try Ok (Pcre2.regexp ~flags regexp) with e -> Error (Printexc.to_string e) in
-           let* discids = Cached.Discid.all_local ~root
-           and* releases = Cached.Release.all_local ~root
-           and* artists = Cached.Artist.all_local ~root in 
-           let* discid_matches = grep1 ~rex "discid" discids
-           and* release_matches = grep1 ~rex "release" releases
-           and* artist_matches = grep1 ~rex "artist" artists in
+           let* discids = Cached.Discid.all_local ~root in
+           let* discid_matches = grep1 ~rex "discid" discids in
+           let* releases = Cached.Release.all_local ~root in
+           let* release_matches = grep1 ~rex "release" releases in
+           let* artists = Cached.Artist.all_local ~root in
+           let* artist_matches = grep1 ~rex "artist" artists in
            combine_matches [discid_matches; release_matches; artist_matches]
+           |> abbreviate_paths ~short ~very_short
            |> print_matches;
            Ok () in
       match result with
@@ -233,8 +262,8 @@ module Grep : Exit_Cmd =
     let cmd =
       let open Cmd in
       make (info "grep" ~man) @@
-        let+ root and+ caseless and+ regexp in
-        grep ~root ~caseless ~regexp ()
+        let+ root and+ caseless and+ regexp and+ short and+ very_short in
+        grep ~root ~caseless ~regexp ~short ~very_short ()
 
   end
 
