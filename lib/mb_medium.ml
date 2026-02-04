@@ -46,7 +46,7 @@ let update_artists map m =
 let print m =
   let open Printf in
   let n = Option.value m.position ~default:0 in
-  printf "Disc %2d: %s\n"
+  printf "Disc  %3d:    %s\n"
     n
     (match m.title with
      | None | Some "" -> "[" ^ m.id ^ "]"

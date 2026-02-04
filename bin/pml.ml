@@ -34,12 +34,14 @@ module Common : Common =
 
     let man_footer =
       [ `S Manpage.s_files;
-        `P "None, so far.";
+        `I ("$(b," ^ default_cache ^ ")",
+            "Directory containg cached JSON responses from MusicBrainz.");
         `S Manpage.s_authors;
         `P "Thorsten Ohl <ohl@physik.uni-wuerzburg.de>.";
         `S Manpage.s_bugs;
         `P "Report bugs to <ohl@physik.uni-wuerzburg.de>.";
-        `P "It's not finished yet - in fact, I haven't really started." ]
+        `P "Needs more testing on different discs.
+            The command line interface is still messy." ]
 
   end
 
@@ -331,7 +333,9 @@ let device =
   Arg.(value & opt filepath default_device & info ["device"] ~doc)
 
 let discid =
-  let doc = Printf.sprintf "Disc to be examined." in
+  let doc = Printf.sprintf "Discid of the disc to be examined, if there is
+                            no disc in the drive. The discid is the output
+                            of $(b,pml discid --id)." in
   Arg.(value & pos 0 (some string) None & info [] ~docv:"discid" ~doc)
 
 let title =
@@ -441,8 +445,9 @@ let apply_edits e tagged =
 
 let medium =
   let doc =
-    Printf.sprintf "Select the medium with MBID matched this prefix,
-                    in case of an ambiguous diskid." in
+    Printf.sprintf "Select the medium with MBID matching this prefix,
+                    in case of an ambiguous discid pointing to more
+                    than one media in the MusicBrainz database." in
   Arg.(value & opt (some string) None & info ["M"; "medium_id"] ~docv:"MBID" ~doc)
 
 let get_discid ?device ?discid () =
@@ -462,8 +467,9 @@ module Medium : Exit_Cmd =
 
     let man = [
         `S Manpage.s_description;
-        `P "Show the information on a medium as returned
-            by MusicBrainz." ] @ Common.man_footer
+        `P "Show the information relevant for tagging a medium
+            in the context of a release as returned by MusicBrainz
+            without any editing or interpretation." ] @ Common.man_footer
 
     let f ~root ?medium ?discid ?device () =
       let open Result.Syntax in
@@ -518,10 +524,6 @@ module Ripper : Exit_Cmd =
       let doc = "Echo command lines of execute external programs." in
       Arg.(value & flag & info ["v"; "verbose"] ~doc)
 
-    let script =
-      let doc = "Write script instead of executing external programs." in
-      Arg.(value & flag & info ["s"; "script"] ~doc)
-
     let directory =
       let doc = "The directory to execute the external programs in." in
       Arg.(value & opt (some dirpath) None & info ["D"; "dir"] ~docv:"name" ~doc)
@@ -536,31 +538,28 @@ module Ripper : Exit_Cmd =
       let doc = "$(docv) select encoders from the list [" ^
                   String.concat ", " (List.map Pml.Rip.encoder_to_string Pml.Rip.encoders) ^
                     "]. The default is \"opus\"." in
-      let encoders =
+      let enc_enum =
         List.map (fun enc -> (Pml.Rip.encoder_to_string enc, enc)) Pml.Rip.encoders in
-      Arg.(value & opt_all (enum encoders) [Pml.Rip.Opus] & info ["e"; "encoder"] ~doc ~docv:"encoder")
+      Arg.(value & opt_all (enum enc_enum) [Pml.Rip.Opus] & info ["e"; "encoder"] ~doc ~docv:"encoder")
 
     module ESet = Set.Make (struct type t = Pml.Rip.encoder let compare = Stdlib.compare end)
 
-    let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ~script ~editing
+    let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ~editing
           ~bitrate ~encoders () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = apply_edits editing (Tagged.of_mb disc) in
-      if script then
-        Rip.script tagged
-      else
-        let encoders = ESet.of_list encoders |> ESet.elements in
-        Rip.execute ~dry ~verbose ?directory ~bitrate encoders tagged
+      let encoders = ESet.of_list encoders |> ESet.elements in
+      Rip.execute ~dry ~verbose ?directory ~bitrate encoders tagged
 
     let cmd =
       let open Cmd in
       make (info "ripper" ~man) @@
-        let+ dry and+ verbose and+ directory and+ script
+        let+ dry and+ verbose and+ directory
            and+ root and+ medium and+ discid and+ device
            and+ bitrate and+ encoders and+ editing in
-        f ~root ~dry ~verbose ~script ?directory ?medium ?discid ~device ~bitrate ~encoders ~editing ()
+        f ~root ~dry ~verbose ?directory ?medium ?discid ~device ~bitrate ~encoders ~editing ()
         |> exit_result
 
   end
@@ -641,9 +640,12 @@ module Curl : Exit_Cmd =
       let doc = "The URL to query." in
       Arg.(required & pos 0 (some string) None & info [] ~docv:"url" ~doc)
 
+    let default_user_agent =
+      Version.long_name ^ " [Test] / " ^ Version.version ^ " ( " ^ Version.email ^ " )"
+
     let user_agent =
       let doc = "The user agent string." in
-      Arg.(value & opt string "pml testing" & info ["u"; "User"] ~doc)
+      Arg.(value & opt string default_user_agent & info ["u"; "user"] ~doc)
 
     let timeout =
       let doc = "Timeout for query." in

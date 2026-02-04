@@ -55,7 +55,7 @@ let update_artists map t =
 
 let print n t =
   let open Printf in
-  printf "  Trk%2d.%02d: %s\n"
+  printf "Track %3d.%02d: %s\n"
     n
     (Option.value t.position ~default:0)
     (match t.title with
@@ -64,8 +64,8 @@ let print n t =
   begin match t.artist_credits with
   | [] -> ()
   | c :: clist ->
-     printf "      Art.: %s\n" (Mb_artist_credit.to_string c);
-     List.iter (fun c -> printf "            %s\n" (Mb_artist_credit.to_string c)) clist
+     printf "     Artists: %s\n" (Mb_artist_credit.to_string c);
+     List.iter (fun c -> printf "              %s\n" (Mb_artist_credit.to_string c)) clist
   end;
   begin match t.recording with
   | None -> ()

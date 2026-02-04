@@ -69,7 +69,7 @@ let ambiguous_discid discid discs =
   let b = Buffer.create 16 in
   let pr = Printf.bprintf in
   pr b "%d released discs for discid '%s':" (List.length discs) discid;
-  pr b "\n  %-36s %-36s" "MEDIUM" "RELEASE";
+  pr b "\n  %-36s %-36s" "MEDIUM ID/TITLE" "RELEASE ID/TITLE";
   List.iter
     (fun d ->
       pr b "\n/ %-36s %-36s \\" d.medium.Mb_medium.id d.release.Mb_release.id;
@@ -108,8 +108,9 @@ let of_discid ?medium ~root discid =
       
 let print disc =
   let open Printf in
-  printf "Discid: %s\n" disc.discid;
-  printf "Release: %s\n" (Option.value disc.release.Mb_release.title ~default:"(no title)");
+  printf "Disc:    %s / %s\n" disc.medium.Mb_medium.id disc.discid;
+  printf "Release: %s\n" disc.release.Mb_release.id;
+  printf "Title:   %s\n" (Option.value disc.release.Mb_release.title ~default:"(no title)");
   begin match disc.release.Mb_release.artist_credits with
   | [] -> ()
   | c :: clist ->

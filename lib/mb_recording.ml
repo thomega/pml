@@ -42,14 +42,14 @@ let update_artists map r =
 
 let print r =
   let open Printf in
-  printf "      Rec.: %s\n"
+  printf "   Recording: %s\n"
     (match r.title with
      | None | Some "" -> "[" ^ r.id ^ "]"
      | Some s -> s);
   begin match r.artist_credits with
   | [] -> ()
   | c :: clist ->
-     printf "      Art.: %s\n" (Mb_artist_credit.to_string c);
-     List.iter (fun c -> printf "            %s\n" (Mb_artist_credit.to_string c)) clist
+     printf "Rec.-Artists: %s\n" (Mb_artist_credit.to_string c);
+     List.iter (fun c -> printf "              %s\n" (Mb_artist_credit.to_string c)) clist
   end;
   ()
