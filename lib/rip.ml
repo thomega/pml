@@ -211,8 +211,13 @@ let encode_track ?dry ?verbose bitrate encoders dir d t =
      | Mp3 -> mp3enc ?verbose ?dry ~bitrate tags ~input ~output ())
     encoders
 
-let mkdir name =
-  if Sys.file_exists name then
+let mkdir ?(dry=false) ?(verbose=false) name =
+  let verbose = verbose || dry in
+  if verbose then
+    Printf.printf "executing: mkdir %s\n" (quote_if_white name);
+  if dry then
+    Ok ()
+  else if Sys.file_exists name then
     if Sys.is_directory name then
       Ok ()
     else
@@ -223,15 +228,20 @@ let mkdir name =
     with
     | e -> Error (Printexc.to_string e)
 
-let chdir ?directory () =
+let chdir ?(dry=false) ?(verbose=false) ?directory () =
   match directory with
   | None -> Ok ()
   | Some name ->
-     try
-       Unix.chdir name;
+     let verbose = verbose || dry in
+     if verbose then
+       Printf.printf "executing: chdir %s\n" (quote_if_white name);
+     if dry then
        Ok ()
-     with
-     | e -> Error (Printexc.to_string e)
+     else
+       try
+         Ok (Sys.chdir name)
+       with
+       | e -> Error (Printexc.to_string e)
 
 let target_dir d =
   let root =
@@ -248,15 +258,14 @@ let target_dir d =
   and subdir = Edit.filename_safe subdir in
   (root, Filename.concat root subdir)
 
-(** TODO: [mkdir] ignores [dry] *)
 let execute ?dry ?verbose ?directory ~bitrate encoders d =
   let open Result.Syntax in
-  let* () = chdir ?directory () in
+  let* () = chdir ?dry ?verbose ?directory () in
   let* () =
     Result_list.iter
       (fun t -> t.Track.number_on_disc |> rip_track ?verbose ?dry d)
       d.Tagged.tracks in
   let root, dir = target_dir d in
-  let* () = mkdir root in
-  let* () = mkdir dir in
+  let* () = mkdir ?dry ?verbose root in
+  let* () = mkdir ?dry ?verbose dir in
   Result_list.iter (encode_track ?dry ?verbose bitrate encoders dir d) d.tracks
