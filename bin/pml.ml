@@ -45,6 +45,10 @@ module Common : Common =
 
   end
 
+let exit_result = function
+  | Error msg -> prerr_endline msg; 1
+  | Ok () -> 0
+
 module type Exit_Cmd =
   sig
     val cmd : int Cmd.t
@@ -66,9 +70,7 @@ module Init : Exit_Cmd =
       let open Cmd in
       make (info "init" ~man) @@
         let+ root in
-        match Cached.init ~root with
-        | Error msg -> prerr_endline msg; 1
-        | Ok () -> 0
+        Cached.init ~root |> exit_result
 
   end
 
@@ -127,63 +129,59 @@ module Cachetest : Exit_Cmd =
       | Ok None -> Error (Printf.sprintf "%s key '%s': not found locally" kind key)
       | Error _ as e -> e
 
-    let cache_tool ~root ~normalize ~remote ~print ?discid ?release ?artist
+    let f ~root ~normalize ~remote ~print ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list () =
       let open Result.Syntax in
-      let result =
-        if discid_list then
-          let* discids = Cached.Discid.all_local ~root in
-          Ok (print_keys discids)
-        else if release_list then
-          let* releases = Cached.Release.all_local ~root in
-          Ok (print_keys releases)
-        else if artist_list then
-          let* artists = Cached.Artist.all_local ~root in
-          Ok (print_keys artists)
-        else
-          let* _ =
-            match discid with
-            | Some discid ->
-               if normalize then
-                 Cached.Discid.Internal.map ~root discid Json.normalize
-               else if remote then
-                 Cached.Discid.get ~root discid |> Result.map (fun _ -> ())
-               else
-                 Cached.Discid.local ~root discid |> found print "discid" discid
-            | None -> Ok ()
-          and* _ =
-            match release with
-            | Some release ->
-               if normalize then
-                 Cached.Release.Internal.map ~root release Json.normalize
-               else if remote then
-                 Cached.Release.get ~root release |> Result.map (fun _ -> ())
-               else
-                 Cached.Release.local ~root release |> found print "release" release
-            | None -> Ok ()
-          and* _ =
-            match artist with
-            | Some artist ->
-               if normalize then
-                 Cached.Artist.Internal.map ~root artist Json.normalize
-               else if remote then
-                 Cached.Artist.get ~root artist |> Result.map (fun _ -> ())
-               else
-                 Cached.Artist.local ~root artist |> found print "artist" artist
-            | None -> Ok () in
-          Ok () in
-      match result with
-      | Error msg -> prerr_endline msg; 1
-      | Ok _ -> 0
-
+      if discid_list then
+        let* discids = Cached.Discid.all_local ~root in
+        Ok (print_keys discids)
+      else if release_list then
+        let* releases = Cached.Release.all_local ~root in
+        Ok (print_keys releases)
+      else if artist_list then
+        let* artists = Cached.Artist.all_local ~root in
+        Ok (print_keys artists)
+      else
+        let* _ =
+          match discid with
+          | Some discid ->
+             if normalize then
+               Cached.Discid.Internal.map ~root discid Json.normalize
+             else if remote then
+               Cached.Discid.get ~root discid |> Result.map (fun _ -> ())
+             else
+               Cached.Discid.local ~root discid |> found print "discid" discid
+          | None -> Ok ()
+        and* _ =
+          match release with
+          | Some release ->
+             if normalize then
+               Cached.Release.Internal.map ~root release Json.normalize
+             else if remote then
+               Cached.Release.get ~root release |> Result.map (fun _ -> ())
+             else
+               Cached.Release.local ~root release |> found print "release" release
+          | None -> Ok ()
+        and* _ =
+          match artist with
+          | Some artist ->
+             if normalize then
+               Cached.Artist.Internal.map ~root artist Json.normalize
+             else if remote then
+               Cached.Artist.get ~root artist |> Result.map (fun _ -> ())
+             else
+               Cached.Artist.local ~root artist |> found print "artist" artist
+          | None -> Ok () in
+        Ok ()
 
     let cmd =
       let open Cmd in
       make (info "cache" ~man) @@
         let+ root and+ normalize and+ remote and+ print and+ discid and+ release and+ artist
            and+ discid_list and+ release_list and+ artist_list in
-        cache_tool ~root ~normalize ~remote ~print ?discid ?release ?artist
+        f ~root ~normalize ~remote ~print ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list ()
+        |> exit_result
 
   end
 
@@ -255,37 +253,34 @@ module Grep : Exit_Cmd =
       else
         shorten_paths paths
 
-    let grep ~root ~caseless ~regexp ~short ~long () =
-      let result =
-        match regexp with
-        | None -> Ok ()
-        | Some regexp ->
-           let open Result.Syntax in
-           let flags =
-             if caseless then
-               [`CASELESS]
-             else
-               [] in
-           let* rex = try Ok (Pcre2.regexp ~flags regexp) with e -> Error (Printexc.to_string e) in
-           let* discids = Cached.Discid.all_local ~root in
-           let* discid_matches = grep1 ~rex "discid" discids in
-           let* releases = Cached.Release.all_local ~root in
-           let* release_matches = grep1 ~rex "release" releases in
-           let* artists = Cached.Artist.all_local ~root in
-           let* artist_matches = grep1 ~rex "artist" artists in
-           combine_matches [discid_matches; release_matches; artist_matches]
-           |> abbreviate_paths ~short ~long
-           |> print_matches;
-           Ok () in
-      match result with
-      | Error msg -> prerr_endline msg; 1
-      | Ok _ -> 0
+    let f ~root ~caseless ~regexp ~short ~long () =
+      match regexp with
+      | None -> Ok ()
+      | Some regexp ->
+         let open Result.Syntax in
+         let flags =
+           if caseless then
+             [`CASELESS]
+           else
+             [] in
+         let* rex = try Ok (Pcre2.regexp ~flags regexp) with e -> Error (Printexc.to_string e) in
+         let* discids = Cached.Discid.all_local ~root in
+         let* discid_matches = grep1 ~rex "discid" discids in
+         let* releases = Cached.Release.all_local ~root in
+         let* release_matches = grep1 ~rex "release" releases in
+         let* artists = Cached.Artist.all_local ~root in
+         let* artist_matches = grep1 ~rex "artist" artists in
+         combine_matches [discid_matches; release_matches; artist_matches]
+         |> abbreviate_paths ~short ~long
+         |> print_matches;
+         Ok ()
 
     let cmd =
       let open Cmd in
       make (info "grep" ~man) @@
         let+ root and+ caseless and+ regexp and+ short and+ long in
-        grep ~root ~caseless ~regexp ~short ~long ()
+        f ~root ~caseless ~regexp ~short ~long ()
+        |> exit_result
 
   end
 
@@ -458,10 +453,6 @@ let get_discid ?device ?discid () =
      let* ids = Libdiscid.get ?device () in
      Ok (ids.Libdiscid.id)
 
-let exit_result = function
-  | Error msg -> prerr_endline msg; 1
-  | Ok () -> 0
-
 module Medium : Exit_Cmd =
   struct
 
@@ -481,7 +472,8 @@ module Medium : Exit_Cmd =
       let open Cmd in
       make (info "medium" ~man) @@
         let+ root and+ medium and+ discid and+ device in
-        f ~root ?medium ?discid ~device () |> exit_result
+        f ~root ?medium ?discid ~device ()
+        |> exit_result
 
   end
 
@@ -505,7 +497,8 @@ module Explore : Exit_Cmd =
       let open Cmd in
       make (info "explore" ~man) @@
         let+ root and+ medium and+ discid and+ device and+ editing in
-        f ~root ?medium ?discid ~device ~editing () |> exit_result
+        f ~root ?medium ?discid ~device ~editing ()
+        |> exit_result
 
   end
 
@@ -592,40 +585,37 @@ module Disc : Exit_Cmd =
       let doc = "Print the URL accessing the discid submission interface." in
       Arg.(value & flag & info ["u"; "url"] ~doc)
 
-    let query_disc ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url =
+    let f ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url =
+      let open Result.Syntax in
       if verbose then
         Printf.printf "querying %s ...\n" device;
-      match Libdiscid.get ~device () with
-      | Ok ids ->
-         begin
-           if not lookup && not print_id && not print_toc && not print_submission_url then
-             Printf.printf "id = %s\ntoc = %s\nsubmit = %s\n" ids.id ids.toc ids.submission_url
-           else if lookup then
-             begin match Cached.Discid.get ~root ids.id with
-             | Error msg -> Printf.eprintf "error: %s\n" msg
-             | Ok json ->
-                Printf.printf
-                  "received %d bytes for %s in %s/discid\n"
-                  (String.length json) ids.id root
-             end
-           else if print_id then
-             print_endline ids.id
-           else if print_toc then
-             print_endline ids.toc
-           else if print_submission_url then
-             print_endline ids.submission_url
-         end;
-         0
-      | Error msg ->
-         Printf.eprintf "error: %s!\n" msg;
-         1
-
+      let* ids = Libdiscid.get ~device () in
+      let () =
+        if not lookup && not print_id && not print_toc && not print_submission_url then
+          Printf.printf "id = %s\ntoc = %s\nsubmit = %s\n" ids.id ids.toc ids.submission_url
+        else if lookup then
+          begin match Cached.Discid.get ~root ids.id with
+          | Error msg -> Printf.eprintf "error: %s\n" msg
+          | Ok json ->
+             Printf.printf
+               "received %d bytes for %s in %s/discid\n"
+               (String.length json) ids.id root
+          end
+        else if print_id then
+          print_endline ids.id
+        else if print_toc then
+          print_endline ids.toc
+        else if print_submission_url then
+          print_endline ids.submission_url in
+        Ok ()
+    
     let cmd =
       let open Cmd in
       make (info "discid" ~man) @@
         let+ device and+ verbose and+ root and+ lookup
            and+ print_id and+ print_toc and+ print_submission_url in
-        query_disc ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url
+        f ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url
+        |> exit_result
 
 end
 
