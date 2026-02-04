@@ -1,19 +1,19 @@
 (* cache.ml -- part of PML (Physical Media Library)
 
-  Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
+   Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
 module type T =
   sig
@@ -247,7 +247,7 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
+         let* () = C.init ~root in
          C.get ~root 1
        with
        | Ok None -> true
@@ -256,7 +256,7 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
+         let* () = C.init ~root in
          C.set ~root (-1) "A"
        with
        | Error "negative: -1" -> true
@@ -265,7 +265,7 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
+         let* () = C.init ~root in
          C.get ~root (-1)
        with
        | Error "negative: -1" -> true
@@ -274,8 +274,8 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
-         let* _ = C.set ~root 1 "A" in
+         let* () = C.init ~root in
+         let* () = C.set ~root 1 "A" in
          C.get ~root 1
        with
        | Ok (Some "A") -> true
@@ -284,9 +284,9 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
-         let* _ = C.set ~root 1 "A" in
-         let* _ = C.set ~root 1 "B" in
+         let* () = C.init ~root in
+         let* () = C.set ~root 1 "A" in
+         let* () = C.set ~root 1 "B" in
          C.get ~root 1
        with
        | Ok (Some "B") -> true
@@ -295,9 +295,9 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
-         let* _ = C.set ~root 1 "A" in
-         let* _ = C.set ~root 2 "A" in
+         let* () = C.init ~root in
+         let* () = C.set ~root 1 "A" in
+         let* () = C.set ~root 2 "A" in
          C.get ~root 1
        with
        | Ok (Some "A") -> true
@@ -306,9 +306,9 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
-         let* _ = C.set ~root 1 "A" in
-         let* _ = C.remove ~root 1 in
+         let* () = C.init ~root in
+         let* () = C.set ~root 1 "A" in
+         let* () = C.remove ~root 1 in
          C.get ~root 1
        with
        | Ok None -> true
@@ -317,9 +317,9 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
-         let* _ = C.set ~root 1 "A" in
-         let* _ = C.map ~root 1 (fun s -> Ok (s ^ s)) in
+         let* () = C.init ~root in
+         let* () = C.set ~root 1 "A" in
+         let* () = C.map ~root 1 (fun s -> Ok (s ^ s)) in
          C.get ~root 1
        with
        | Ok (Some "AA") -> true
@@ -328,9 +328,9 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
-         let* _ = C.set ~root 1 "A" in
-         let* _ = C.map ~root 1 (fun _ -> Error "foo") in
+         let* () = C.init ~root in
+         let* () = C.set ~root 1 "A" in
+         let* () = C.map ~root 1 (fun _ -> Error "foo") in
          C.get ~root 1
        with
        | Error "foo" -> true
@@ -339,8 +339,8 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
-         let* _ = C.set ~root 1 "A" in
+         let* () = C.init ~root in
+         let* () = C.set ~root 1 "A" in
          C.lookup ~root 1 (fun _ -> Ok "B")
        with
        | Ok "A" -> true
@@ -352,7 +352,7 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
+         let* () = C.init ~root in
          C.to_alist ~root
        with
        | Ok alist -> alists_equal alist []
@@ -361,8 +361,8 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
-         let* _ = C.set ~root 1 "A" in
+         let* () = C.init ~root in
+         let* () = C.set ~root 1 "A" in
          C.to_alist ~root
        with
        | Ok alist -> alists_equal alist [(1, "A")]
@@ -371,9 +371,9 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
-         let* _ = C.set ~root 1 "A" in
-         let* _ = C.set ~root 2 "B" in
+         let* () = C.init ~root in
+         let* () = C.set ~root 1 "A" in
+         let* () = C.set ~root 2 "B" in
          C.to_alist ~root
        with
        | Ok alist -> alists_equal alist [(1, "A"); (2, "B")]
@@ -382,7 +382,7 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
+         let* () = C.init ~root in
          let* _ = C.lookup ~root 1 (fun _ -> Ok "A") in
          C.to_alist ~root
        with
@@ -392,7 +392,7 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
+         let* () = C.init ~root in
          let* _ = C.lookup ~root 1 (fun _ -> Ok "A") in
          let* _ = C.lookup ~root 1 (fun _ -> failwith "") in
          let* _ = C.lookup ~root 2 (fun _ -> Ok "B") in
@@ -404,7 +404,7 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
+         let* () = C.init ~root in
          let* _ = C.lookup ~root 1 (fun _ -> Ok "A") in
          let* _ = C.lookup ~root 1 (fun _ -> Ok "X") in
          let* _ = C.lookup ~root 2 (fun _ -> Ok "B") in
@@ -416,7 +416,7 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
+         let* () = C.init ~root in
          let* _ = C.lookup ~root 1 (fun _ -> Error "Z") in
          C.set ~root 1 "A"
        with
@@ -426,8 +426,8 @@ let%test_module _ =
      let%test _ =
        let root = fresh () in
        match
-         let* _ = C.init ~root in
-         let* _ = C.set ~root 1 "A" in
+         let* () = C.init ~root in
+         let* () = C.set ~root 1 "A" in
          let* _ = C.lookup ~root 1 (fun _ -> Error "Z") in
          C.get ~root 1
        with

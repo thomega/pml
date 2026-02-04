@@ -160,13 +160,13 @@ let mp3enc ?verbose ?dry ~bitrate tags ~input ~output () =
 let wav_name d i =
   Printf.sprintf "%s%s%02d.wav" wav_prefix d.Tagged.discid i
 
-let rip_track ?(force=false) d i =
+let rip_track ?verbose ?dry ?(force=false) d i =
   let wav = wav_name d i in
   let args = ["-w"; string_of_int i; wav] in
   if Sys.file_exists wav then
     if Sys.is_regular_file wav then
       if force then
-        synchronously "cdparanoia" args
+        synchronously ?verbose ?dry "cdparanoia" args
       else
         begin
           Printf.printf "not ripping %s again\n" wav;
@@ -176,7 +176,7 @@ let rip_track ?(force=false) d i =
     else
       Error (Printf.sprintf "%s exists and is not a regular file" wav)
   else
-    synchronously "cdparanoia" args
+    synchronously ?verbose ?dry "cdparanoia" args
 
 let encode_track ?dry ?verbose bitrate encoders dir d t =
   let album = List.hd d.Tagged.titles |> Tagged.title_to_string
@@ -184,7 +184,7 @@ let encode_track ?dry ?verbose bitrate encoders dir d t =
   and track_id = t.Track.id
   and album_id = d.Tagged.release_id in
   let tracknumber = t.Track.number in
-  let input = wav_name d tracknumber
+  let input = wav_name d t.Track.number_on_disc
   and output =
     Printf.sprintf "%0*d %s" d.track_width tracknumber t.Track.title
     |> Edit.filename_safe in
@@ -251,7 +251,10 @@ let target_dir d =
 let execute ?dry ?verbose ?directory ~bitrate encoders d =
   let open Result.Syntax in
   let* () = chdir ?directory () in
-  let* () = Result_list.iter (fun t -> t.Track.number_on_disc |> rip_track d) d.Tagged.tracks in
+  let* () =
+    Result_list.iter
+      (fun t -> t.Track.number_on_disc |> rip_track ?verbose ?dry d)
+      d.Tagged.tracks in
   let root, dir = target_dir d in
   let* () = mkdir root in
   let* () = mkdir dir in
