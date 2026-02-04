@@ -590,24 +590,20 @@ module Disc : Exit_Cmd =
       if verbose then
         Printf.printf "querying %s ...\n" device;
       let* ids = Libdiscid.get ~device () in
-      let () =
-        if not lookup && not print_id && not print_toc && not print_submission_url then
-          Printf.printf "id = %s\ntoc = %s\nsubmit = %s\n" ids.id ids.toc ids.submission_url
-        else if lookup then
-          begin match Cached.Discid.get ~root ids.id with
-          | Error msg -> Printf.eprintf "error: %s\n" msg
-          | Ok json ->
-             Printf.printf
+      if lookup then
+        let* json = Cached.Discid.get ~root ids.id in
+        Printf.printf
                "received %d bytes for %s in %s/discid\n"
-               (String.length json) ids.id root
-          end
-        else if print_id then
-          print_endline ids.id
-        else if print_toc then
-          print_endline ids.toc
-        else if print_submission_url then
-          print_endline ids.submission_url in
+               (String.length json) ids.id root;
         Ok ()
+      else if print_id then
+        Ok (print_endline ids.id)
+      else if print_toc then
+        Ok (print_endline ids.toc)
+      else if print_submission_url then
+        Ok (print_endline ids.submission_url)
+      else
+        Ok (Printf.printf "id = %s\ntoc = %s\nsubmit = %s\n" ids.id ids.toc ids.submission_url)
     
     let cmd =
       let open Cmd in
