@@ -68,6 +68,7 @@ type tags =
     title : string;
     album : string;
     performers : string list;
+    discid : string;
     track_id : string;
     album_id : string }
 
@@ -81,6 +82,7 @@ let vorbiscomments opt tags =
   List.append
     [ opt; "MUSICBRAINZ_TRACKID=" ^ tags.track_id;
       opt; "MUSICBRAINZ_ALBUMID=" ^ tags.album_id;
+      opt; "MUSICBRAINZ_DISCID=" ^ tags.discid;
       opt; "TRACKNUMBER=" ^ string_of_int tags.tracknumber;
       opt; "ALBUM=" ^ tags.album;
       opt; "TITLE=" ^ tags.title ]
@@ -178,6 +180,7 @@ let rip_track ?(force=false) d i =
 
 let encode_track ?dry ?verbose bitrate encoders dir d t =
   let album = List.hd d.Tagged.titles |> Tagged.title_to_string
+  and discid = d.Tagged.discid
   and track_id = t.Track.id
   and album_id = d.Tagged.release_id in
   let tracknumber = t.Track.number in
@@ -198,7 +201,7 @@ let encode_track ?dry ?verbose bitrate encoders dir d t =
   and performers =
     Artist.Collection.to_list t.Track.artists |> List.map Artist.to_string in
   let tags =
-    { tracknumber; artist; title; album; performers; track_id; album_id } in
+    { tracknumber; artist; title; album; performers; discid; track_id; album_id } in
   let output = Filename.concat dir output in
   Result_list.iter
     (function
