@@ -263,12 +263,26 @@ let performer_prefix pfx d =
   let* name = match_performer pfx d in
   user_performer name d
 
+(*
+   type printing =
+   { 
+   }
+ *)
+
 let list_artists artists =
   Artist.Collection.iter
     (fun a -> Printf.printf "            > '%s'\n" (Artist.to_string a))
     artists
 
-let print d =
+let artist_intersection d =
+  match d.tracks with
+  | [] -> Artist.Collection.empty
+  | [t] -> t.Track.artists
+  | t :: tlist ->
+     List.map (fun t -> t.Track.artists) tlist
+     |> List.fold_left Artist.Collection.inter t.Track.artists 
+
+let print ?(only_titles=false) d =
   let open Printf in
   printf "Discid: '%s'\n" d.discid;
   printf "Medium: '%s'\n" d.medium_id;
@@ -289,6 +303,7 @@ let print d =
   | Some p -> printf "Performer: '%s'\n" (Artist.to_string p)
   | None -> ()
   end;
+  let common_artists = artist_intersection d in
   list_artists d.artists;
   begin match d.tracks_orig with
   | Some tracks_orig ->
@@ -300,7 +315,8 @@ let print d =
          | Some t -> printf "       recording: '%s'\n" t
          | None -> ()
          end;
-         list_artists t.Track.artists)
+         if not only_titles then
+           list_artists (Artist.Collection.diff t.Track.artists common_artists))
        d.tracks tracks_orig
   | None ->
      List.iter
@@ -310,7 +326,8 @@ let print d =
          | Some t -> printf "       recording: '%s'\n" t
          | None -> ()
          end;
-         list_artists t.Track.artists)
+         if not only_titles then
+           list_artists (Artist.Collection.diff t.Track.artists common_artists))
        d.tracks
   end
 

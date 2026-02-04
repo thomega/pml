@@ -477,27 +477,35 @@ module Medium : Exit_Cmd =
 
   end
 
-module Explore : Exit_Cmd =
+module Editor : Exit_Cmd =
   struct
 
     let man = [
         `S Manpage.s_description;
         `P "Explore editing options for the information on
             a medium returned by MusicBrainz in order to
-            fine tune the tagging." ] @ Common.man_footer
+            fine tune the tagging.";
+        `P "This subcommand accepts the same editing options
+            as the $(b,rip) subcommand." ] @ Common.man_footer
 
-    let f ~root ?medium ?discid ?device ~editing () =
+    let only_titles =
+      let doc = "Don't print the artists for individual tracks
+                 to be able to focus on editing the titles and
+                 top billed performers." in
+      Arg.(value & flag & info ["T"; "only_titles"] ~doc)
+
+    let f ~root ?medium ?discid ?device ?only_titles ~editing () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = apply_edits editing (Tagged.of_mb disc) in
-      Ok (Tagged.print tagged)
+      Ok (Tagged.print ?only_titles tagged)
 
     let cmd =
       let open Cmd in
-      make (info "explore" ~man) @@
-        let+ root and+ medium and+ discid and+ device and+ editing in
-        f ~root ?medium ?discid ~device ~editing ()
+      make (info "edit" ~man) @@
+        let+ root and+ medium and+ discid and+ device and+ only_titles and+ editing in
+        f ~root ?medium ?discid ~device ~only_titles ~editing ()
         |> exit_result
 
   end
@@ -507,7 +515,10 @@ module Ripper : Exit_Cmd =
 
     let man = [
         `S Manpage.s_description;
-        `P "Rip and encode tracks from a CD." ] @ Common.man_footer
+        `P "Rip and encode tracks from a CD.";
+        `P "The $(b,edit) subcommand accepts the same editing
+            options as this subcommand and should be used to
+            fine tune them before ripping and encoding." ] @ Common.man_footer
 
     let dry =
       let doc = "Don't execute external programs." in
@@ -548,7 +559,7 @@ module Ripper : Exit_Cmd =
 
     let cmd =
       let open Cmd in
-      make (info "ripper" ~man) @@
+      make (info "rip" ~man) @@
         let+ dry and+ verbose and+ directory
            and+ root and+ medium and+ discid and+ device
            and+ bitrate and+ encoders and+ editing in
@@ -709,7 +720,7 @@ module Main : Exit_Cmd =
         [ Disc.cmd;
           JSON.cmd;
           Medium.cmd;
-          Explore.cmd;
+          Editor.cmd;
           Ripper.cmd;
           Grep.cmd;
           Init.cmd;

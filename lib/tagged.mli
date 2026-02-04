@@ -94,5 +94,5 @@ val composer_prefix : string -> t -> (t, string) result
 val performer_prefix : string -> t -> (t, string) result
 (** (Interactively?) select top billed performer by matching prefix. *)
 
-val print : t -> unit
+val print : ?only_titles:bool -> t -> unit
 (** Exploration, WIP ... *)
