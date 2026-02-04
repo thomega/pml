@@ -31,19 +31,21 @@ let default_trackset =
   { offset = 0; first = 1; last = None; width = 2 }
 
 let title_kind_to_string = function
-  | User _ -> "user"
-  | Tracks _ -> "tracks"
+  | User _ -> "user choice"
+  | Tracks _ -> "track prefix"
   | Medium _ -> "medium"
   | Release _ -> "release"
 
 let title_to_string = function
   | User s | Tracks s | Medium s | Release s -> s
 
+module Artists = Artist.Collection
+
 type t =
   { composer : Artist.t option;
     titles : title list;
     performer : Artist.t option;
-    artists : Artist.Collection.t;
+    artists : Artists.t;
     tracks : Track.t list;
     tracks_orig : Track.t list option;
     track_width : int;
@@ -58,10 +60,10 @@ type t =
 (** Heuristics for selecting composer and top billed performer.
     This relies on the ordering in [Artist_types]. *)
 let make_artists artists =
-  match Artist.Collection.min_elt_opt artists with
+  match Artists.min_elt_opt artists with
   | None -> (None, None)
   | Some composer ->
-     let performer_opt = Artist.Collection.min_elt_opt (Artist.Collection.remove composer artists) in
+     let performer_opt = Artists.min_elt_opt (Artists.remove composer artists) in
      (Some composer, performer_opt)
 
 let replace_track_titles strings tracks =
@@ -114,7 +116,7 @@ let make_titles ~release_title ~medium_title tracks =
 
 let add_tracks_artists artists tracks =
   List.fold_left
-    (fun acc track -> Artist.Collection.union acc track.Track.artists)
+    (fun acc track -> Artists.union acc track.Track.artists)
     artists tracks
 
 let of_mb mb =
@@ -192,7 +194,7 @@ let recording_titles d =
   Ok { d with titles; tracks; tracks_orig }
 
 let force_user_title title d =
-  let titles = [User title]
+  let titles = User title :: d.titles
   and tracks = orig_tracks d
   and tracks_orig = None in
   { d with titles; tracks; tracks_orig }
@@ -207,7 +209,7 @@ let user_title title d =
   let title = strip_trailing_punctuation title in
   match d.titles with
   | Tracks longest_prefix :: _ when String.starts_with ~prefix:title longest_prefix ->
-     let titles = [User title] in
+     let titles = User title :: d.titles in
      let tracks, tracks_orig =
        let n = String.length title in
        match d.tracks_orig with
@@ -245,7 +247,7 @@ let user_performer name d =
 let match_performer pfx d =
   let prefix = String.lowercase_ascii (Ubase.from_utf8 pfx) in
   let artist =
-    Artist.Collection.find_first_opt
+    Artists.find_first_opt
       (fun a ->
         String.starts_with ~prefix (String.lowercase_ascii (Ubase.from_utf8 a.name)))
       d.artists in
@@ -263,30 +265,39 @@ let performer_prefix pfx d =
   let* name = match_performer pfx d in
   user_performer name d
 
-(*
-   type printing =
-   { 
-   }
- *)
-
 let list_artists artists =
-  Artist.Collection.iter
-    (fun a -> Printf.printf "            > '%s'\n" (Artist.to_string a))
-    artists
+  match Artists.min_elt_opt artists with
+  | None -> ()
+  | Some artist ->
+     Printf.printf " Artists: '%s'\n" (Artist.to_string artist);
+     Artists.iter
+       (fun a -> Printf.printf "          '%s'\n" (Artist.to_string a))
+       (Artists.remove artist artists)
 
-let artist_intersection d =
-  match d.tracks with
-  | [] -> Artist.Collection.empty
+let artist_intersection = function
+  | [] -> Artists.empty
   | [t] -> t.Track.artists
   | t :: tlist ->
-     List.map (fun t -> t.Track.artists) tlist
-     |> List.fold_left Artist.Collection.inter t.Track.artists 
+     List.fold_left (fun acc t -> Artists.inter acc t.Track.artists) t.Track.artists tlist
 
-let print ?(only_titles=false) d =
+let factor_track_artists d =
+  let common = artist_intersection d.tracks in
+  let tracks =
+    List.map (fun t -> Track.{ t with artists = Artists.diff t.artists common }) d.tracks in
+  let artists = Artists.union d.artists common in
+  { d with artists; tracks }
+
+let print ?(no_artists=false) ?(factor_artists=false)
+      ?(no_originals=false) ?(no_recordings=false) d =
   let open Printf in
   printf "Discid: '%s'\n" d.discid;
   printf "Medium: '%s'\n" d.medium_id;
-  printf "Release: '%s'\n" d.release_id;
+  printf "Release: '%s'\n\n" d.release_id;
+  let d =
+    if factor_artists then
+      factor_track_artists d
+    else
+      d in
   begin match d.composer with
   | Some composer ->
      begin match d.performer with
@@ -295,39 +306,46 @@ let print ?(only_titles=false) d =
      end
   | None -> ()
   end;
-  List.iter
-    (fun t ->
-      printf "Title(%s): '%s'\n" (title_kind_to_string t) (title_to_string t))
-    d.titles;
   begin match d.performer with
   | Some p -> printf "Performer: '%s'\n" (Artist.to_string p)
   | None -> ()
   end;
-  let common_artists = artist_intersection d in
-  list_artists d.artists;
+  printf "\nTitle suggestions:\n";
+  List.iter
+    (fun t ->
+      printf " - %-13s '%s'\n" (title_kind_to_string t ^ ":") (title_to_string t))
+    d.titles;
+  if not no_artists then
+    begin
+      printf "\n";
+      list_artists d.artists
+    end;
   begin match d.tracks_orig with
   | Some tracks_orig ->
      List.iter2
        (fun t ot ->
-         printf "  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
-         printf "       original:  '%s'\n" ot.Track.title;
-         begin match t.recording_title with
-         | Some t -> printf "       recording: '%s'\n" t
-         | None -> ()
-         end;
-         if not only_titles then
-           list_artists (Artist.Collection.diff t.Track.artists common_artists))
+         printf "\nTrack %0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
+         if not no_originals then
+           printf "   orig.: '%s'\n" ot.Track.title;
+         if not no_recordings then
+           begin match t.recording_title with
+           | Some t -> printf "    rec.: '%s'\n" t
+           | None -> ()
+           end;
+         if not no_artists then
+           list_artists t.Track.artists)
        d.tracks tracks_orig
   | None ->
      List.iter
        (fun t ->
-         printf "  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
-         begin match t.recording_title with
-         | Some t -> printf "       recording: '%s'\n" t
-         | None -> ()
-         end;
-         if not only_titles then
-           list_artists (Artist.Collection.diff t.Track.artists common_artists))
+         printf "\nTrack  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
+         if not no_recordings then
+           begin match t.recording_title with
+           | Some t -> printf "    rec.: '%s'\n" t
+           | None -> ()
+           end;
+         if not no_artists then
+           list_artists t.Track.artists)
        d.tracks
   end
 

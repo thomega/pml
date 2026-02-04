@@ -488,24 +488,42 @@ module Editor : Exit_Cmd =
         `P "This subcommand accepts the same editing options
             as the $(b,rip) subcommand." ] @ Common.man_footer
 
-    let only_titles =
-      let doc = "Don't print the artists for individual tracks
-                 to be able to focus on editing the titles and
-                 top billed performers." in
-      Arg.(value & flag & info ["T"; "only_titles"] ~doc)
+    let no_artists =
+      let doc = "Don't print the artists to be able to focus on
+                 editing the titles and top billed performers." in
+      Arg.(value & flag & info ["A"; "no_artists"] ~doc)
 
-    let f ~root ?medium ?discid ?device ?only_titles ~editing () =
+    let factor_artists =
+      let doc = "Move artists common to all tracks to the disk
+                 and show only the remaining ones with the tracks." in
+      Arg.(value & flag & info ["F"; "factor_artists"] ~doc)
+
+    let no_originals =
+      let doc = "Don't print the unedited track titles
+                 from MusicBrainz." in
+      Arg.(value & flag & info ["O"; "no_originals"] ~doc)
+
+    let no_recordings =
+      let doc = "Don't print the recording titles
+                 from MusicBrainz." in
+      Arg.(value & flag & info ["N"; "no_recordings"] ~doc)
+
+    let f ~root ?medium ?discid ?device ?no_artists ?factor_artists
+          ?no_originals ?no_recordings ~editing () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = apply_edits editing (Tagged.of_mb disc) in
-      Ok (Tagged.print ?only_titles tagged)
+      Ok (Tagged.print ?no_artists ?factor_artists ?no_originals ?no_recordings tagged)
 
     let cmd =
       let open Cmd in
       make (info "edit" ~man) @@
-        let+ root and+ medium and+ discid and+ device and+ only_titles and+ editing in
-        f ~root ?medium ?discid ~device ~only_titles ~editing ()
+        let+ root and+ medium and+ discid and+ device
+           and+ no_artists and+ factor_artists
+           and+ no_originals and+ no_recordings and+ editing in
+        f ~root ?medium ?discid ~device ~no_artists ~factor_artists
+          ~no_originals ~no_recordings ~editing ()
         |> exit_result
 
   end

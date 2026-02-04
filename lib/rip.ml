@@ -248,6 +248,7 @@ let target_dir d =
   and subdir = Edit.filename_safe subdir in
   (root, Filename.concat root subdir)
 
+(** TODO: [mkdir] ignores [dry] *)
 let execute ?dry ?verbose ?directory ~bitrate encoders d =
   let open Result.Syntax in
   let* () = chdir ?directory () in
