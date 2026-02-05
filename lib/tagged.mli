@@ -94,6 +94,11 @@ val composer_prefix : string -> t -> (t, string) result
 val performer_prefix : string -> t -> (t, string) result
 (** (Interactively?) select top billed performer by matching prefix. *)
 
+val target_dir : t -> string * string
+(** Where to write the encoded tracks.
+    This belongs to [Rip], but that would introduce a cyclic dependence
+    in the modules. *)
+
 val print : ?no_artists:bool -> ?factor_artists:bool ->
             ?no_originals:bool -> ?no_recordings:bool -> t -> unit
 (** Exploration, WIP ... *)

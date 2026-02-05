@@ -265,13 +265,13 @@ let performer_prefix pfx d =
   let* name = match_performer pfx d in
   user_performer name d
 
-let list_artists artists =
+let list_artists lcw artists =
   match Artists.min_elt_opt artists with
   | None -> ()
   | Some artist ->
-     Printf.printf " Artists: '%s'\n" (Artist.to_string artist);
+     Printf.printf "%*s '%s'\n" lcw "Artists:" (Artist.to_string artist);
      Artists.iter
-       (fun a -> Printf.printf "          '%s'\n" (Artist.to_string a))
+       (fun a -> Printf.printf "%*s '%s'\n" lcw "" (Artist.to_string a))
        (Artists.remove artist artists)
 
 let artist_intersection = function
@@ -287,65 +287,69 @@ let factor_track_artists d =
   let artists = Artists.union d.artists common in
   { d with artists; tracks }
 
-let print ?(no_artists=false) ?(factor_artists=false)
-      ?(no_originals=false) ?(no_recordings=false) d =
+let target_dir d =
+  let root =
+    match d.composer with
+    | Some c -> c.Artist.sort_name
+    | None -> "Anonymous"
+  and subdir =
+    match d.titles, d.performer with
+    | [], None -> "Unnamed"
+    | t :: _, None -> (title_to_string t)
+    | [], Some p -> p.Artist.sort_name
+    | t :: _, Some p -> title_to_string t ^ " - " ^ p.Artist.sort_name in
+  let root = Edit.filename_safe root
+  and subdir = Edit.filename_safe subdir in
+  (root, Filename.concat root subdir)
+
+let print ?(no_artists=false) ?(factor_artists=false) ?(no_originals=false) ?(no_recordings=false) d =
   let open Printf in
-  printf "Discid: '%s'\n" d.discid;
-  printf "Medium: '%s'\n" d.medium_id;
-  printf "Release: '%s'\n\n" d.release_id;
+  let lcw = 10 in
+  printf "Discid:  %s\n" d.discid;
+  printf "Medium:  %s\n" d.medium_id;
+  printf "Release: %s\n\n" d.release_id;
   let d =
     if factor_artists then
       factor_track_artists d
     else
       d in
-  begin match d.composer with
-  | Some composer ->
-     begin match d.performer with
-     | Some _ -> printf "Composer: '%s'\n" (Artist.to_string composer)
-     | None -> printf "Artist: '%s'\n" (Artist.to_string composer)
-     end
-  | None -> ()
+  begin match d.composer, d.performer with
+  | Some composer, Some performer ->
+     printf "%-*s '%s'\n" lcw "Composer:" (Artist.to_string composer);
+     printf "%-*s '%s'\n" lcw "Performer:" (Artist.to_string performer)
+  | None, Some performer ->
+     printf "%-*s '%s'\n" lcw "Performer:" (Artist.to_string performer)
+  | Some composer, None ->
+     printf "%-*s '%s'\n" lcw "Artist:" (Artist.to_string composer)
+  | None, None -> ()
   end;
-  begin match d.performer with
-  | Some p -> printf "Performer: '%s'\n" (Artist.to_string p)
-  | None -> ()
-  end;
-  printf "\nTitle suggestions:\n";
+  printf "\nTitle:\n\n";
+  let kind_width =
+    List.fold_left (fun acc t -> max acc (String.length (title_kind_to_string t))) 0 d.titles in
   List.iter
     (fun t ->
-      printf " - %-13s '%s'\n" (title_kind_to_string t ^ ":") (title_to_string t))
+      printf "%*s '%s'\n" (kind_width + 3) (title_kind_to_string t ^ ":") (title_to_string t))
     d.titles;
-  if not no_artists then
-    begin
-      printf "\n";
-      list_artists d.artists
-    end;
+  if not no_artists then (printf "\n"; list_artists lcw d.artists);
+  let _, dir = target_dir d in
+  printf "\n%-*s '%s'\n\n" lcw "Directory:" dir;
   begin match d.tracks_orig with
   | Some tracks_orig ->
      List.iter2
        (fun t ot ->
-         printf "\nTrack %0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
-         if not no_originals then
-           printf "   orig.: '%s'\n" ot.Track.title;
-         if not no_recordings then
-           begin match t.recording_title with
-           | Some t -> printf "    rec.: '%s'\n" t
-           | None -> ()
-           end;
-         if not no_artists then
-           list_artists t.Track.artists)
+         printf "%-*s %0*d: '%s'\n" (lcw - d.track_width - 2) "Track"
+           d.track_width t.Track.number t.Track.title;
+         if not no_originals then printf "%*s '%s'\n" lcw "orig.:" ot.Track.title;
+         if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
+         if not no_artists then list_artists lcw t.Track.artists)
        d.tracks tracks_orig
   | None ->
      List.iter
        (fun t ->
-         printf "\nTrack  #%0*d: '%s'\n" d.track_width t.Track.number t.Track.title;
-         if not no_recordings then
-           begin match t.recording_title with
-           | Some t -> printf "    rec.: '%s'\n" t
-           | None -> ()
-           end;
-         if not no_artists then
-           list_artists t.Track.artists)
+         printf "%-*s %0*d: '%s'\n" (lcw - d.track_width - 2) "Track"
+           d.track_width t.Track.number t.Track.title;
+         if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
+         if not no_artists then list_artists lcw t.Track.artists)
        d.tracks
   end
 

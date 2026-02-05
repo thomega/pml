@@ -243,21 +243,6 @@ let chdir ?(dry=false) ?(verbose=false) ?directory () =
        with
        | e -> Error (Printexc.to_string e)
 
-let target_dir d =
-  let root =
-    match d.Tagged.composer with
-    | Some c -> c.Artist.sort_name
-    | None -> "Anonymous"
-  and subdir =
-    match d.Tagged.titles, d.Tagged.performer with
-    | [], None -> "Unnamed"
-    | t :: _, None -> (Tagged.title_to_string t)
-    | [], Some p -> p.Artist.sort_name
-    | t :: _, Some p -> Tagged.title_to_string t ^ " - " ^ p.Artist.sort_name in
-  let root = Edit.filename_safe root
-  and subdir = Edit.filename_safe subdir in
-  (root, Filename.concat root subdir)
-
 let execute ?dry ?verbose ?directory ~bitrate encoders d =
   let open Result.Syntax in
   let* () = chdir ?dry ?verbose ?directory () in
@@ -265,7 +250,7 @@ let execute ?dry ?verbose ?directory ~bitrate encoders d =
     Result_list.iter
       (fun t -> t.Track.number_on_disc |> rip_track ?verbose ?dry d)
       d.Tagged.tracks in
-  let root, dir = target_dir d in
+  let root, dir = Tagged.target_dir d in
   let* () = mkdir ?dry ?verbose root in
   let* () = mkdir ?dry ?verbose dir in
   Result_list.iter (encode_track ?dry ?verbose bitrate encoders dir d) d.tracks

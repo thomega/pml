@@ -15,11 +15,11 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
+(** Ripping and tagging. *)
+
 type encoder = Opus | Vorbis | Flac | Mp3
 val encoder_to_string : encoder -> string
 val encoders : encoder list
-
-(** Ripping and tagging. *)
 
 val execute : ?dry:bool -> ?verbose:bool -> ?directory:string ->
               bitrate:int -> encoder list -> Tagged.t -> (unit, string) result
