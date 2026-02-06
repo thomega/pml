@@ -10,7 +10,8 @@ In this example we extract Shostakovich's 12th symphony on tracks 4 to 7
 from a CD that contains the 2nd symphony on the first three tracks.
 Note that we have to help `pml` with the title of the work, because
 the common prefix of the track titles extends to the roman numeral
-'I' starting the movements.
+'I' starting the movements.  We also have to specify the MBID of the
+medium, because there is more than one match in the MusicBrainz database.
 ```
 $ pml edit jBntohWmL3pfOjiSqgwfDWhbmDg- -M b103 -f 4 -t 'Symphony No. 12 in D minor, Op. 112 "1917"'
 Discid:  jBntohWmL3pfOjiSqgwfDWhbmDg-
