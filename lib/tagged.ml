@@ -239,10 +239,10 @@ let release_title d =
   user_title title d
 
 let user_composer name d =
-  Ok { d with composer = Some (Artist.of_name name) }
+  Ok { d with composer = Some (Artist.of_sort_name name) }
 
 let user_performer name d =
-  Ok { d with performer = Some (Artist.of_name name) }
+  Ok { d with performer = Some (Artist.of_sort_name name) }
 
 let match_performer pfx d =
   let prefix = String.lowercase_ascii (Ubase.from_utf8 pfx) in
