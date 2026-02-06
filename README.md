@@ -5,7 +5,11 @@ are only a subset of tracks on a disc or are spread over more than one disc.
 It supports recordings that are identified by composer, title and performer.
 
 # Typical workflow:
-1. Explore the choices for directories, files and tags with `pml edit`:
+1. Explore the choices for directories, files and tags with `pml edit`.
+In this example we extract Shostakovich's 12th symphony on tracks 4 to 7
+from a CD that contains the 2nd symphony on tracks 1 to 3.  We have to help
+`pml` with the title of the work because the common prefix of the tracks
+extends to the roman numeral 'I' starting the movements.
 ```
 $ pml edit jBntohWmL3pfOjiSqgwfDWhbmDg- -M b103 -f 4 -t 'Symphony No. 12 in D minor, Op. 112 "1917"'
 Discid:  jBntohWmL3pfOjiSqgwfDWhbmDg-
