@@ -218,6 +218,40 @@ let user_title title d =
      Ok { d with titles; tracks; tracks_orig }
   | _ -> Ok (force_user_title title d)
 
+let edit_prefix ~rex ~sub d =
+  match d.titles with
+  | Tracks longest_prefix :: _ ->
+     let open Result.Syntax in
+     let* title =
+       try
+         Ok (Pcre2.replace ~rex ~itempl:sub longest_prefix)
+       with
+       | e -> Error (Printexc.to_string e) in
+     if String.starts_with ~prefix:title longest_prefix then
+       let titles = User title :: d.titles in
+       let tracks, tracks_orig =
+         let n = String.length title in
+         match d.tracks_orig with
+         | None -> (chop_prefixes n d.tracks, Some d.tracks)
+         | Some tracks_orig -> (chop_prefixes n tracks_orig, d.tracks_orig) in
+       Ok { d with titles; tracks; tracks_orig }
+     else
+       Ok d
+  | _ -> Ok d
+
+let edit_title ~rex ~sub d =
+  match d.titles with
+  | User title :: _ | Tracks title :: _ | Medium title :: _ | Release title :: _ ->
+     let open Result.Syntax in
+     let* title =
+       try
+         Ok (Pcre2.replace ~rex ~itempl:sub title)
+       with
+       | e -> Error (Printexc.to_string e) in
+     let titles = User title :: d.titles in
+     Ok { d with titles }
+  | _ -> Ok d
+
 let get_medium_title d =
   match List.find_opt (function Medium _ -> true | _ -> false) d.titles with
   | Some t -> Ok (title_to_string t)
