@@ -1,0 +1,7 @@
+  * edit/rip: make flags -C and -P select sort_name
+
+  * edit/rip: new flags for editing before *and* after extracting the
+    common prefix of track titles, e.g.:
+
+     - before: chop off too long prefix
+     - after: replace 4 by 04 in enumerations
