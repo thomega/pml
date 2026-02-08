@@ -167,9 +167,9 @@ let perl_s_of_string s =
       try
         let flags =
           if caseless then
-            [`CASELESS]
+            [`CASELESS; `UTF]
           else
-            [] in
+            [`UTF] in
         Ok (Pcre2.regexp ~flags rex)
       with
       | e -> Error (Printexc.to_string e)
@@ -201,3 +201,4 @@ let%test _ = perl_s' "/a/b/g" "aa" = Ok "bb"
 let%test _ = perl_s' "|a|b|g" "aa" = Ok "bb"
 let%test _ = perl_s' "/a/b/ig" "Aa" = Ok "bb"
 let%test _ = perl_s' "/a/b/x" "Aa" = Error "perl_s_of_string: invalid flags \"x\""
+let%test _ = perl_s' "/[Дт]/X/g" "Дмитрий" = Ok "XмиXрий"
