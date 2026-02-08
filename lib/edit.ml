@@ -131,7 +131,11 @@ let%test _ = shell_double_quote {|\$a""b`c|} = {|"\\\$a\"\"b\`c"|}
 type perl_s =
   { rex : Pcre2.regexp;
     sub : Pcre2.substitution;
-    global : bool }
+    global : bool;
+    text: string }
+
+let perl_s_to_string p =
+  p.text
 
 let split_substitution s =
   let myname = "perl_s_of_string" in
@@ -155,9 +159,9 @@ let%test _ = split_substitution "/a/b/c" = Ok ("a", "b", "c")
 let%test _ = split_substitution "/a//c" = Ok ("a", "", "c")
 let%test _ = split_substitution "/a/b/c/" = Error ("perl_s_of_string: too many '/'s")
 
-let perl_s_of_string s =
+let perl_s_of_string text =
   let open Result.Syntax in
-  let* rex, sub, flags = split_substitution s in
+  let* rex, sub, flags = split_substitution text in
   if not (List.mem flags [""; "g"; "i"; "ig"; "gi"]) then
     Error (Printf.sprintf "%s: invalid flags \"%s\"" "perl_s_of_string" flags)
   else
@@ -178,9 +182,10 @@ let perl_s_of_string s =
         Ok (Pcre2.subst sub)
       with
       | e -> Error (Printexc.to_string e) in
-    Ok { rex; sub; global }
+    Ok { rex; sub; global; text }
 
-let perl_s { rex; sub; global } s =
+let perl_s { rex; sub; global; text } s =
+  ignore text;
   try
     if global then
       Ok (Pcre2.replace ~rex ~itempl:sub s)
@@ -189,9 +194,9 @@ let perl_s { rex; sub; global } s =
   with
   | e -> Error (Printexc.to_string e)
 
-let perl_s' expr s =
+let perl_s' text s =
   let open Result.Syntax in
-  let* expr = perl_s_of_string expr in
+  let* expr = perl_s_of_string text in
   perl_s expr s
 
 let%test _ = perl_s' "/a/b/" "aa" = Ok "ba"

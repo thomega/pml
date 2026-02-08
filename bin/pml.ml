@@ -337,6 +337,11 @@ let title =
   let doc = Printf.sprintf "Overwrite derived title." in
   Arg.(value & opt (some string) None & info ["t"; "title"] ~docv:"title" ~doc)
 
+let perl_s =
+  let parser = Edit.perl_s_of_string in
+  let pp ppf sub = Format.pp_print_string ppf (Edit.perl_s_to_string sub) in
+  Cmdliner.Arg.Conv.make ~docv:"/regexp/substitution/flags" ~parser ~pp ()
+
 let edit_prefix =
   let doc = Printf.sprintf "Edit the common prefix with a pair
                             of perl regular expression and substitution
@@ -344,7 +349,7 @@ let edit_prefix =
                             chhop off everything after a colon.  This
                             is helpful, if all track portions start with
                             the same letter." in
-  Arg.(value & opt (some string) None & info ["edit_prefix"] ~docv:"substitution" ~doc)
+  Arg.(value & opt (some perl_s) None & info ["edit_prefix"] ~doc)
 
 let edit_title =
   let doc = Printf.sprintf "Edit the title after all other edits. This does
@@ -354,7 +359,7 @@ let edit_title =
                             double digit numbers,
                             $(b,--edit_title '/ (\\\\d\\) /  \\$1 /') will add a
                             leading blank to single digits for simpler sorting." in
-  Arg.(value & opt (some string) None & info ["edit_title"] ~docv:"substitution" ~doc)
+  Arg.(value & opt (some perl_s) None & info ["edit_title"] ~doc)
 
 let recording_titles =
   let doc = "Choose the recording titles as track titles." in
@@ -424,22 +429,11 @@ type editing =
     performer_prefix : string option;
     trackset : Tagged.trackset option }
 
-(* Find a way to do better error handling than raising exeptions or ignoring ... *)
 let editing =
   let+ title and+ edit_prefix and+ edit_title
      and+ recording_titles and+ release_title and+ medium_title
      and+ composer and+ composer_prefix and+ performer and+ performer_prefix
      and+ trackset in
-  let edit_prefix =
-    match Option.map Edit.perl_s_of_string edit_prefix with
-    | Some (Ok edit_prefix) -> Some edit_prefix
-    | Some (Error msg) -> prerr_endline msg; None
-    | None -> None
-  and edit_title =
-    match Option.map Edit.perl_s_of_string edit_title with
-    | Some (Ok edit_title) -> Some edit_title
-    | Some (Error msg) -> prerr_endline msg; None
-    | None -> None  in
   { title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
     composer; composer_prefix; performer; performer_prefix; trackset }
 
