@@ -346,9 +346,11 @@ let edit_prefix =
   let doc = Printf.sprintf "Edit the common prefix with a pair
                             of perl regular expression and substitution
                             string.  E.g. $(b,--edit_prefix '/:.*$//') will
-                            chhop off everything after a colon.  This
+                            chop off everything after a colon.  This
                             is helpful, if all track portions start with
-                            the same letter." in
+                            the same letter, for example if the movements
+                            of a classical piece are enumerated my roman
+                            numerals and there are fewer that five movements." in
   Arg.(value & opt (some perl_s) None & info ["edit_prefix"] ~doc)
 
 let edit_title =
@@ -357,8 +359,8 @@ let edit_title =
                             prefix, but allows to normalize directory names.
                             E.g. if there are titles containing single and
                             double digit numbers,
-                            $(b,--edit_title '/ (\\\\d\\) /  \\$1 /') will add a
-                            leading blank to single digits for simpler sorting." in
+                            $(b,--edit_title '/ (\\\\d\\) / 0\\$1 /') will add a
+                            leading zero to single digits for simpler sorting." in
   Arg.(value & opt (some perl_s) None & info ["edit_title"] ~doc)
 
 let recording_titles =
