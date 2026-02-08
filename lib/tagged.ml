@@ -218,13 +218,13 @@ let user_title title d =
      Ok { d with titles; tracks; tracks_orig }
   | _ -> Ok (force_user_title title d)
 
-let edit_prefix ~rex ~sub d =
+let edit_prefix sub d =
   match d.titles with
   | Tracks longest_prefix :: _ ->
      let open Result.Syntax in
      let* title =
        try
-         Ok (Pcre2.replace ~rex ~itempl:sub longest_prefix)
+         Edit.perl_s sub longest_prefix
        with
        | e -> Error (Printexc.to_string e) in
      if String.starts_with ~prefix:title longest_prefix then
@@ -239,13 +239,13 @@ let edit_prefix ~rex ~sub d =
        Ok d
   | _ -> Ok d
 
-let edit_title ~rex ~sub d =
+let edit_title sub d =
   match d.titles with
   | User title :: _ | Tracks title :: _ | Medium title :: _ | Release title :: _ ->
      let open Result.Syntax in
      let* title =
        try
-         Ok (Pcre2.replace ~rex ~itempl:sub title)
+         Edit.perl_s sub title
        with
        | e -> Error (Printexc.to_string e) in
      let titles = User title :: d.titles in

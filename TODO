@@ -1,9 +1,5 @@
   * edit/rip: make flags -C and -P select sort_name
 
-  * --edit_prefix/title: can we afford to loose '|' for alternation
-    in the regexp when we use it as separator of regexp and
-    substitution on the command line?
-
   * Edit.filename_safe collapses repeated whitespace.  Is this
     a good idea?
 

@@ -340,12 +340,11 @@ let title =
 let edit_prefix =
   let doc = Printf.sprintf "Edit the common prefix with a pair
                             of perl regular expression and substitution
-                            string.  E.g. $(b,--edit_prefix ':.*$|') will
+                            string.  E.g. $(b,--edit_prefix '/:.*$//') will
                             chhop off everything after a colon.  This
                             is helpful, if all track portions start with
                             the same letter." in
-  Arg.(value & opt (some (pair ~sep:'|' string string)) None &
-         info ["edit_prefix"] ~docv:"regexp|substitution" ~doc)
+  Arg.(value & opt (some string) None & info ["edit_prefix"] ~docv:"substitution" ~doc)
 
 let edit_title =
   let doc = Printf.sprintf "Edit the title after all other edits. This does
@@ -353,10 +352,9 @@ let edit_title =
                             prefix, but allows to normalize directory names.
                             E.g. if there are titles containing single and
                             double digit numbers,
-                            $(b,--edit_title ' (\\\\d\\) |  \\$1 ') will add a
+                            $(b,--edit_title '/ (\\\\d\\) /  \\$1 /') will add a
                             leading blank to single digits for simpler sorting." in
-  Arg.(value & opt (some (pair ~sep:'|' string string)) None &
-         info ["edit_title"] ~docv:"regexp|substitution" ~doc)
+  Arg.(value & opt (some string) None & info ["edit_title"] ~docv:"substitution" ~doc)
 
 let recording_titles =
   let doc = "Choose the recording titles as track titles." in
@@ -415,8 +413,8 @@ let trackset =
 
 type editing =
   { title : string option;
-    edit_prefix : (Pcre2.regexp * Pcre2.substitution) option;
-    edit_title : (Pcre2.regexp * Pcre2.substitution) option;
+    edit_prefix : Edit.perl_s option;
+    edit_title : Edit.perl_s option;
     recording_titles : bool;
     medium_title : bool;
     release_title : bool;
@@ -426,13 +424,22 @@ type editing =
     performer_prefix : string option;
     trackset : Tagged.trackset option }
 
+(* Find a way to do better error handling than raising exeptions or ignoring ... *)
 let editing =
   let+ title and+ edit_prefix and+ edit_title
      and+ recording_titles and+ release_title and+ medium_title
      and+ composer and+ composer_prefix and+ performer and+ performer_prefix
      and+ trackset in
-  let edit_prefix = Option.map (fun (rex, sub) -> (Pcre2.regexp rex, Pcre2.subst sub)) edit_prefix
-  and edit_title = Option.map (fun (rex, sub) -> (Pcre2.regexp rex, Pcre2.subst sub)) edit_title in
+  let edit_prefix =
+    match Option.map Edit.perl_s_of_string edit_prefix with
+    | Some (Ok edit_prefix) -> Some edit_prefix
+    | Some (Error msg) -> prerr_endline msg; None
+    | None -> None
+  and edit_title =
+    match Option.map Edit.perl_s_of_string edit_title with
+    | Some (Ok edit_title) -> Some edit_title
+    | Some (Error msg) -> prerr_endline msg; None
+    | None -> None  in
   { title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
     composer; composer_prefix; performer; performer_prefix; trackset }
 
@@ -456,7 +463,7 @@ let apply_pcre f pcre_opt tagged =
   let* tagged in
   match pcre_opt with
   | None -> Ok tagged
-  | Some (rex, sub) -> f ~rex ~sub tagged
+  | Some sub -> f sub tagged
 
 (** The order is very significant! *)
 let apply_edits e tagged =

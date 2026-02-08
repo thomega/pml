@@ -76,8 +76,8 @@ val recording_titles : t -> (t, string) result
 val user_title : string -> t -> (t, string) result
 (** (Interactively?) set the title. *)
 
-val edit_prefix : rex:Pcre2.regexp -> sub:Pcre2.substitution -> t -> (t, string) result
-val edit_title : rex:Pcre2.regexp -> sub:Pcre2.substitution -> t -> (t, string) result
+val edit_prefix : Edit.perl_s -> t -> (t, string) result
+val edit_title : Edit.perl_s -> t -> (t, string) result
 
 val medium_title : t -> (t, string) result
 (** (Interactively?) select the medium title as the title. *)
