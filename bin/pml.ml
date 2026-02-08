@@ -352,8 +352,9 @@ let edit_title =
                             $(b,not) affect the extraction of the common
                             prefix, but allows to normalize directory names.
                             E.g. if there are titles containing single and
-                            double digit numbers, $(b,' (\\\\d\\) | 0\\$1 ') will
-                            add a leading zero to single digits." in
+                            double digit numbers,
+                            $(b,--edit_title ' (\\\\d\\) |  \\$1 ') will add a
+                            leading blank to single digits for simpler sorting." in
   Arg.(value & opt (some (pair ~sep:'|' string string)) None &
          info ["edit_title"] ~docv:"regexp|substitution" ~doc)
 

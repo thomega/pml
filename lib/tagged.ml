@@ -329,7 +329,7 @@ let target_dir d =
   and subdir =
     match d.titles, d.performer with
     | [], None -> "Unnamed"
-    | t :: _, None -> (title_to_string t)
+    | t :: _, None -> title_to_string t
     | [], Some p -> p.Artist.sort_name
     | t :: _, Some p -> title_to_string t ^ " - " ^ p.Artist.sort_name in
   let root = Edit.filename_safe root
