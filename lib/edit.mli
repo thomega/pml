@@ -32,6 +32,11 @@ val shell_double_quote : string -> string
 
 type perl_s
 val perl_s_of_string : string -> (perl_s, string) result
+
 val perl_s_to_string : perl_s -> string
+(** For error messages. *)
+
 val perl_s : perl_s -> string -> (string, string) result
+
 val perl_s' : string -> string -> (string, string) result
+(** Combining [perl_s_of_string] and [perl_s]. *)

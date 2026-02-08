@@ -1,7 +1,12 @@
   * edit/rip: make flags -C and -P select sort_name
 
-  * Edit.filename_safe collapses repeated whitespace.  Is this
-    a good idea?
+  * Edit.filename_safe collapses repeated whitespace.
+    This is not a good idea, because it spoils lexicographically
+    sortable titles.  Instead collape repeated whitespace
+    upon import and replace CR/LF by "; ".
 
   * Artist_type: a 'composer' is more likely to be the composer than a
     'composer and conductor'
+
+  * choose composer and performer from the intersection of artists
+    from the selected tracks only.
