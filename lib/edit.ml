@@ -158,24 +158,27 @@ let%test _ = split_substitution "/a/b/c/" = Error ("perl_s_of_string: too many '
 let perl_s_of_string s =
   let open Result.Syntax in
   let* rex, sub, flags = split_substitution s in
-  let global = String.contains flags 'g'
-  and caseless = String.contains flags 'i' in
-  let* rex =
-    try
-      let flags =
-        if caseless then
-          [`CASELESS]
-        else
-          [] in
-      Ok (Pcre2.regexp ~flags rex)
-    with
-    | e -> Error (Printexc.to_string e)
-  and* sub =
-    try
-      Ok (Pcre2.subst sub)
-    with
-    | e -> Error (Printexc.to_string e) in
-  Ok { rex; sub; global }
+  if not (List.mem flags [""; "g"; "i"; "ig"; "gi"]) then
+    Error (Printf.sprintf "%s: invalid flags \"%s\"" "perl_s_of_string" flags)
+  else
+    let global = String.contains flags 'g'
+    and caseless = String.contains flags 'i' in
+    let* rex =
+      try
+        let flags =
+          if caseless then
+            [`CASELESS]
+          else
+            [] in
+        Ok (Pcre2.regexp ~flags rex)
+      with
+      | e -> Error (Printexc.to_string e)
+    and* sub =
+      try
+        Ok (Pcre2.subst sub)
+      with
+      | e -> Error (Printexc.to_string e) in
+    Ok { rex; sub; global }
 
 let perl_s { rex; sub; global } s =
   try
@@ -191,6 +194,10 @@ let perl_s' expr s =
   let* expr = perl_s_of_string expr in
   perl_s expr s
 
-let%test _ = perl_s' "/a/b/" "aa" = Ok ("ba")
-let%test _ = perl_s' "/a/b/g" "aa" = Ok ("bb")
-let%test _ = perl_s' "|a|b|g" "aa" = Ok ("bb")
+let%test _ = perl_s' "/a/b/" "aa" = Ok "ba"
+let%test _ = perl_s' "/a/b/" "Aa" = Ok "Ab"
+let%test _ = perl_s' "/a/b/i" "Aa" = Ok "ba"
+let%test _ = perl_s' "/a/b/g" "aa" = Ok "bb"
+let%test _ = perl_s' "|a|b|g" "aa" = Ok "bb"
+let%test _ = perl_s' "/a/b/ig" "Aa" = Ok "bb"
+let%test _ = perl_s' "/a/b/x" "Aa" = Error "perl_s_of_string: invalid flags \"x\""
