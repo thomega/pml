@@ -350,7 +350,12 @@ let edit_prefix =
                             is helpful, if all track portions start with
                             the same letter, for example if the movements
                             of a classical piece are enumerated my roman
-                            numerals and there are fewer that five movements." in
+                            numerals and there are fewer that five movements.
+                            Note that the '/' can be replaced by any other
+                            character, but it can not be escaped by '\\\\'
+                            in the expressions.  The only flags accepted
+                            are 'i' for case insensitive and 'g' for
+                            repeated matching." in
   Arg.(value & opt (some perl_s) None & info ["edit_prefix"] ~doc)
 
 let edit_title =
@@ -360,7 +365,12 @@ let edit_title =
                             E.g. if there are titles containing single and
                             double digit numbers,
                             $(b,--edit_title '/ (\\\\d\\) / 0\\$1 /') will add a
-                            leading zero to single digits for simpler sorting." in
+                            leading zero to single digits for simpler sorting.
+                            Note that the '/' can be replaced by any other
+                            character, but it can not be escaped by '\\\\'
+                            in the expressions.  The only flags accepted
+                            are 'i' for case insensitive and 'g' for
+                            repeated matching." in
   Arg.(value & opt (some perl_s) None & info ["edit_title"] ~doc)
 
 let recording_titles =
