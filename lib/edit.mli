@@ -29,3 +29,8 @@ val filename_safe : string -> string
 
 val shell_single_quote : string -> string
 val shell_double_quote : string -> string
+
+type perl_s
+val perl_s_of_string : string -> (perl_s, string) result
+val perl_s : perl_s -> string -> (string, string) result
+val perl_s' : string -> string -> (string, string) result

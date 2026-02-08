@@ -127,3 +127,70 @@ let%test _ = shell_double_quote {|abc|} = {|"abc"|}
 let%test _ = shell_double_quote {|$abc|} = {|"\$abc"|}
 let%test _ = shell_double_quote {|$a"b`c|} = {|"\$a\"b\`c"|}
 let%test _ = shell_double_quote {|\$a""b`c|} = {|"\\\$a\"\"b\`c"|}
+
+type perl_s =
+  { rex : Pcre2.regexp;
+    sub : Pcre2.substitution;
+    global : bool }
+
+let split_substitution s =
+  let myname = "perl_s_of_string" in
+  let l = String.length s in
+  if l = 0 then
+    Error (myname ^ ": empty string")
+  else
+    let delim = s.[0] in
+    match String.split_on_char delim (String.sub s 1 (pred l)) with
+    | [] | [_] -> Error (Printf.sprintf "%s: missing second '%c'" myname delim)
+    | [_; _] -> Error (Printf.sprintf "%s: missing third '%c'" myname delim)
+    | [rex; sub; ""] -> Ok (rex, sub, "")
+    | [rex; sub; flags] -> Ok (rex, sub, flags)
+    | _ -> Error (Printf.sprintf "%s: too many '%c's" myname delim)
+
+let%test _ = split_substitution "/ab" = Error ("perl_s_of_string: missing second '/'")
+let%test _ = split_substitution "/a/b" = Error ("perl_s_of_string: missing third '/'")
+let%test _ = split_substitution "/a/b/" = Ok ("a", "b", "")
+let%test _ = split_substitution "/a//" = Ok ("a", "", "")
+let%test _ = split_substitution "/a/b/c" = Ok ("a", "b", "c")
+let%test _ = split_substitution "/a//c" = Ok ("a", "", "c")
+let%test _ = split_substitution "/a/b/c/" = Error ("perl_s_of_string: too many '/'s")
+
+let perl_s_of_string s =
+  let open Result.Syntax in
+  let* rex, sub, flags = split_substitution s in
+  let global = String.contains flags 'g'
+  and caseless = String.contains flags 'i' in
+  let* rex =
+    try
+      let flags =
+        if caseless then
+          [`CASELESS]
+        else
+          [] in
+      Ok (Pcre2.regexp ~flags rex)
+    with
+    | e -> Error (Printexc.to_string e)
+  and* sub =
+    try
+      Ok (Pcre2.subst sub)
+    with
+    | e -> Error (Printexc.to_string e) in
+  Ok { rex; sub; global }
+
+let perl_s { rex; sub; global } s =
+  try
+    if global then
+      Ok (Pcre2.replace ~rex ~itempl:sub s)
+    else
+      Ok (Pcre2.replace_first ~rex ~itempl:sub s)
+  with
+  | e -> Error (Printexc.to_string e)
+
+let perl_s' expr s =
+  let open Result.Syntax in
+  let* expr = perl_s_of_string expr in
+  perl_s expr s
+
+let%test _ = perl_s' "/a/b/" "aa" = Ok ("ba")
+let%test _ = perl_s' "/a/b/g" "aa" = Ok ("bb")
+let%test _ = perl_s' "|a|b|g" "aa" = Ok ("bb")
