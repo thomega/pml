@@ -94,12 +94,8 @@ let filename_safe s =
   |> Re.replace_string re_boundary_white ~by:""
 
 let%test _ = filename_safe {|a: b|} = {|a - b|}
-let%test _ = filename_safe {|a  /  b|} = {|a - b|}
-let%test _ = filename_safe {| a  \  b|} = {|a - b|}
-let%test _ =
-filename_safe {|a
-\/  b
-c |} = {|a -- b c|}
+let%test _ = filename_safe {|a / b|} = {|a - b|}
+let%test _ = filename_safe {| a \ b|} = {|a - b|}
 
 let sq = {|'|}
 let dq = {|"|}

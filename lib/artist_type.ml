@@ -140,12 +140,16 @@ let of_string roles = function
   | "Other" -> Other
   | s -> Unknown s
 
+(** Concatenate the rank of all roles for persons.
+    This way, a composer with no other role will
+    come before a conductor who is also a composer,
+    if we use [List.compare]. *)
 let to_rank_and_string_opt = function
   | Person roles ->
-     begin match Roles.min_elt_opt roles with
-     | None -> ([1; 5], None)
-     | Some role ->
-        let r, _ = role_to_rank_and_string role in
+     begin match Roles.elements roles with
+     | [] -> ([1; 5], None)
+     | rlist ->
+        let r = List.concat_map role_to_rank rlist in
         (1 :: r, roles_to_string_opt roles)
      end
   | Group -> ([2], None)
