@@ -102,6 +102,21 @@ val target_dir : t -> string * string
     This belongs to [Rip], but that would introduce a cyclic dependence
     in the modules. *)
 
+module Edits : sig
+  type t =
+    { title : string option;
+      edit_prefix : Edit.perl_s option;
+      edit_title : Edit.perl_s option;
+      recording_titles : bool;
+      medium_title : bool;
+      release_title : bool;
+      composer : string option;
+      composer_prefix : string option;
+      performer : string option;
+      performer_prefix : string option;
+      trackset : trackset option }
+end
+
 val print : ?no_artists:bool -> ?factor_artists:bool ->
             ?no_originals:bool -> ?no_recordings:bool -> t -> unit
 (** Exploration, WIP ... *)

@@ -307,6 +307,22 @@ let performer_prefix pfx d =
   let* name = match_performer pfx d in
   user_performer name d
 
+module Edits =
+  struct
+    type t =
+      { title : string option;
+        edit_prefix : Edit.perl_s option;
+        edit_title : Edit.perl_s option;
+        recording_titles : bool;
+        medium_title : bool;
+        release_title : bool;
+        composer : string option;
+        composer_prefix : string option;
+        performer : string option;
+        performer_prefix : string option;
+        trackset : trackset option }
+  end
+
 let list_artists lcw artists =
   match Artists.min_elt_opt artists with
   | None -> ()

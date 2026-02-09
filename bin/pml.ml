@@ -428,26 +428,13 @@ let trackset =
   else
     Some ts
 
-type editing =
-  { title : string option;
-    edit_prefix : Edit.perl_s option;
-    edit_title : Edit.perl_s option;
-    recording_titles : bool;
-    medium_title : bool;
-    release_title : bool;
-    composer : string option;
-    composer_prefix : string option;
-    performer : string option;
-    performer_prefix : string option;
-    trackset : Tagged.trackset option }
-
 let editing =
   let+ title and+ edit_prefix and+ edit_title
      and+ recording_titles and+ release_title and+ medium_title
      and+ composer and+ composer_prefix and+ performer and+ performer_prefix
      and+ trackset in
-  { title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
-    composer; composer_prefix; performer; performer_prefix; trackset }
+  Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
+                 composer; composer_prefix; performer; performer_prefix; trackset }
 
 let apply_edit f string_opt tagged =
   let open Result.Syntax in
@@ -473,6 +460,7 @@ let apply_pcre f pcre_opt tagged =
 
 (** The order is very significant! *)
 let apply_edits e tagged =
+  let open Tagged.Edits in
   Ok tagged
   |> apply_edit Tagged.select_tracks e.trackset
   |> apply_edit_if e.recording_titles Tagged.recording_titles
