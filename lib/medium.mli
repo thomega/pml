@@ -23,5 +23,3 @@ type t =
     id : string }
 
 val of_mb : Mb_medium.t -> t
-
-

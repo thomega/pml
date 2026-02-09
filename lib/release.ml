@@ -28,4 +28,3 @@ let of_mb mb =
   and artists = Artist.of_credits mb.R.artist_credits
   and media = List.map Medium.of_mb mb.R.media in
   { id; title; artists; media }
-

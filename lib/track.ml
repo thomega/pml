@@ -63,4 +63,5 @@ let recording_title t =
   | Some title -> { t with title; recording_title = None }
   | None -> t
 
-
+let filter_artists predicate t =
+  { t with artists = Artist.Collection.filter predicate t.artists }

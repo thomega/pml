@@ -29,3 +29,5 @@ val of_mb : Mb_track.t -> t
 
 val recording_title : t -> t
 (** If [recording_title] exists, replace [title] by it and set it to [None]. *)
+
+val filter_artists : (Artist.t -> bool) -> t -> t

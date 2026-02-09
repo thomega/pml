@@ -46,6 +46,12 @@ type t =
     release_title : string option;
     release_id : string }
 
+let filter_artists predicate t =
+  let artists = Artist.Collection.filter predicate t.artists
+  and tracks = List.map (Track.filter_artists predicate) t.tracks
+  and tracks_orig = Option.map (List.map (Track.filter_artists predicate)) t.tracks_orig in
+  { t with artists; tracks; tracks_orig }
+
 (** TODO: sanitize titles for filenames, rotate articles, ... *)
 
 (** Heuristics for selecting composer and top billed performer.
@@ -280,6 +286,9 @@ let release_title d =
   let* title = get_release_title d in
   user_title title d
 
+let delete_artists perl_m d =
+  Ok (filter_artists (fun a -> Perl.M.exec perl_m a.Artist.name |> not) d)
+
 let user_composer name d =
   Ok { d with composer = Some (Artist.of_sort_name name) }
 
@@ -318,6 +327,7 @@ module Edits =
         title : string option;
         edit_prefix : Perl.S.t list;
         edit_title : Perl.S.t list;
+        delete_artists : Perl.M.t list;
         composer_prefix : string option;
         performer_prefix : string option;
         composer : string option;
@@ -338,10 +348,15 @@ module Edits =
       else
         Ok tagged
 
-    let apply_pcre f pcre_list tagged =
+    let apply_pcre_s f pcre_list tagged =
       let open Result.Syntax in
       let* tagged in
       Result_list.fold_left (fun acc sub -> f sub acc) tagged pcre_list
+
+    let apply_pcre_m f pcre_list tagged =
+      let open Result.Syntax in
+      let* tagged in
+      Result_list.fold_left (fun acc rex -> f rex acc) tagged pcre_list
 
     (** The order is very significant! *)
     let apply_all e tagged =
@@ -351,8 +366,9 @@ module Edits =
       |> apply_if e.release_title release_title
       |> apply_if e.medium_title medium_title
       |> apply user_title e.title
-      |> apply_pcre edit_prefix e.edit_prefix
-      |> apply_pcre edit_title e.edit_title
+      |> apply_pcre_s edit_prefix e.edit_prefix
+      |> apply_pcre_s edit_title e.edit_title
+      |> apply_pcre_m delete_artists e.delete_artists
       |> apply composer_prefix e.composer_prefix
       |> apply performer_prefix e.performer_prefix
       |> apply user_composer e.composer

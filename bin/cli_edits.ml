@@ -28,6 +28,11 @@ let perl_s =
   let pp ppf sub = Format.pp_print_string ppf (Perl.S.to_string sub) in
   Cmdliner.Arg.Conv.make ~docv:"/regexp/substitution/flags" ~parser ~pp ()
 
+let perl_m =
+  let parser = Perl.M.of_string in
+  let pp ppf sub = Format.pp_print_string ppf (Perl.M.to_string sub) in
+  Cmdliner.Arg.Conv.make ~docv:"/regexp/flags" ~parser ~pp ()
+
 let edit_doc =
   "Note that the '/' can be replaced by any other
    character, but it can not be escaped by '\\\\'
@@ -68,6 +73,10 @@ let medium_title =
 let release_title =
   let doc = "Choose the release title." in
   Arg.(value & flag & info ["r"; "release"] ~doc)
+
+let delete_artists =
+  let doc = Printf.sprintf "" ^ edit_doc in
+  Arg.(value & opt_all perl_m [] & info ["delete_artists"] ~doc)
 
 let composer =
   let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
@@ -114,9 +123,9 @@ let trackset =
 
 let all =
   let+ title and+ edit_prefix and+ edit_title
-     and+ recording_titles and+ release_title and+ medium_title
+     and+ recording_titles and+ release_title and+ medium_title and+ delete_artists
      and+ composer and+ composer_prefix and+ performer and+ performer_prefix
      and+ trackset in
   Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
-                 composer; composer_prefix; performer; performer_prefix; trackset }
+                 delete_artists; composer; composer_prefix; performer; performer_prefix; trackset }
 
