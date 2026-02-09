@@ -24,8 +24,8 @@ let title =
   Arg.(value & opt (some string) None & info ["t"; "title"] ~docv:"title" ~doc)
 
 let perl_s =
-  let parser = Edit.perl_s_of_string in
-  let pp ppf sub = Format.pp_print_string ppf (Edit.perl_s_to_string sub) in
+  let parser = Edit.Perl_s.of_string in
+  let pp ppf sub = Format.pp_print_string ppf (Edit.Perl_s.to_string sub) in
   Cmdliner.Arg.Conv.make ~docv:"/regexp/substitution/flags" ~parser ~pp ()
 
 let edit_doc =

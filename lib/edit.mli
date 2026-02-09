@@ -30,18 +30,23 @@ val filename_safe : string -> string
 val shell_single_quote : string -> string
 val shell_double_quote : string -> string
 
-type perl_s
-val perl_s_of_string : string -> (perl_s, string) result
-(** Parse and compile a [perl] style [/regexp/substitution/flags/] substitution.
-    We separate parsing and compilation from the application to be able to
-    handle errors early.  The slight performance benefit for repeated applications
-    is not very important in our application. *)
+module Perl_s : sig
 
-val perl_s_to_string : perl_s -> string
-(** For error messages. *)
+  type t
 
-val perl_s : perl_s -> string -> (string, string) result
-(** Apply a [perl] style [/regexp/substitution/flags/] substitution. *)
+  val of_string : string -> (t, string) result
+  (** Parse and compile a [perl] style [/regexp/substitution/flags/] substitution.
+      We separate parsing and compilation from the application to be able to
+      handle errors early.  The slight performance benefit for repeated applications
+      is not very important in our application. *)
 
-val perl_s' : string -> string -> (string, string) result
-(** Combining [perl_s_of_string] and [perl_s]. *)
+  val to_string : t -> string
+  (** For error messages. *)
+
+  val exec : t -> string -> (string, string) result
+  (** Apply a [perl] style [/regexp/substitution/flags/] substitution. *)
+
+  val exec' : string -> string -> (string, string) result
+  (** Combining [perl_s_of_string] and [perl_s]. *)
+
+end
