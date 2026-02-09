@@ -333,109 +333,6 @@ let discid =
                             of $(b,pml discid --id)." in
   Arg.(value & pos 0 (some string) None & info [] ~docv:"discid" ~doc)
 
-let title =
-  let doc = Printf.sprintf "Overwrite derived title." in
-  Arg.(value & opt (some string) None & info ["t"; "title"] ~docv:"title" ~doc)
-
-let perl_s =
-  let parser = Edit.perl_s_of_string in
-  let pp ppf sub = Format.pp_print_string ppf (Edit.perl_s_to_string sub) in
-  Cmdliner.Arg.Conv.make ~docv:"/regexp/substitution/flags" ~parser ~pp ()
-
-let edit_prefix =
-  let doc = Printf.sprintf "Edit the common prefix with a pair
-                            of perl regular expression and substitution
-                            string.  E.g. $(b,--edit_prefix '/:.*$//') will
-                            chop off everything after a colon.  This
-                            is helpful, if all track portions start with
-                            the same letter, for example if the movements
-                            of a classical piece are enumerated my roman
-                            numerals and there are fewer that five movements.
-                            Note that the '/' can be replaced by any other
-                            character, but it can not be escaped by '\\\\'
-                            in the expressions.  The only flags accepted
-                            are 'i' for case insensitive and 'g' for
-                            repeated matching." in
-  Arg.(value & opt (some perl_s) None & info ["edit_prefix"] ~doc)
-
-let edit_title =
-  let doc = Printf.sprintf "Edit the title after all other edits. This does
-                            $(b,not) affect the extraction of the common
-                            prefix, but allows to normalize directory names.
-                            E.g. if there are titles containing single and
-                            double digit numbers,
-                            $(b,--edit_title '/ (\\\\d\\) / 0\\$1 /') will add a
-                            leading zero to single digits for simpler sorting.
-                            Note that the '/' can be replaced by any other
-                            character, but it can not be escaped by '\\\\'
-                            in the expressions.  The only flags accepted
-                            are 'i' for case insensitive and 'g' for
-                            repeated matching." in
-  Arg.(value & opt (some perl_s) None & info ["edit_title"] ~doc)
-
-let recording_titles =
-  let doc = "Choose the recording titles as track titles." in
-  Arg.(value & flag & info ["R"; "recording"] ~doc)
-
-let medium_title =
-  let doc = "Choose the medium title." in
-  Arg.(value & flag & info ["m"; "medium"] ~doc)
-
-let release_title =
-  let doc = "Choose the release title." in
-  Arg.(value & flag & info ["r"; "release"] ~doc)
-
-let composer =
-  let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
-  Arg.(value & opt (some string) None & info ["c"; "composer"] ~docv:"name" ~doc)
-
-let performer =
-  let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
-  Arg.(value & opt (some string) None & info ["p"; "performer"] ~docv:"name" ~doc)
-
-let composer_prefix =
-  let doc = Printf.sprintf "Overwrite derived composer (top billing) by matching prefix." in
-  Arg.(value & opt (some string) None & info ["C"; "Composer"] ~docv:"prefix" ~doc)
-
-let performer_prefix =
-  let doc = Printf.sprintf "Overwrite derived performer (top billing) by matching prefix." in
-  Arg.(value & opt (some string) None & info ["P"; "Performer"] ~docv:"prefix" ~doc)
-
-let offset =
-  let doc = Printf.sprintf "Apply an offset to the track numbers." in
-  Arg.(value & opt int Tagged.(default_trackset.offset) & info ["o"; "offset"] ~docv:"n" ~doc)
-
-let first =
-  let doc = Printf.sprintf "First track to select (counting from 1,
-                            $(b,before) applying offset)." in
-  Arg.(value & opt int Tagged.(default_trackset.first) & info ["f"; "first"] ~docv:"n" ~doc)
-
-let last =
-  let doc = Printf.sprintf "Last track to select (counting from 1,
-                            $(b,before) applying offset)." in
-  Arg.(value & opt (some int) Tagged.(default_trackset.last) & info ["l"; "last"] ~docv:"n" ~doc)
-
-let width =
-  let doc = Printf.sprintf "The width of the printed track number,
-                            including leading zeros." in
-  Arg.(value & opt int Tagged.(default_trackset.width) & info ["w"; "width"] ~docv:"n" ~doc)
-
-let trackset =
-  let+ offset and+ first and+ last and+ width in
-  let ts = Tagged.{ offset; first; last; width } in
-  if ts = Tagged.default_trackset then
-    None
-  else
-    Some ts
-
-let editing =
-  let+ title and+ edit_prefix and+ edit_title
-     and+ recording_titles and+ release_title and+ medium_title
-     and+ composer and+ composer_prefix and+ performer and+ performer_prefix
-     and+ trackset in
-  Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
-                 composer; composer_prefix; performer; performer_prefix; trackset }
-
 let medium =
   let doc =
     Printf.sprintf "Select the medium with MBID matching this prefix,
@@ -475,6 +372,114 @@ module Medium : Exit_Cmd =
 
   end
 
+module Edits : sig val all : Tagged.Edits.all Term.t end =
+  struct
+
+    let title =
+      let doc = Printf.sprintf "Overwrite derived title." in
+      Arg.(value & opt (some string) None & info ["t"; "title"] ~docv:"title" ~doc)
+
+    let perl_s =
+      let parser = Edit.perl_s_of_string in
+      let pp ppf sub = Format.pp_print_string ppf (Edit.perl_s_to_string sub) in
+      Cmdliner.Arg.Conv.make ~docv:"/regexp/substitution/flags" ~parser ~pp ()
+
+    let edit_prefix =
+      let doc = Printf.sprintf "Edit the common prefix with a pair
+                                of perl regular expression and substitution
+                                string.  E.g. $(b,--edit_prefix '/:.*$//') will
+                                chop off everything after a colon.  This
+                                is helpful, if all track portions start with
+                                the same letter, for example if the movements
+                                of a classical piece are enumerated my roman
+                                numerals and there are fewer that five movements.
+                                Note that the '/' can be replaced by any other
+                                character, but it can not be escaped by '\\\\'
+                                in the expressions.  The only flags accepted
+                                are 'i' for case insensitive and 'g' for
+                                repeated matching." in
+      Arg.(value & opt (some perl_s) None & info ["edit_prefix"] ~doc)
+
+    let edit_title =
+      let doc = Printf.sprintf "Edit the title after all other edits. This does
+                                $(b,not) affect the extraction of the common
+                                prefix, but allows to normalize directory names.
+                                E.g. if there are titles containing single and
+                                double digit numbers,
+                                $(b,--edit_title '/ (\\\\d\\) / 0\\$1 /') will add a
+                                leading zero to single digits for simpler sorting.
+                                Note that the '/' can be replaced by any other
+                                character, but it can not be escaped by '\\\\'
+                                in the expressions.  The only flags accepted
+                                are 'i' for case insensitive and 'g' for
+                                repeated matching." in
+      Arg.(value & opt (some perl_s) None & info ["edit_title"] ~doc)
+
+    let recording_titles =
+      let doc = "Choose the recording titles as track titles." in
+      Arg.(value & flag & info ["R"; "recording"] ~doc)
+
+    let medium_title =
+      let doc = "Choose the medium title." in
+      Arg.(value & flag & info ["m"; "medium"] ~doc)
+
+    let release_title =
+      let doc = "Choose the release title." in
+      Arg.(value & flag & info ["r"; "release"] ~doc)
+
+    let composer =
+      let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
+      Arg.(value & opt (some string) None & info ["c"; "composer"] ~docv:"name" ~doc)
+
+    let performer =
+      let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
+      Arg.(value & opt (some string) None & info ["p"; "performer"] ~docv:"name" ~doc)
+
+    let composer_prefix =
+      let doc = Printf.sprintf "Overwrite derived composer (top billing) by matching prefix." in
+      Arg.(value & opt (some string) None & info ["C"; "Composer"] ~docv:"prefix" ~doc)
+
+    let performer_prefix =
+      let doc = Printf.sprintf "Overwrite derived performer (top billing) by matching prefix." in
+      Arg.(value & opt (some string) None & info ["P"; "Performer"] ~docv:"prefix" ~doc)
+
+    let offset =
+      let doc = Printf.sprintf "Apply an offset to the track numbers." in
+      Arg.(value & opt int Tagged.(default_trackset.offset) & info ["o"; "offset"] ~docv:"n" ~doc)
+
+    let first =
+      let doc = Printf.sprintf "First track to select (counting from 1,
+                                $(b,before) applying offset)." in
+      Arg.(value & opt int Tagged.(default_trackset.first) & info ["f"; "first"] ~docv:"n" ~doc)
+
+    let last =
+      let doc = Printf.sprintf "Last track to select (counting from 1,
+                                $(b,before) applying offset)." in
+      Arg.(value & opt (some int) Tagged.(default_trackset.last) & info ["l"; "last"] ~docv:"n" ~doc)
+
+    let width =
+      let doc = Printf.sprintf "The width of the printed track number,
+                                including leading zeros." in
+      Arg.(value & opt int Tagged.(default_trackset.width) & info ["w"; "width"] ~docv:"n" ~doc)
+
+    let trackset =
+      let+ offset and+ first and+ last and+ width in
+      let ts = Tagged.{ offset; first; last; width } in
+      if ts = Tagged.default_trackset then
+        None
+      else
+        Some ts
+
+    let all =
+      let+ title and+ edit_prefix and+ edit_title
+         and+ recording_titles and+ release_title and+ medium_title
+         and+ composer and+ composer_prefix and+ performer and+ performer_prefix
+         and+ trackset in
+      Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
+                     composer; composer_prefix; performer; performer_prefix; trackset }
+
+  end
+
 module Editor : Exit_Cmd =
   struct
 
@@ -507,21 +512,22 @@ module Editor : Exit_Cmd =
       Arg.(value & flag & info ["N"; "no_recordings"] ~doc)
 
     let f ~root ?medium ?discid ?device ?no_artists ?factor_artists
-          ?no_originals ?no_recordings ~editing () =
+          ?no_originals ?no_recordings ~edits () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
-      let* tagged = Tagged.Edits.apply_all editing (Tagged.of_mb disc) in
+      let* tagged = Tagged.Edits.apply_all edits (Tagged.of_mb disc) in
       Ok (Tagged.print ?no_artists ?factor_artists ?no_originals ?no_recordings tagged)
 
     let cmd =
       let open Cmd in
+      let edits = Edits.all in
       make (info "edit" ~man) @@
         let+ root and+ medium and+ discid and+ device
            and+ no_artists and+ factor_artists
-           and+ no_originals and+ no_recordings and+ editing in
+           and+ no_originals and+ no_recordings and+ edits in
         f ~root ?medium ?discid ~device ~no_artists ~factor_artists
-          ~no_originals ~no_recordings ~editing ()
+          ~no_originals ~no_recordings ~edits ()
         |> exit_result
 
   end
@@ -564,22 +570,23 @@ module Ripper : Exit_Cmd =
 
     module ESet = Set.Make (struct type t = Pml.Rip.encoder let compare = Stdlib.compare end)
 
-    let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ~editing
+    let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ~edits
           ~bitrate ~encoders () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
-      let* tagged = Tagged.Edits.apply_all editing (Tagged.of_mb disc) in
+      let* tagged = Tagged.Edits.apply_all edits (Tagged.of_mb disc) in
       let encoders = ESet.of_list encoders |> ESet.elements in
       Rip.execute ~dry ~verbose ?directory ~bitrate encoders tagged
 
     let cmd =
       let open Cmd in
+      let edits = Edits.all in
       make (info "rip" ~man) @@
         let+ dry and+ verbose and+ directory
            and+ root and+ medium and+ discid and+ device
-           and+ bitrate and+ encoders and+ editing in
-        f ~root ~dry ~verbose ?directory ?medium ?discid ~device ~bitrate ~encoders ~editing ()
+           and+ bitrate and+ encoders and+ edits in
+        f ~root ~dry ~verbose ?directory ?medium ?discid ~device ~bitrate ~encoders ~edits ()
         |> exit_result
 
   end
