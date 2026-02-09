@@ -28,6 +28,14 @@ let perl_s =
   let pp ppf sub = Format.pp_print_string ppf (Edit.perl_s_to_string sub) in
   Cmdliner.Arg.Conv.make ~docv:"/regexp/substitution/flags" ~parser ~pp ()
 
+let edit_doc =
+  "Note that the '/' can be replaced by any other
+   character, but it can not be escaped by '\\\\'
+   in the expressions.
+   The only flags accepted are 'i' for case insensitive
+   and 'g' for repeated matching.
+   Repeated arguments are applied in sequence."
+
 let edit_prefix =
   let doc = Printf.sprintf "Edit the common prefix with a pair
                             of perl regular expression and substitution
@@ -36,13 +44,8 @@ let edit_prefix =
                             is helpful, if all track portions start with
                             the same letter, for example if the movements
                             of a classical piece are enumerated my roman
-                            numerals and there are fewer that five movements.
-                            Note that the '/' can be replaced by any other
-                            character, but it can not be escaped by '\\\\'
-                            in the expressions.  The only flags accepted
-                            are 'i' for case insensitive and 'g' for
-                            repeated matching." in
-  Arg.(value & opt (some perl_s) None & info ["edit_prefix"] ~doc)
+                            numerals and there are fewer that five movements. " ^ edit_doc in
+  Arg.(value & opt_all perl_s [] & info ["edit_prefix"] ~doc)
 
 let edit_title =
   let doc = Printf.sprintf "Edit the title after all other edits. This does
@@ -51,13 +54,8 @@ let edit_title =
                             E.g. if there are titles containing single and
                             double digit numbers,
                             $(b,--edit_title '/ (\\\\d\\) / 0\\$1 /') will add a
-                            leading zero to single digits for simpler sorting.
-                            Note that the '/' can be replaced by any other
-                            character, but it can not be escaped by '\\\\'
-                            in the expressions.  The only flags accepted
-                            are 'i' for case insensitive and 'g' for
-                            repeated matching." in
-  Arg.(value & opt (some perl_s) None & info ["edit_title"] ~doc)
+                            leading zero to single digits for simpler sorting. " ^ edit_doc in
+  Arg.(value & opt_all perl_s [] & info ["edit_title"] ~doc)
 
 let recording_titles =
   let doc = "Choose the recording titles as track titles." in

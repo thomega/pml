@@ -316,8 +316,8 @@ module Edits =
         release_title : bool;
         medium_title : bool;
         title : string option;
-        edit_prefix : Edit.perl_s option;
-        edit_title : Edit.perl_s option;
+        edit_prefix : Edit.perl_s list;
+        edit_title : Edit.perl_s list;
         composer_prefix : string option;
         performer_prefix : string option;
         composer : string option;
@@ -338,12 +338,10 @@ module Edits =
       else
         Ok tagged
 
-    let apply_pcre f pcre_opt tagged =
+    let apply_pcre f pcre_list tagged =
       let open Result.Syntax in
       let* tagged in
-      match pcre_opt with
-      | None -> Ok tagged
-      | Some sub -> f sub tagged
+      Result_list.fold_left (fun acc sub -> f sub acc) tagged pcre_list
 
     (** The order is very significant! *)
     let apply_all e tagged =
