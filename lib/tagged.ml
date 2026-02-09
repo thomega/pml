@@ -309,7 +309,8 @@ let performer_prefix pfx d =
 
 module Edits =
   struct
-    type t =
+
+    type all =
       { title : string option;
         edit_prefix : Edit.perl_s option;
         edit_title : Edit.perl_s option;
@@ -321,6 +322,44 @@ module Edits =
         performer : string option;
         performer_prefix : string option;
         trackset : trackset option }
+
+    let apply f string_opt tagged =
+      let open Result.Syntax in
+      let* tagged in
+      match string_opt with
+      | None -> Ok tagged
+      | Some s -> f s tagged
+
+    let apply_if flag f tagged =
+      let open Result.Syntax in
+      let* tagged in
+      if flag then
+        f tagged
+      else
+        Ok tagged
+
+    let apply_pcre f pcre_opt tagged =
+      let open Result.Syntax in
+      let* tagged in
+      match pcre_opt with
+      | None -> Ok tagged
+      | Some sub -> f sub tagged
+
+    (** The order is very significant! *)
+    let apply_all e tagged =
+      Ok tagged
+      |> apply select_tracks e.trackset
+      |> apply_if e.recording_titles recording_titles
+      |> apply_if e.release_title release_title
+      |> apply_if e.medium_title medium_title
+      |> apply user_title e.title
+      |> apply_pcre edit_prefix e.edit_prefix
+      |> apply_pcre edit_title e.edit_title
+      |> apply composer_prefix e.composer_prefix
+      |> apply performer_prefix e.performer_prefix
+      |> apply user_composer e.composer
+      |> apply user_performer e.performer
+
   end
 
 let list_artists lcw artists =

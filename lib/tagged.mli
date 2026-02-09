@@ -67,43 +67,9 @@ type t =
 
 val of_mb : Taggable.t -> t
 
-val select_tracks : trackset -> t -> (t, string) result
-(** (Interactively?) select tracks and apply offsets. *)
-
-val recording_titles : t -> (t, string) result
-(** (Interactively?) replace the track titles by the recording titles. *)
-
-val user_title : string -> t -> (t, string) result
-(** (Interactively?) set the title. *)
-
-val edit_prefix : Edit.perl_s -> t -> (t, string) result
-val edit_title : Edit.perl_s -> t -> (t, string) result
-
-val medium_title : t -> (t, string) result
-(** (Interactively?) select the medium title as the title. *)
-
-val release_title : t -> (t, string) result
-(** (Interactively?) select the release title as the title. *)
-
-val user_composer : string -> t -> (t, string) result
-(** (Interactively?) name composer. *)
-
-val user_performer : string -> t -> (t, string) result
-(** (Interactively?) name top billed performer. *)
-
-val composer_prefix : string -> t -> (t, string) result
-(** (Interactively?) select composer by matching prefix. *)
-
-val performer_prefix : string -> t -> (t, string) result
-(** (Interactively?) select top billed performer by matching prefix. *)
-
-val target_dir : t -> string * string
-(** Where to write the encoded tracks.
-    This belongs to [Rip], but that would introduce a cyclic dependence
-    in the modules. *)
-
 module Edits : sig
-  type t =
+
+  type all =
     { title : string option;
       edit_prefix : Edit.perl_s option;
       edit_title : Edit.perl_s option;
@@ -115,7 +81,15 @@ module Edits : sig
       performer : string option;
       performer_prefix : string option;
       trackset : trackset option }
+
+  val apply_all : all -> t -> (t, string) result
+
 end
+
+val target_dir : t -> string * string
+(** Where to write the encoded tracks.
+    This belongs to [Rip], but that would introduce a cyclic dependence
+    in the modules. *)
 
 val print : ?no_artists:bool -> ?factor_artists:bool ->
             ?no_originals:bool -> ?no_recordings:bool -> t -> unit

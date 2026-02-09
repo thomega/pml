@@ -436,44 +436,6 @@ let editing =
   Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
                  composer; composer_prefix; performer; performer_prefix; trackset }
 
-let apply_edit f string_opt tagged =
-  let open Result.Syntax in
-  let* tagged in
-  match string_opt with
-  | None -> Ok tagged
-  | Some s -> f s tagged
-
-let apply_edit_if flag f tagged =
-  let open Result.Syntax in
-  let* tagged in
-  if flag then
-    f tagged
-  else
-    Ok tagged
-
-let apply_pcre f pcre_opt tagged =
-  let open Result.Syntax in
-  let* tagged in
-  match pcre_opt with
-  | None -> Ok tagged
-  | Some sub -> f sub tagged
-
-(** The order is very significant! *)
-let apply_edits e tagged =
-  let open Tagged.Edits in
-  Ok tagged
-  |> apply_edit Tagged.select_tracks e.trackset
-  |> apply_edit_if e.recording_titles Tagged.recording_titles
-  |> apply_edit_if e.release_title Tagged.release_title
-  |> apply_edit_if e.medium_title Tagged.medium_title
-  |> apply_edit Tagged.user_title e.title
-  |> apply_pcre Tagged.edit_prefix e.edit_prefix
-  |> apply_pcre Tagged.edit_title e.edit_title
-  |> apply_edit Tagged.composer_prefix e.composer_prefix
-  |> apply_edit Tagged.performer_prefix e.performer_prefix
-  |> apply_edit Tagged.user_composer e.composer
-  |> apply_edit Tagged.user_performer e.performer
-
 let medium =
   let doc =
     Printf.sprintf "Select the medium with MBID matching this prefix,
@@ -549,7 +511,7 @@ module Editor : Exit_Cmd =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
-      let* tagged = apply_edits editing (Tagged.of_mb disc) in
+      let* tagged = Tagged.Edits.apply_all editing (Tagged.of_mb disc) in
       Ok (Tagged.print ?no_artists ?factor_artists ?no_originals ?no_recordings tagged)
 
     let cmd =
@@ -607,7 +569,7 @@ module Ripper : Exit_Cmd =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
-      let* tagged = apply_edits editing (Tagged.of_mb disc) in
+      let* tagged = Tagged.Edits.apply_all editing (Tagged.of_mb disc) in
       let encoders = ESet.of_list encoders |> ESet.elements in
       Rip.execute ~dry ~verbose ?directory ~bitrate encoders tagged
 
