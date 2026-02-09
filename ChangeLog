@@ -5,6 +5,7 @@
 	* lib/tagged.ml: select composer and performer from the artists
   	   common to all selected tracks.
 	* lib/edit.ml: don't compress white space in filenames anymore
+	* factorize CLI
 
 2026-02-08  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
