@@ -8,12 +8,12 @@ It supports recordings that are identified by composer, title and performer.
 1. Explore the choices for directories, files and tags with `pml edit`.
 In this example we extract Shostakovich's 12th symphony on tracks 4 to 7
 from a CD that contains the 2nd symphony on the first three tracks.
-Note that we have to help `pml` with the title of the work, because
+Note that we have to help `pml` a bit with the title of the work, because
 the common prefix of the track titles extends to the roman numeral
 'I' starting the movements.  We also have to specify the MBID of the
 medium, because there is more than one match in the MusicBrainz database.
 ```
-$ pml edit jBntohWmL3pfOjiSqgwfDWhbmDg- -M b103 -f 4 -t 'Symphony No. 12 in D minor, Op. 112 "1917"'
+$ pml edit jBntohWmL3pfOjiSqgwfDWhbmDg- -M b103 -f 4 --edit_prefix '/:.*$//'
 Discid:  jBntohWmL3pfOjiSqgwfDWhbmDg-
 Medium:  b1036a66-8bdb-3951-96c6-59a44f4515ee
 Release: 8db74987-390e-4a77-9ac6-e1cec3b961df
@@ -66,7 +66,7 @@ Track  04: 'IV. The Dawn of Humanity: L'istesso tempo - Allegretto'
 2. Call `cdparanoia` and `opusenc`, `flac`, `oggenc`, or `lame` with `pml rip`
 using the *same* editing options:
 ```
-$ pml rip jBntohWmL3pfOjiSqgwfDWhbmDg- -M b103 -f 4 -t 'Symphony No. 12 in D minor, Op. 112 "1917"' -r -D working
+$ pml rip jBntohWmL3pfOjiSqgwfDWhbmDg- -M b103 -f 4 --edit_prefix '/:.*$//' -r -D working
 executing: chdir working
 executing: cdparanoia -w 4 cd-jBntohWmL3pfOjiSqgwfDWhbmDg-04.wav
 executing: cdparanoia -w 5 cd-jBntohWmL3pfOjiSqgwfDWhbmDg-05.wav
