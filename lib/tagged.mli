@@ -83,7 +83,9 @@ module Edits : sig
       edit_title : Perl.S.t list (** Apply a [perl]-style [/regexp/substitution/flags]
                                      edit to the overall title. *);
       delete_artists : Perl.M.t list (** List of [perl]-style [/regexp/flags/] expressions
-                                         for deleting artists. *);
+                                         for deleting artists with matching name. *);
+      delete_artists_sort : Perl.M.t list (** List of [perl]-style [/regexp/flags/] expressions
+                                              for deleting artists with matching sort-name. *);
       composer_prefix : string option (** Select the composer among the artists by a prefix. *);
       performer_prefix : string option (** Select the top-billed performer among the artists
                                            by a prefix. *);

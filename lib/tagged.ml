@@ -287,7 +287,14 @@ let release_title d =
   user_title title d
 
 let delete_artists perl_m d =
-  Ok (filter_artists (fun a -> Perl.M.exec perl_m a.Artist.name |> not) d)
+  let d = filter_artists (fun a -> Perl.M.exec perl_m a.Artist.name |> not) d in
+  let composer, performer = make_artists d.artists in
+  Ok { d with composer; performer }
+
+let delete_artists_sort perl_m d =
+  let d = filter_artists (fun a -> Perl.M.exec perl_m a.Artist.sort_name |> not) d in
+  let composer, performer = make_artists d.artists in
+  Ok { d with composer; performer }
 
 let user_composer name d =
   Ok { d with composer = Some (Artist.of_sort_name name) }
@@ -328,15 +335,16 @@ module Edits =
         edit_prefix : Perl.S.t list;
         edit_title : Perl.S.t list;
         delete_artists : Perl.M.t list;
+        delete_artists_sort : Perl.M.t list;
         composer_prefix : string option;
         performer_prefix : string option;
         composer : string option;
         performer : string option }
 
-    let apply f string_opt tagged =
+    let apply f opt tagged =
       let open Result.Syntax in
       let* tagged in
-      match string_opt with
+      match opt with
       | None -> Ok tagged
       | Some s -> f s tagged
 
@@ -369,6 +377,7 @@ module Edits =
       |> apply_pcre_s edit_prefix e.edit_prefix
       |> apply_pcre_s edit_title e.edit_title
       |> apply_pcre_m delete_artists e.delete_artists
+      |> apply_pcre_m delete_artists_sort e.delete_artists_sort
       |> apply composer_prefix e.composer_prefix
       |> apply performer_prefix e.performer_prefix
       |> apply user_composer e.composer

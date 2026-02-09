@@ -75,8 +75,12 @@ let release_title =
   Arg.(value & flag & info ["r"; "release"] ~doc)
 
 let delete_artists =
-  let doc = Printf.sprintf "" ^ edit_doc in
+  let doc = Printf.sprintf "Remove artists with name matching a pattern." in
   Arg.(value & opt_all perl_m [] & info ["delete_artists"] ~doc)
+
+let delete_artists_sort =
+  let doc = Printf.sprintf "Remove artists with sort_name matching a pattern." ^ edit_doc in
+  Arg.(value & opt_all perl_m [] & info ["delete_artists_sort"] ~doc)
 
 let composer =
   let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
@@ -123,9 +127,11 @@ let trackset =
 
 let all =
   let+ title and+ edit_prefix and+ edit_title
-     and+ recording_titles and+ release_title and+ medium_title and+ delete_artists
+     and+ recording_titles and+ release_title and+ medium_title
+     and+ delete_artists and+ delete_artists_sort
      and+ composer and+ composer_prefix and+ performer and+ performer_prefix
      and+ trackset in
   Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
-                 delete_artists; composer; composer_prefix; performer; performer_prefix; trackset }
+                 delete_artists; delete_artists_sort;
+                 composer; composer_prefix; performer; performer_prefix; trackset }
 
