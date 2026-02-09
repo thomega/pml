@@ -32,11 +32,16 @@ val shell_double_quote : string -> string
 
 type perl_s
 val perl_s_of_string : string -> (perl_s, string) result
+(** Parse and compile a [perl] style [/regexp/substitution/flags/] substitution.
+    We separate parsing and compilation from the application to be able to
+    handle errors early.  The slight performance benefit for repeated applications
+    is not very important in our application. *)
 
 val perl_s_to_string : perl_s -> string
 (** For error messages. *)
 
 val perl_s : perl_s -> string -> (string, string) result
+(** Apply a [perl] style [/regexp/substitution/flags/] substitution. *)
 
 val perl_s' : string -> string -> (string, string) result
 (** Combining [perl_s_of_string] and [perl_s]. *)

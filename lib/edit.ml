@@ -125,14 +125,18 @@ let%test _ = shell_double_quote {|$abc|} = {|"\$abc"|}
 let%test _ = shell_double_quote {|$a"b`c|} = {|"\$a\"b\`c"|}
 let%test _ = shell_double_quote {|\$a""b`c|} = {|"\\\$a\"\"b\`c"|}
 
-type perl_s =
-  { rex : Pcre2.regexp;
-    sub : Pcre2.substitution;
-    global : bool;
-    text: string }
+module Perl_s =
+  struct
+    type t =
+      { rex : Pcre2.regexp;
+        sub : Pcre2.substitution;
+        global : bool;
+        text: string }
+  end
+type perl_s = Perl_s.t
 
 let perl_s_to_string p =
-  p.text
+  p.Perl_s.text
 
 let split_substitution s =
   let myname = "perl_s_of_string" in
@@ -142,11 +146,11 @@ let split_substitution s =
   else
     let delim = s.[0] in
     match String.split_on_char delim (String.sub s 1 (pred l)) with
-    | [] | [_] -> Error (Printf.sprintf "%s: missing second '%c'" myname delim)
-    | [_; _] -> Error (Printf.sprintf "%s: missing third '%c'" myname delim)
+    | [] | [_] -> Error (Printf.sprintf "%s: missing second '%c' in \"%s\"" myname delim s)
+    | [_; _] -> Error (Printf.sprintf "%s: missing third '%c' in \"%s\"" myname delim s)
     | [rex; sub; ""] -> Ok (rex, sub, "")
     | [rex; sub; flags] -> Ok (rex, sub, flags)
-    | _ -> Error (Printf.sprintf "%s: too many '%c's" myname delim)
+    | _ -> Error (Printf.sprintf "%s: too many '%c's in \"%s\"" myname delim s)
 
 let%test _ = split_substitution "/ab" = Error ("perl_s_of_string: missing second '/'")
 let%test _ = split_substitution "/a/b" = Error ("perl_s_of_string: missing third '/'")
@@ -160,7 +164,7 @@ let perl_s_of_string text =
   let open Result.Syntax in
   let* rex, sub, flags = split_substitution text in
   if not (List.mem flags [""; "g"; "i"; "ig"; "gi"]) then
-    Error (Printf.sprintf "%s: invalid flags \"%s\"" "perl_s_of_string" flags)
+    Error (Printf.sprintf "%s: invalid flags \"%s\" in \"%s\"" "perl_s_of_string" flags text)
   else
     let global = String.contains flags 'g'
     and caseless = String.contains flags 'i' in
@@ -173,15 +177,15 @@ let perl_s_of_string text =
             [`UTF] in
         Ok (Pcre2.regexp ~flags rex)
       with
-      | e -> Error (Printexc.to_string e)
+      | e -> Error (Printf.sprintf "\"%s\": %s" text (Printexc.to_string e))
     and* sub =
       try
         Ok (Pcre2.subst sub)
       with
-      | e -> Error (Printexc.to_string e) in
-    Ok { rex; sub; global; text }
+      | e -> Error (Printf.sprintf "\"%s\": %s" text (Printexc.to_string e)) in
+    Ok Perl_s.{ rex; sub; global; text }
 
-let perl_s { rex; sub; global; text } s =
+let perl_s Perl_s.{ rex; sub; global; text } s =
   ignore text;
   try
     if global then
