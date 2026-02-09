@@ -21,15 +21,6 @@ type title =
   | Medium of string
   | Release of string
 
-type trackset =
-  { offset : int;
-    first : int;
-    last : int option;
-    width : int }
-
-let default_trackset =
-  { offset = 0; first = 1; last = None; width = 2 }
-
 let title_kind_to_string = function
   | User _ -> "user choice"
   | Tracks _ -> "track prefix"
@@ -176,6 +167,15 @@ let%test_module _ =
 
    end)
 
+type trackset =
+  { offset : int;
+    first : int;
+    last : int option;
+    width : int }
+
+let default_trackset =
+  { offset = 0; first = 1; last = None; width = 2 }
+
 let select_tracklist subset tracks =
   sublist subset.first subset.last tracks
   |> List.map (fun t -> Track.{ t with number = t.number + subset.offset - subset.first + 1 })
@@ -311,17 +311,17 @@ module Edits =
   struct
 
     type all =
-      { title : string option;
+      { trackset : trackset option;
+        recording_titles : bool;
+        release_title : bool;
+        medium_title : bool;
+        title : string option;
         edit_prefix : Edit.perl_s option;
         edit_title : Edit.perl_s option;
-        recording_titles : bool;
-        medium_title : bool;
-        release_title : bool;
-        composer : string option;
         composer_prefix : string option;
-        performer : string option;
         performer_prefix : string option;
-        trackset : trackset option }
+        composer : string option;
+        performer : string option }
 
     let apply f string_opt tagged =
       let open Result.Syntax in
