@@ -86,9 +86,9 @@ module Edits : sig
                                          for deleting artists with matching name. *);
       delete_artists_sort : Perl.M.t list (** List of [perl]-style [/regexp/flags/] expressions
                                               for deleting artists with matching sort-name. *);
-      composer_prefix : string option (** Select the composer among the artists by a prefix. *);
-      performer_prefix : string option (** Select the top-billed performer among the artists
-                                           by a prefix. *);
+      composer_pattern : Perl.M.t option (** Select the composer among the artists by a regexp. *);
+      performer_pattern : Perl.M.t option (** Select the top-billed performer among the artists
+                                              by a regexp. *);
       composer : string option (** Set the name of the composer explicitely. *);
       performer : string option (** Set the name of the top-billed performer explicitely. *) }
 

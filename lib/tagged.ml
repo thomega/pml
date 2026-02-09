@@ -302,25 +302,20 @@ let user_composer name d =
 let user_performer name d =
   Ok { d with performer = Some (Artist.of_sort_name name) }
 
-let match_performer pfx d =
-  let prefix = String.lowercase_ascii (Ubase.from_utf8 pfx) in
-  let artist =
-    Artists.find_first_opt
-      (fun a ->
-        String.starts_with ~prefix (String.lowercase_ascii (Ubase.from_utf8 a.name)))
-      d.artists in
+let match_performer rex d =
+  let artist = Artists.find_first_opt (fun a -> prerr_endline a.Artist.name; Perl.M.exec rex a.Artist.name) d.artists in
   match artist with
-  | Some a -> Ok a.name
-  | None -> Error (Printf.sprintf "pattern '%s' matches no artist" pfx)
+  | Some a -> Ok a.Artist.sort_name
+  | None -> Error (Printf.sprintf "pattern '%s' matches no artist" (Perl.M.to_string rex))
 
-let composer_prefix pfx d =
+let composer_pattern rex d =
   let open Result.Syntax in
-  let* name = match_performer pfx d in
+  let* name = match_performer rex d in
   user_composer name d
 
-let performer_prefix pfx d =
+let performer_pattern rex d =
   let open Result.Syntax in
-  let* name = match_performer pfx d in
+  let* name = match_performer rex d in
   user_performer name d
 
 module Edits =
@@ -336,8 +331,8 @@ module Edits =
         edit_title : Perl.S.t list;
         delete_artists : Perl.M.t list;
         delete_artists_sort : Perl.M.t list;
-        composer_prefix : string option;
-        performer_prefix : string option;
+        composer_pattern : Perl.M.t option;
+        performer_pattern : Perl.M.t option;
         composer : string option;
         performer : string option }
 
@@ -378,8 +373,8 @@ module Edits =
       |> apply_pcre_s edit_title e.edit_title
       |> apply_pcre_m delete_artists e.delete_artists
       |> apply_pcre_m delete_artists_sort e.delete_artists_sort
-      |> apply composer_prefix e.composer_prefix
-      |> apply performer_prefix e.performer_prefix
+      |> apply composer_pattern e.composer_pattern
+      |> apply performer_pattern e.performer_pattern
       |> apply user_composer e.composer
       |> apply user_performer e.performer
 

@@ -90,13 +90,13 @@ let performer =
   let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
   Arg.(value & opt (some string) None & info ["p"; "performer"] ~docv:"name" ~doc)
 
-let composer_prefix =
-  let doc = Printf.sprintf "Overwrite derived composer (top billing) by matching prefix." in
-  Arg.(value & opt (some string) None & info ["C"; "Composer"] ~docv:"prefix" ~doc)
+let composer_pattern =
+  let doc = Printf.sprintf "Overwrite derived composer (top billing) by matching pattern." in
+  Arg.(value & opt (some perl_m) None & info ["C"; "Composer"] ~docv:"prefix" ~doc)
 
-let performer_prefix =
-  let doc = Printf.sprintf "Overwrite derived performer (top billing) by matching prefix." in
-  Arg.(value & opt (some string) None & info ["P"; "Performer"] ~docv:"prefix" ~doc)
+let performer_pattern =
+  let doc = Printf.sprintf "Overwrite derived performer (top billing) by matching pattern." in
+  Arg.(value & opt (some perl_m) None & info ["P"; "Performer"] ~docv:"prefix" ~doc)
 
 let offset =
   let doc = Printf.sprintf "Apply an offset to the track numbers." in
@@ -129,9 +129,9 @@ let all =
   let+ title and+ edit_prefix and+ edit_title
      and+ recording_titles and+ release_title and+ medium_title
      and+ delete_artists and+ delete_artists_sort
-     and+ composer and+ composer_prefix and+ performer and+ performer_prefix
+     and+ composer and+ composer_pattern and+ performer and+ performer_pattern
      and+ trackset in
   Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
                  delete_artists; delete_artists_sort;
-                 composer; composer_prefix; performer; performer_prefix; trackset }
+                 composer; composer_pattern; performer; performer_pattern; trackset }
 
