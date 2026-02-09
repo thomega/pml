@@ -232,7 +232,7 @@ let edit_prefix sub d =
      let open Result.Syntax in
      let* title =
        try
-         Edit.Perl_s.exec sub longest_prefix
+         Perl.S.exec sub longest_prefix
        with
        | e -> Error (Printexc.to_string e) in
      if String.starts_with ~prefix:title longest_prefix then
@@ -253,7 +253,7 @@ let edit_title sub d =
      let open Result.Syntax in
      let* title =
        try
-         Edit.Perl_s.exec sub title
+         Perl.S.exec sub title
        with
        | e -> Error (Printexc.to_string e) in
      let titles = User title :: d.titles in
@@ -316,8 +316,8 @@ module Edits =
         release_title : bool;
         medium_title : bool;
         title : string option;
-        edit_prefix : Edit.Perl_s.t list;
-        edit_title : Edit.Perl_s.t list;
+        edit_prefix : Perl.S.t list;
+        edit_title : Perl.S.t list;
         composer_prefix : string option;
         performer_prefix : string option;
         composer : string option;

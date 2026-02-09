@@ -8,7 +8,7 @@
     Mb_error Json Cached
     Artist_type Lifespan Date
     Libdiscid Query
-    Edit Sets Cache Result_list Option_syntax Version)
+    Edit Perl Sets Cache Result_list Option_syntax Version)
   (private_modules )
   ; (wrapped false)
   (inline_tests)

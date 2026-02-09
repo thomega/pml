@@ -31,5 +31,6 @@ You can also jump immediately to the wrapped API modules
 {!modules:Pml_lib.Sets Pml_lib.Version}
 
 {3 (More or Less) General Purpose Libraries}
-{!modules:Pml_lib.Json Pml_lib.Edit Pml_lib.Cache Pml_lib.Result_list Pml_lib.Option_syntax}
+{!modules:Pml_lib.Json Pml_lib.Edit Pml_lib.Perl
+          Pml_lib.Cache Pml_lib.Result_list Pml_lib.Option_syntax}
 

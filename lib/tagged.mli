@@ -77,11 +77,11 @@ module Edits : sig
       release_title : bool (** Pick the title of the whole release as the title of the selection. *);
       medium_title : bool (** Pick the title of the medium as the title of the selection. *);
       title : string option (** Set the title of the selection explicitely. *);
-      edit_prefix : Edit.Perl_s.t list (** Apply a [perl]-style [/regex/substitution/flags]
-                                           edit to the common prefix of the track titles,
-                                           that we use as a candidate for the overall title. *);
-      edit_title : Edit.Perl_s.t list (** Apply a [perl]-style [/regex/substitution/flags]
-                                          edit to the overall title. *);
+      edit_prefix : Perl.S.t list (** Apply a [perl]-style [/regex/substitution/flags]
+                                      edit to the common prefix of the track titles,
+                                      that we use as a candidate for the overall title. *);
+      edit_title : Perl.S.t list (** Apply a [perl]-style [/regex/substitution/flags]
+                                     edit to the overall title. *);
       composer_prefix : string option (** Select the composer among the artists by a prefix. *);
       performer_prefix : string option (** Select the top-billed performer among the artists
                                            by a prefix. *);
