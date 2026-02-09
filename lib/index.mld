@@ -1,35 +1,35 @@
-{0 Pml index}
+{0 Pml_lib index}
 
 {1 Library}
 This library provides the toplevel module
-{!modules:Pml}
+{!modules:Pml_lib}
 implementing access to Musicbrainz in order to organize a Physical Media Library.
 
 {2 API}
 You can also jump immediately to the wrapped API modules
 
 {3 Ripping}
-{!modules:Pml.Rip}
+{!modules:Pml_lib.Rip}
 
 {3 Tagging}
-{!modules:Pml.Tagged Pml.Release Pml.Medium Pml.Track Pml.Artist Pml.Taggable}
+{!modules:Pml_lib.Tagged Pml_lib.Release Pml_lib.Medium Pml_lib.Track Pml_lib.Artist Pml_lib.Taggable}
 
 {3 Artists Classification}
-{!modules:Pml.Artist_type Pml.Lifespan Pml.Date}
+{!modules:Pml_lib.Artist_type Pml_lib.Lifespan Pml_lib.Date}
 
 {3 Musicbrainz}
-{!modules: Pml.Mb_release Pml.Mb_medium Pml.Mb_disc
-	   Pml.Mb_track Pml.Mb_recording Pml.Mb_artist Pml.Mb_artist_credit}
+{!modules: Pml_lib.Mb_release Pml_lib.Mb_medium Pml_lib.Mb_disc
+	   Pml_lib.Mb_track Pml_lib.Mb_recording Pml_lib.Mb_artist Pml_lib.Mb_artist_credit}
 
 {3 Database Access}
-{!modules:Pml.Cached Pml.Query Pml.Mb_error}
+{!modules:Pml_lib.Cached Pml_lib.Query Pml_lib.Mb_error}
 
 {3 Disc Identification}
-{!modules:Pml.Libdiscid}
+{!modules:Pml_lib.Libdiscid}
 
 {3 Trivia}
-{!modules:Pml.Sets Pml.Version}
+{!modules:Pml_lib.Sets Pml_lib.Version}
 
 {3 (More or Less) General Purpose Libraries}
-{!modules:Pml.Json Pml.Edit Pml.Cache Pml.Result_list Pml.Option_syntax}
+{!modules:Pml_lib.Json Pml_lib.Edit Pml_lib.Cache Pml_lib.Result_list Pml_lib.Option_syntax}
 

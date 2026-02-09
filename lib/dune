@@ -1,6 +1,6 @@
 (library
-  (name pml)
-  (public_name pml)
+  (name pml_lib)
+  (public_name pml_lib)
   (modules
     Rip Tagged Release Medium Track Artist Taggable
     Mb_release Mb_medium Mb_disc Mb_track Mb_recording
@@ -21,5 +21,5 @@
     curl jsont jsont.bytesrw re pcre2 ubase unix))
 
 (documentation
-  (package pml)
+  (package pml_lib)
   (mld_files index))

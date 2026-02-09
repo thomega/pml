@@ -20,7 +20,7 @@ let default_cache =
   | Some home -> Filename.concat home ".local/share/pml/cache"
   | None -> "pml-cache"
 
-open Pml
+open Pml_lib
 open Cmdliner
 open Cmdliner.Term.Syntax
 
@@ -562,13 +562,13 @@ module Ripper : Exit_Cmd =
 
     let encoders =
       let doc = "$(docv) select encoders from the list [" ^
-                  String.concat ", " (List.map Pml.Rip.encoder_to_string Pml.Rip.encoders) ^
+                  String.concat ", " (List.map Rip.encoder_to_string Rip.encoders) ^
                     "]. The default is \"opus\"." in
       let enc_enum =
-        List.map (fun enc -> (Pml.Rip.encoder_to_string enc, enc)) Pml.Rip.encoders in
-      Arg.(value & opt_all (enum enc_enum) [Pml.Rip.Opus] & info ["e"; "encoder"] ~doc ~docv:"encoder")
+        List.map (fun enc -> (Rip.encoder_to_string enc, enc)) Rip.encoders in
+      Arg.(value & opt_all (enum enc_enum) [Rip.Opus] & info ["e"; "encoder"] ~doc ~docv:"encoder")
 
-    module ESet = Set.Make (struct type t = Pml.Rip.encoder let compare = Stdlib.compare end)
+    module ESet = Set.Make (struct type t = Rip.encoder let compare = Stdlib.compare end)
 
     let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ~edits
           ~bitrate ~encoders () =
