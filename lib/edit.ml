@@ -69,7 +69,7 @@ let _re_quotes =
   Re.(set {|"'|} |> compile)
 
 (** Compress all whitespace, including newlines, to a single blank. *)
-let re_rep_white =
+let _re_rep_white =
   Re.(rep1 set_white |> compile)
 
 (** Whitespace at the beginning or end is not illegal, but superfluous. *)
@@ -84,12 +84,13 @@ let re_colon =
   Re.(set {|:|} |> compile)
 
 (** Android appears wants us to kill double quotes. *)
+(** We have removed [|> Re.replace_string re_rep_white ~by:" "].  *)
+
 let filename_safe s =
   s
   |> Re.replace_string re_slash ~by:"-"
   |> Re.replace_string re_colon ~by:" -"
   |> Re.replace_string re_double_quote ~by:"'"
-  |> Re.replace_string re_rep_white ~by:" "
   |> Re.replace_string re_boundary_white ~by:""
 
 let%test _ = filename_safe {|a: b|} = {|a - b|}
