@@ -1,7 +1,1 @@
   * edit/rip: make flags -C and -P select sort_name
-
-  * Artist_type: a 'composer' is more likely to be the composer than a
-    'composer and conductor'
-
-  * choose composer and performer from the intersection of artists
-    from the selected tracks only.

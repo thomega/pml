@@ -1,6 +1,10 @@
 2026-02-09  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
+	* v0.1.4: handle multi-composer discs better:
 	* lib/artist_type.ml: rank of persons with more than one role
+	* lib/tagged.ml: select composer and performer from the artists
+  	   common to all selected tracks.
+	* lib/edit.ml: don't compress white space in filenames anymore
 
 2026-02-08  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 

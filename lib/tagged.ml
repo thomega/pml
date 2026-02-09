@@ -119,6 +119,13 @@ let add_tracks_artists artists tracks =
     (fun acc track -> Artists.union acc track.Track.artists)
     artists tracks
 
+let common_tracks_artists = function
+  | [] -> Artists.empty
+  | track :: tracks ->
+     List.fold_left
+       (fun acc track -> Artists.inter acc track.Track.artists)
+       track.Track.artists tracks
+
 let of_mb mb =
   let medium = Medium.of_mb mb.Taggable.medium
   and release = Release.of_mb mb.Taggable.release
@@ -184,7 +191,8 @@ let select_tracks subset d =
   and track_width = subset.width in
   let tracks = orig_tracks d |> select_tracklist subset in
   let titles, tracks, tracks_orig = make_titles ~release_title ~medium_title tracks in
-  Ok { d with titles; tracks; tracks_orig; track_width }
+  let composer, performer = common_tracks_artists tracks |> make_artists in
+  Ok { d with titles; composer; performer; tracks; tracks_orig; track_width }
 
 let recording_titles d =
   let release_title = d.release_title
