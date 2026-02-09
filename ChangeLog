@@ -1,5 +1,9 @@
 2026-02-09  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
+	* v0.1.4: new option --delete_artist, -C and -P accept regular expressions
+
+2026-02-09  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
+
 	* v0.1.4: handle multi-composer discs better:
 	* lib/artist_type.ml: rank of persons with more than one role
 	* lib/tagged.ml: select composer and performer from the artists

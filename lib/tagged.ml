@@ -46,12 +46,6 @@ type t =
     release_title : string option;
     release_id : string }
 
-let filter_artists predicate t =
-  let artists = Artist.Collection.filter predicate t.artists
-  and tracks = List.map (Track.filter_artists predicate) t.tracks
-  and tracks_orig = Option.map (List.map (Track.filter_artists predicate)) t.tracks_orig in
-  { t with artists; tracks; tracks_orig }
-
 (** TODO: sanitize titles for filenames, rotate articles, ... *)
 
 (** Heuristics for selecting composer and top billed performer.
@@ -200,6 +194,12 @@ let select_tracks subset d =
   let composer, performer = common_tracks_artists tracks |> make_artists in
   Ok { d with titles; composer; performer; tracks; tracks_orig; track_width }
 
+let filter_artists predicate t =
+  let artists = Artist.Collection.filter predicate t.artists
+  and tracks = List.map (Track.filter_artists predicate) t.tracks in
+  let artists = add_tracks_artists artists tracks in
+  { t with artists; tracks }
+
 let recording_titles d =
   let release_title = d.release_title
   and medium_title = d.medium_title in
@@ -302,20 +302,20 @@ let user_composer name d =
 let user_performer name d =
   Ok { d with performer = Some (Artist.of_sort_name name) }
 
-let match_performer rex d =
-  let artist = Artists.find_first_opt (fun a -> prerr_endline a.Artist.name; Perl.M.exec rex a.Artist.name) d.artists in
-  match artist with
+let match_artist rex d =
+  let matches = Artists.filter (fun a -> Perl.M.exec rex a.Artist.name) d.artists in
+  match Artists.min_elt_opt matches with
   | Some a -> Ok a.Artist.sort_name
   | None -> Error (Printf.sprintf "pattern '%s' matches no artist" (Perl.M.to_string rex))
 
 let composer_pattern rex d =
   let open Result.Syntax in
-  let* name = match_performer rex d in
+  let* name = match_artist rex d in
   user_composer name d
 
 let performer_pattern rex d =
   let open Result.Syntax in
-  let* name = match_performer rex d in
+  let* name = match_artist rex d in
   user_performer name d
 
 module Edits =

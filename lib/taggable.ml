@@ -108,7 +108,8 @@ let of_discid ?medium ~root discid =
       
 let print disc =
   let open Printf in
-  printf "Disc:    %s / %s\n" disc.medium.Mb_medium.id disc.discid;
+  printf "Disc:    %s\n" disc.discid;
+  printf "Medium:  %s\n" disc.medium.Mb_medium.id;
   printf "Release: %s\n" disc.release.Mb_release.id;
   printf "Title:   %s\n" (Option.value disc.release.Mb_release.title ~default:"(no title)");
   begin match disc.release.Mb_release.artist_credits with
