@@ -15,6 +15,76 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
+module M =
+  struct
+
+    type t =
+      { rex : Pcre2.regexp;
+        text: string }
+
+    let to_string p =
+      p.text
+
+    let myname = "Perl.M"
+
+    let split_substitution s =
+      let l = String.length s in
+      if l = 0 then
+        Error (myname ^ ": empty string")
+      else
+        let delim = s.[0] in
+        match String.split_on_char delim (String.sub s 1 (pred l)) with
+        | [] | [_] -> Error (Printf.sprintf "%s: missing second '%c' in \"%s\"" myname delim s)
+        | [rex; ""] -> Ok (rex, "")
+        | [rex; flags] -> Ok (rex, flags)
+        | _ -> Error (Printf.sprintf "%s: too many '%c's in \"%s\"" myname delim s)
+
+    let%test _ = split_substitution "/ab" = Error ("Perl.M: missing second '/' in \"/ab\"")
+    let%test _ = split_substitution "/ab/" = Ok ("ab", "")
+    let%test _ = split_substitution "/a/b" = Ok ("a", "b")
+    let%test _ = split_substitution "/a/b/" = Error ("Perl.M: too many '/'s in \"/a/b/\"")
+
+    let of_string text =
+      let open Result.Syntax in
+      let* rex, flags = split_substitution text in
+      if not (List.mem flags [""; "i"]) then
+        Error (Printf.sprintf "%s: invalid flags \"%s\" in \"%s\"" myname flags text)
+      else
+        let caseless = String.contains flags 'i' in
+        let* rex =
+          try
+            let flags =
+              if caseless then
+                [`CASELESS; `UTF]
+              else
+                [`UTF] in
+            Ok (Pcre2.regexp ~flags rex)
+          with
+          | e -> Error (Printf.sprintf "\"%s\": %s" text (Printexc.to_string e)) in
+        Ok { rex; text }
+
+    let exec { rex; text } s =
+      ignore text;
+      try
+        Pcre2.pmatch ~rex s
+      with
+      | _ -> false
+
+    let exec' text s =
+      let open Result.Syntax in
+      let* expr = of_string text in
+      Ok (exec expr s)
+
+    let%test _ = exec' "/a/" "aa" = Ok true
+    let%test _ = exec' "/a/" "AA" = Ok false
+    let%test _ = exec' "/a/" "Aa" = Ok true
+    let%test _ = exec' "/a/i" "AA" = Ok true
+    let%test _ = exec' "|ab|" "aa" = Ok false
+    let%test _ = exec' "|ab|" "aab" = Ok true
+    let%test _ = exec' "/a/x" "Aa" = Error "Perl.M: invalid flags \"x\" in \"/a/x\""
+
+  end
+
 module S =
   struct
 
@@ -54,7 +124,7 @@ module S =
       let open Result.Syntax in
       let* rex, sub, flags = split_substitution text in
       if not (List.mem flags [""; "g"; "i"; "ig"; "gi"]) then
-        Error (Printf.sprintf "%s: invalid flags \"%s\" in \"%s\"" "Perl.S" flags text)
+        Error (Printf.sprintf "%s: invalid flags \"%s\" in \"%s\"" myname flags text)
       else
         let global = String.contains flags 'g'
         and caseless = String.contains flags 'i' in

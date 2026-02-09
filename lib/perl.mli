@@ -17,6 +17,29 @@
 
 (** Use the PCRE library to implement [perl]-style string matching and substitutions.*)
 
+module M : sig
+
+  type t
+  (** Compiled regular expression. *)
+
+  val of_string : string -> (t, string) result
+  (** Parse and compile a [perl] style [/regexp/flags/] matching.
+      We separate parsing and compilation from the application to be able to
+      handle errors early.  The slight performance benefit for repeated applications
+      is not very important in our application. *)
+
+  val to_string : t -> string
+  (** For error messages. *)
+
+  val exec : t -> string -> bool
+  (** Attempt a [perl] style [/regexp/flags/] matching. *)
+
+  val exec' : string -> string -> (bool, string) result
+  (** Combining [of_string] and [exec] for convenience. *)
+
+end
+(** Matchings. *)
+
 module S : sig
 
   type t
