@@ -1,10 +1,11 @@
 2026-02-10  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
+	* v0.1.6: cleanups
 	* bin/pml.ml: split off bin/pml_admin.ml
 
 2026-02-09  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
-	* v0.1.4: new option --delete_artist, -C and -P accept regular expressions
+	* v0.1.5: new option --delete_artist, -C and -P accept regular expressions
 
 2026-02-09  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 

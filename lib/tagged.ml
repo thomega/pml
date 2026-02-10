@@ -198,7 +198,8 @@ let filter_artists predicate t =
   let artists = Artist.Collection.filter predicate t.artists
   and tracks = List.map (Track.filter_artists predicate) t.tracks in
   let artists = add_tracks_artists artists tracks in
-  { t with artists; tracks }
+  let composer, performer = make_artists artists in
+  { t with composer; performer; artists; tracks  }
 
 let recording_titles d =
   let release_title = d.release_title
@@ -287,14 +288,10 @@ let release_title d =
   user_title title d
 
 let delete_artists perl_m d =
-  let d = filter_artists (fun a -> Perl.M.exec perl_m a.Artist.name |> not) d in
-  let composer, performer = make_artists d.artists in
-  Ok { d with composer; performer }
+  Ok (filter_artists (fun a -> Perl.M.exec perl_m a.Artist.name |> not) d)
 
 let delete_artists_sort perl_m d =
-  let d = filter_artists (fun a -> Perl.M.exec perl_m a.Artist.sort_name |> not) d in
-  let composer, performer = make_artists d.artists in
-  Ok { d with composer; performer }
+  Ok (filter_artists (fun a -> Perl.M.exec perl_m a.Artist.sort_name |> not) d)
 
 let user_composer name d =
   Ok { d with composer = Some (Artist.of_sort_name name) }
@@ -302,6 +299,8 @@ let user_composer name d =
 let user_performer name d =
   Ok { d with performer = Some (Artist.of_sort_name name) }
 
+(** NB: we can't use [Set().find_first_opt] as a shortcut, because
+    it requires a monotonically increasing function as predicate. *)
 let match_artist rex d =
   let matches = Artists.filter (fun a -> Perl.M.exec rex a.Artist.name) d.artists in
   match Artists.min_elt_opt matches with
