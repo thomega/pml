@@ -21,7 +21,7 @@ open Cli_common
 open Cmdliner
 open Cmdliner.Term.Syntax
 
-module Init : Exit_Cmd =
+module Init : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -32,11 +32,11 @@ module Init : Exit_Cmd =
       let open Cmd in
       make (info "init" ~man) @@
         let+ root in
-        Cached.init ~root |> exit_result
+        Cached.init ~root
 
   end
 
-module Cachetest : Exit_Cmd =
+module Cachetest : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -143,11 +143,10 @@ module Cachetest : Exit_Cmd =
            and+ discid_list and+ release_list and+ artist_list in
         f ~root ~normalize ~remote ~print ?discid ?release ?artist
           ~discid_list ~release_list ~artist_list ()
-        |> exit_result
 
   end
 
-module Grep : Exit_Cmd =
+module Grep : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -242,11 +241,10 @@ module Grep : Exit_Cmd =
       make (info "grep" ~man) @@
         let+ root and+ caseless and+ regexp and+ short and+ long in
         f ~root ~caseless ~regexp ~short ~long ()
-        |> exit_result
 
   end
 
-module JSON : Exit_Cmd =
+module JSON : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -268,11 +266,11 @@ module JSON : Exit_Cmd =
     let parse_json ~root ~file ~schema ~pretty () =
       ignore root;
       if schema then
-        try Json.dump_schema_file file; 0 with _ -> 1
+        try Ok (Json.dump_schema_file file) with e -> Error (Printexc.to_string e)
       else if pretty then
-        try Json.print_file file; 0 with _ -> 1
+        try Ok (Json.print_file file) with e -> Error (Printexc.to_string e)
       else
-        0
+        Ok ()
 
     let cmd =
       let open Cmd in
@@ -282,7 +280,7 @@ module JSON : Exit_Cmd =
 
   end
 
-module Curl : Exit_Cmd =
+module Curl : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -305,9 +303,11 @@ module Curl : Exit_Cmd =
       Arg.(value & opt int 0 & info ["t"; "timeout"] ~doc)
 
     let curl ?timeout ~user_agent url =
-      match Query.curl ?timeout ~user_agent url with
-      | Ok s -> print_endline "Response:"; print_endline s; 0
-      | Error msg -> prerr_endline "Error:"; prerr_endline msg; 1
+      let open Result.Syntax in
+      let* text = Query.curl ?timeout ~user_agent url in
+      print_endline "Response:";
+      print_endline text;
+      Ok ()
 
     let cmd =
       let open Cmd in
@@ -317,7 +317,7 @@ module Curl : Exit_Cmd =
 
 end
 
-module Version : Exit_Cmd =
+module Version : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -347,7 +347,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>." in
         Printf.printf "%s (%s) is free software: %s\n" name long_name gpl
       else
         print_endline version;
-      0
+      Ok ()
     
     let cmd =
       let open Cmd in
@@ -357,16 +357,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>." in
 
 end
 
-module Main : Exit_Cmd =
+module Main : Unit_Result_Cmd =
   struct
 
     let _doc = "Physical Media Library"
     
     let man =
       [ `S Manpage.s_synopsis;
-        `P "$(b,pml) [$(i,OPTIONS)]";
+        `P "$(cmd) [$(i,OPTIONS)]";
         `S Manpage.s_description;
-        `P "Query the CD-ROM and the MusicBrainz database.";
+        `P "Manage the local cache for MusicBrainz database and debug
+            the library used by the $(b,pml) command.";
         `S Manpage.s_authors;
         `P "Thorsten Ohl <ohl@physik.uni-wuerzburg.de>" ] @ Common.man_footer
 
@@ -383,7 +384,7 @@ module Main : Exit_Cmd =
   end
 
 let main () =
-  Cmd.eval' Main.cmd
+  Cmd.eval_result Main.cmd
 
 let () =
   if !Sys.interactive then

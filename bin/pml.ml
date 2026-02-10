@@ -49,7 +49,7 @@ let get_discid ?device ?discid () =
      let* ids = Libdiscid.get ?device () in
      Ok (ids.Libdiscid.id)
 
-module Medium : Exit_Cmd =
+module Medium : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -69,11 +69,10 @@ module Medium : Exit_Cmd =
       make (info "medium" ~man) @@
         let+ root and+ medium and+ discid and+ device in
         f ~root ?medium ?discid ~device ()
-        |> exit_result
 
   end
 
-module Editor : Exit_Cmd =
+module Editor : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -121,11 +120,10 @@ module Editor : Exit_Cmd =
            and+ no_originals and+ no_recordings and+ edits in
         f ~root ?medium ?discid ~device ~no_artists ~factor_artists
           ~no_originals ~no_recordings ~edits ()
-        |> exit_result
 
   end
 
-module Ripper : Exit_Cmd =
+module Ripper : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -180,11 +178,10 @@ module Ripper : Exit_Cmd =
            and+ root and+ medium and+ discid and+ device
            and+ bitrate and+ encoders and+ edits in
         f ~root ~dry ~verbose ?directory ?medium ?discid ~device ~bitrate ~encoders ~edits ()
-        |> exit_result
 
   end
 
-module Disc : Exit_Cmd =
+module Disc : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -238,11 +235,10 @@ module Disc : Exit_Cmd =
         let+ device and+ verbose and+ root and+ lookup
            and+ print_id and+ print_toc and+ print_submission_url in
         f ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url
-        |> exit_result
 
 end
 
-module Version : Exit_Cmd =
+module Version : Unit_Result_Cmd =
   struct
 
     let man = [
@@ -272,7 +268,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>." in
         Printf.printf "%s (%s) is free software: %s\n" name long_name gpl
       else
         print_endline version;
-      0
+      Ok ()
     
     let cmd =
       let open Cmd in
@@ -282,14 +278,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>." in
 
 end
 
-module Main : Exit_Cmd =
+module Main : Unit_Result_Cmd =
   struct
 
     let _doc = "Physical Media Library"
     
     let man =
       [ `S Manpage.s_synopsis;
-        `P "$(b,pml) [$(i,OPTIONS)]";
+        `P "$(cmd) [$(i,OPTIONS)]";
         `S Manpage.s_description;
         `P "Query the CD-ROM and the MusicBrainz database.";
         `S Manpage.s_authors;
@@ -307,7 +303,7 @@ module Main : Exit_Cmd =
   end
 
 let main () =
-  Cmd.eval' Main.cmd
+  Cmd.eval_result Main.cmd
 
 let () =
   if !Sys.interactive then

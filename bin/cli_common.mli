@@ -17,6 +17,8 @@
 
 val default_cache : string
 
+val root : string Cmdliner.Term.t
+
 module type Common =
   sig
     val man_footer : Cmdliner.Manpage.block list
@@ -24,13 +26,10 @@ module type Common =
 
 module Common : Common
 
-val exit_result : (unit, string) result -> int
-
-module type Exit_Cmd =
+module type Unit_Result_Cmd =
   sig
-    val cmd : int Cmdliner.Cmd.t
+    val cmd : (unit, string) result Cmdliner.Cmd.t
   end
 
-val root : string Cmdliner.Term.t
 
 

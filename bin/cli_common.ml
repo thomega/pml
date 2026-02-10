@@ -22,6 +22,11 @@ let default_cache =
 
 open Cmdliner
 
+let root =
+  let doc = Printf.sprintf "Path to the root directory of the local cache."
+  and env = Cmd.Env.info "MUSICBRAINZ_CACHE" in
+  Arg.(value & opt dirpath default_cache & info ["cache"] ~docv:"path" ~doc ~env)
+
 module type Common =
   sig
     val man_footer : Manpage.block list
@@ -43,16 +48,7 @@ module Common : Common =
 
   end
 
-let exit_result = function
-  | Error msg -> prerr_endline msg; 1
-  | Ok () -> 0
-
-module type Exit_Cmd =
+module type Unit_Result_Cmd =
   sig
-    val cmd : int Cmd.t
+    val cmd : (unit, string) result Cmd.t
   end
-
-let root =
-  let doc = Printf.sprintf "Path to the root directory of the local cache."
-  and env = Cmd.Env.info "MUSICBRAINZ_CACHE" in
-  Arg.(value & opt dirpath default_cache & info ["cache"] ~docv:"path" ~doc ~env)
