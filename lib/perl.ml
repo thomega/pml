@@ -98,6 +98,61 @@ module M =
     let%test _ = exec' "| a b|xix" "aab" = Ok true
     let%test _ = exec' "/a/Ix" "Aa" = Error (err_prefix ^ {|invalid flag 'I' in "/a/Ix"|})
 
+    type partial = Sets.Integers.S.t option * t
+
+    let set_integers =
+      Re.(alt [rg '0' '9'; set ",-"])
+
+    let re_partial =
+      Re.(seq [start;
+               group (rep set_integers);
+               group (seq [compl [set_integers]; rep any]);
+               stop] |> compile)
+
+    (** Not yet correct: we must distinguish the empty set from no condition! *)
+    let partial_of_string text =
+      let open Result.Syntax in
+      match Re.exec_opt re_partial text with
+      | None -> Error (Printf.sprintf {|partial_of_string failed: "%s"|} text)
+      | Some groups ->
+         let* iset =
+           match Re.Group.get_opt groups 1 with
+           | Some "" -> Ok None
+           | Some iset ->
+              let* iset = Sets.Integers.of_string iset in
+              Ok (Some iset)
+           | None -> Error ("")
+          and* regexp =
+            match Re.Group.get_opt groups 2 with
+            | Some regexp ->
+               let* regexp = of_string regexp in
+               Ok { regexp with text }
+            | None -> Error ("") in
+         Ok (iset, regexp)
+
+    let%test_module _ =
+      (module struct
+
+         let expect s ilist =
+           let open Result.Syntax in
+           match
+             let* iset, _regexp = partial_of_string s in
+             match iset with
+             | None -> Ok ([] = ilist)
+             | Some iset ->
+                Ok (Sets.Integers.S.elements iset = List.sort Int.compare ilist)
+           with
+           | Error msg -> prerr_endline msg; false
+           | Ok tof -> tof
+
+         let%test _ = expect "/a2/" []
+         let%test _ = expect "2-1/a1/" []
+         let%test _ = expect "1/a/i" [1]
+         let%test _ = expect "1,3/a/x" [1;3]
+         let%test _ = expect "1-2/a/" [1;2]
+
+       end)
+
   end
 
 module S =

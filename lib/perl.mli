@@ -37,6 +37,9 @@ module M : sig
   val exec' : string -> string -> (bool, string) result
   (** Combining [of_string] and [exec] for convenience. *)
 
+  type partial = Sets.Integers.S.t option * t
+  val partial_of_string : string -> (partial, string) result
+
 end
 (** Matchings. *)
 
