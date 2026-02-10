@@ -15,8 +15,18 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
+module CSet = Set.Make (Char)
+
+let cset_of_string s =
+  String.fold_right CSet.add s CSet.empty
+
+let all_chars_in cset s =
+  String.to_seq s |> Seq.exists (fun c -> not (CSet.mem c cset))
+
 module M =
   struct
+
+    let allowed_flags = cset_of_string "i"
 
     type t =
       { rex : Pcre2.regexp;
@@ -47,7 +57,7 @@ module M =
     let of_string text =
       let open Result.Syntax in
       let* rex, flags = split_substitution text in
-      if not (List.mem flags [""; "i"]) then
+      if all_chars_in allowed_flags flags then
         Error (Printf.sprintf "%s: invalid flags \"%s\" in \"%s\"" myname flags text)
       else
         let caseless = String.contains flags 'i' in
@@ -88,6 +98,8 @@ module M =
 module S =
   struct
 
+    let allowed_flags = cset_of_string "ig"
+
     type t =
       { rex : Pcre2.regexp;
         sub : Pcre2.substitution;
@@ -123,7 +135,7 @@ module S =
     let of_string text =
       let open Result.Syntax in
       let* rex, sub, flags = split_substitution text in
-      if not (List.mem flags [""; "g"; "i"; "ig"; "gi"]) then
+      if all_chars_in allowed_flags flags then
         Error (Printf.sprintf "%s: invalid flags \"%s\" in \"%s\"" myname flags text)
       else
         let global = String.contains flags 'g'
