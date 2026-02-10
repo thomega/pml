@@ -15,49 +15,11 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
-let default_cache =
-  match Sys.getenv_opt "HOME" with
-  | Some home -> Filename.concat home ".local/share/pml/cache"
-  | None -> "pml-cache"
-
 open Pml_lib
+open Cli_common
+
 open Cmdliner
 open Cmdliner.Term.Syntax
-
-module type Common =
-  sig
-    val man_footer : Manpage.block list
-  end
-
-module Common : Common =
-  struct 
-
-    let man_footer =
-      [ `S Manpage.s_files;
-        `I ("$(b," ^ default_cache ^ ")",
-            "Directory containg cached JSON responses from MusicBrainz.");
-        `S Manpage.s_authors;
-        `P "Thorsten Ohl <ohl@physik.uni-wuerzburg.de>.";
-        `S Manpage.s_bugs;
-        `P "Report bugs to <ohl@physik.uni-wuerzburg.de>.";
-        `P "Needs more testing on different discs.
-            The command line interface is still messy." ]
-
-  end
-
-let exit_result = function
-  | Error msg -> prerr_endline msg; 1
-  | Ok () -> 0
-
-module type Exit_Cmd =
-  sig
-    val cmd : int Cmd.t
-  end
-
-let root =
-  let doc = Printf.sprintf "Path to the root directory of the local cache."
-  and env = Cmd.Env.info "MUSICBRAINZ_CACHE" in
-  Arg.(value & opt dirpath default_cache & info ["cache"] ~docv:"path" ~doc ~env)
 
 module Init : Exit_Cmd =
   struct
