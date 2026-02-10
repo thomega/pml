@@ -4,3 +4,10 @@
  (name pml)
  (libraries
    pml_lib cmdliner))
+
+(executable
+ (package pml)
+ (public_name pml_admin)
+ (name pml_admin)
+ (libraries
+   pml_lib cmdliner))
