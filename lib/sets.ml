@@ -97,4 +97,7 @@ module Integers =
 
        end)
 
+    let to_string s =
+      S.elements s |> List.map string_of_int |> String.concat ","
+
   end

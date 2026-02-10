@@ -30,5 +30,8 @@ module Integers : sig
   val of_string : string -> (S.t, string) result
   (** Parse expressions like [1,3-5,7]. *)
 
+  val to_string : S.t -> string
+  (** For error messages. *)
+
 end
 (** Integers. *)

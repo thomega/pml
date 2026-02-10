@@ -157,6 +157,11 @@ module M =
 
        end)
 
+    let ranged_to_string (ranges, perl_m) =
+      match ranges with
+      | Some ranges -> Sets.Integers.to_string ranges ^ to_string perl_m
+      | None -> to_string perl_m
+
   end
 
 module S =
@@ -271,6 +276,11 @@ module S =
          let%test _ = expect "1-2/a/b/" (Some [1;2], "/a/b/")
 
        end)
+
+    let ranged_to_string (ranges, perl_s) =
+      match ranges with
+      | Some ranges -> Sets.Integers.to_string ranges ^ to_string perl_s
+      | None -> to_string perl_s
 
   end
 
