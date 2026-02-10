@@ -16,20 +16,24 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
 module CMap = Map.Make (Char)
+module CSet = Set.Make (Char)
+
+let flag_map =
+  CMap.of_list [('i', `CASELESS);
+                ('x', `EXTENDED)]
+
+let cset_of_string s =
+  String.fold_right CSet.add s CSet.empty
 
 let lookup_flag ?(err_prefix="") ?(err_postfix="") map c =
   CMap.find_opt c map
   |> Option.to_result ~none:(err_prefix ^ Printf.sprintf "invalid flag '%c'" c ^ err_postfix)
 
-let flags_of_string ?err_prefix ?err_postfix map s =
-  String.fold_right List.cons s []
-  |> Result_list.map (lookup_flag ?err_prefix ?err_postfix map)
+let flags_of_cset ?err_prefix ?err_postfix map s =
+  CSet.elements s |> Result_list.map (lookup_flag ?err_prefix ?err_postfix map)
 
 module M =
   struct
-
-    let flag_map =
-      CMap.of_list [('i', `CASELESS); ('x', `EXTENDED)]
 
     type t =
       { rex : Pcre2.regexp;
@@ -48,10 +52,10 @@ module M =
       else
         let delim = s.[0] in
         match String.split_on_char delim (String.sub s 1 (pred l)) with
-        | [] | [_] -> Error (Printf.sprintf "%s: missing second '%c' in \"%s\"" myname delim s)
+        | [] | [_] -> Error (Printf.sprintf {|%s: missing second '%c' in "%s"|} myname delim s)
         | [rex; ""] -> Ok (rex, "")
         | [rex; flags] -> Ok (rex, flags)
-        | _ -> Error (Printf.sprintf "%s: too many '%c's in \"%s\"" myname delim s)
+        | _ -> Error (Printf.sprintf {|%s: too many '%c's in "%s"|} myname delim s)
 
     let%test _ = split_substitution "/ab" = Error (err_prefix ^ {|missing second '/' in "/ab"|})
     let%test _ = split_substitution "/ab/" = Ok ("ab", "")
@@ -60,18 +64,18 @@ module M =
 
     let of_string text =
       let open Result.Syntax in
+      let err_postfix = {| in "|} ^ text ^ {|"|} in
       let* rex, flags = split_substitution text in
+      let flags = cset_of_string flags in
+      let* flags = flags_of_cset ~err_prefix ~err_postfix flag_map flags in
       let* rex =
         try
-          let err_postfix = {| in "|} ^ text ^ {|"|} in
-          let* flags = flags_of_string ~err_prefix ~err_postfix flag_map flags in
           Ok (Pcre2.regexp ~flags:(`UTF :: flags) rex)
         with
-        | e -> Error (Printf.sprintf "\"%s\": %s" text (Printexc.to_string e)) in
+        | e -> Error (Printf.sprintf {|"%s": %s|} text (Printexc.to_string e)) in
       Ok { rex; text }
 
-    let exec { rex; text } s =
-      ignore text;
+    let exec { rex; _ } s =
       try
         Pcre2.pmatch ~rex s
       with
@@ -90,15 +94,14 @@ module M =
     let%test _ = exec' "|ab|" "aab" = Ok true
     let%test _ = exec' "| a b|" "aab" = Ok false
     let%test _ = exec' "| a b|x" "aab" = Ok true
-    let%test _ = exec' "/a/I" "Aa" = Error (err_prefix ^ {|invalid flag 'I' in "/a/I"|})
+    let%test _ = exec' "| a b|xx" "aab" = Ok true
+    let%test _ = exec' "| a b|xix" "aab" = Ok true
+    let%test _ = exec' "/a/Ix" "Aa" = Error (err_prefix ^ {|invalid flag 'I' in "/a/Ix"|})
 
   end
 
 module S =
   struct
-
-    let flag_map =
-      CMap.of_list [('i', `CASELESS); ('x', `EXTENDED); ('g', `UTF)] (* That's a HACK! *)
 
     type t =
       { rex : Pcre2.regexp;
@@ -119,11 +122,11 @@ module S =
       else
         let delim = s.[0] in
         match String.split_on_char delim (String.sub s 1 (pred l)) with
-        | [] | [_] -> Error (Printf.sprintf "%s: missing second '%c' in \"%s\"" myname delim s)
-        | [_; _] -> Error (Printf.sprintf "%s: missing third '%c' in \"%s\"" myname delim s)
+        | [] | [_] -> Error (Printf.sprintf {|%s: missing second '%c' in "%s"|} myname delim s)
+        | [_; _] -> Error (Printf.sprintf {|%s: missing third '%c' in "%s"|} myname delim s)
         | [rex; sub; ""] -> Ok (rex, sub, "")
         | [rex; sub; flags] -> Ok (rex, sub, flags)
-        | _ -> Error (Printf.sprintf "%s: too many '%c's in \"%s\"" myname delim s)
+        | _ -> Error (Printf.sprintf {|%s: too many '%c's in "%s"|} myname delim s)
 
     let%test _ = split_substitution "/ab" = Error (err_prefix ^ {|missing second '/' in "/ab"|})
     let%test _ = split_substitution "/a/b" = Error (err_prefix ^ {|missing third '/' in "/a/b"|})
@@ -135,24 +138,25 @@ module S =
 
     let of_string text =
       let open Result.Syntax in
+          let err_postfix = {| in "|} ^ text ^ {|"|} in
       let* rex, sub, flags = split_substitution text in
-      let global = String.contains flags 'g' in
+      let flags = cset_of_string flags in
+      let global = CSet.mem 'g' flags
+      and flags = CSet.remove 'g' flags in
+      let* flags = flags_of_cset ~err_prefix ~err_postfix flag_map flags in
       let* rex =
         try
-          let err_postfix = {| in "|} ^ text ^ {|"|} in
-          let* flags = flags_of_string ~err_prefix ~err_postfix flag_map flags in
-            Ok (Pcre2.regexp ~flags:(`UTF :: flags) rex)
-          with
-          | e -> Error (Printf.sprintf "\"%s\": %s" text (Printexc.to_string e))
-        and* sub =
-          try
-            Ok (Pcre2.subst sub)
-          with
-          | e -> Error (Printf.sprintf "\"%s\": %s" text (Printexc.to_string e)) in
-        Ok { rex; sub; global; text }
+          Ok (Pcre2.regexp ~flags:(`UTF :: flags) rex)
+        with
+        | e -> Error (Printf.sprintf {|"%s": %s|} text (Printexc.to_string e))
+      and* sub =
+        try
+          Ok (Pcre2.subst sub)
+        with
+        | e -> Error (Printf.sprintf {|"%s": %s|} text (Printexc.to_string e)) in
+      Ok { rex; sub; global; text }
 
-    let exec { rex; sub; global; text } s =
-      ignore text;
+    let exec { rex; sub; global; _ } s =
       try
         if global then
           Ok (Pcre2.replace ~rex ~itempl:sub s)
