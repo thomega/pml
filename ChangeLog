@@ -1,6 +1,7 @@
 2026-02-10  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
-	* Sets/Integer: new
+	* Sets.Integer: new
+	* Perl.S/M.ranged: new
 
 2026-02-10  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 

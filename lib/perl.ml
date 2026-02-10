@@ -32,6 +32,35 @@ let lookup_flag ?(err_prefix="") ?(err_postfix="") map c =
 let flags_of_cset ?err_prefix ?err_postfix map s =
   CSet.elements s |> Result_list.map (lookup_flag ?err_prefix ?err_postfix map)
 
+type 'a ranged' = Sets.Integers.S.t option * 'a
+
+let set_integers =
+  Re.(alt [rg '0' '9'; set ",-"])
+
+let re_ranged =
+  Re.(seq [start;
+           group (rep set_integers);
+           group (seq [compl [set_integers]; rep any]);
+           stop] |> compile)
+
+let ranged_of_string' of_string text =
+  let open Result.Syntax in
+  match Re.exec_opt re_ranged text with
+  | None -> Error (Printf.sprintf {|ranged_of_string failed: "%s"|} text)
+  | Some groups ->
+     let* iset =
+       match Re.Group.get_opt groups 1 with
+       | Some "" -> Ok None
+       | Some iset ->
+          let* iset = Sets.Integers.of_string iset in
+          Ok (Some iset)
+       | None -> Error ("")
+     and* regexp =
+       match Re.Group.get_opt groups 2 with
+       | Some regexp -> of_string regexp
+       | None -> Error ("") in
+     Ok (iset, regexp)
+
 module M =
   struct
 
@@ -98,58 +127,33 @@ module M =
     let%test _ = exec' "| a b|xix" "aab" = Ok true
     let%test _ = exec' "/a/Ix" "Aa" = Error (err_prefix ^ {|invalid flag 'I' in "/a/Ix"|})
 
-    type partial = Sets.Integers.S.t option * t
+    type ranged = t ranged'
 
-    let set_integers =
-      Re.(alt [rg '0' '9'; set ",-"])
-
-    let re_partial =
-      Re.(seq [start;
-               group (rep set_integers);
-               group (seq [compl [set_integers]; rep any]);
-               stop] |> compile)
-
-    (** Not yet correct: we must distinguish the empty set from no condition! *)
-    let partial_of_string text =
-      let open Result.Syntax in
-      match Re.exec_opt re_partial text with
-      | None -> Error (Printf.sprintf {|partial_of_string failed: "%s"|} text)
-      | Some groups ->
-         let* iset =
-           match Re.Group.get_opt groups 1 with
-           | Some "" -> Ok None
-           | Some iset ->
-              let* iset = Sets.Integers.of_string iset in
-              Ok (Some iset)
-           | None -> Error ("")
-          and* regexp =
-            match Re.Group.get_opt groups 2 with
-            | Some regexp ->
-               let* regexp = of_string regexp in
-               Ok { regexp with text }
-            | None -> Error ("") in
-         Ok (iset, regexp)
+    let ranged_of_string text =
+      ranged_of_string' of_string text
 
     let%test_module _ =
       (module struct
 
-         let expect s ilist =
+         let expect s (ilist_opt, regexp) =
            let open Result.Syntax in
            match
-             let* iset, _regexp = partial_of_string s in
-             match iset with
-             | None -> Ok ([] = ilist)
-             | Some iset ->
-                Ok (Sets.Integers.S.elements iset = List.sort Int.compare ilist)
+             let* iset, re = ranged_of_string s in
+             match iset, ilist_opt with
+             | None, None -> Ok (to_string re = regexp)
+             | None, Some _ | Some _, None -> Ok false
+             | Some iset, Some ilist ->
+                Ok (Sets.Integers.S.elements iset = List.sort Int.compare ilist &&
+                  to_string re = regexp)
            with
            | Error msg -> prerr_endline msg; false
            | Ok tof -> tof
 
-         let%test _ = expect "/a2/" []
-         let%test _ = expect "2-1/a1/" []
-         let%test _ = expect "1/a/i" [1]
-         let%test _ = expect "1,3/a/x" [1;3]
-         let%test _ = expect "1-2/a/" [1;2]
+         let%test _ = expect "/a2/" (None, "/a2/")
+         let%test _ = expect "2-1/a1/" (Some [], "/a1/")
+         let%test _ = expect "1/a/i" (Some [1], "/a/i")
+         let%test _ = expect "1,3/a/x" (Some [1;3], "/a/x")
+         let%test _ = expect "1-2/a/" (Some [1;2], "/a/")
 
        end)
 
@@ -237,6 +241,36 @@ module S =
     let%test _ = exec' "/a/b/ig" "Aa" = Ok "bb"
     let%test _ = exec' "/a/b/I" "Aa" = Error (err_prefix ^ {|invalid flag 'I' in "/a/b/I"|})
     let%test _ = exec' "/[Дт]/X/g" "Дмитрий" = Ok "XмиXрий"
+
+    type ranged = t ranged'
+
+    let ranged_of_string text =
+      ranged_of_string' of_string text
+
+    let%test_module _ =
+      (module struct
+
+         let expect s (ilist_opt, regexp) =
+           let open Result.Syntax in
+           match
+             let* iset, re = ranged_of_string s in
+             match iset, ilist_opt with
+             | None, None -> Ok (to_string re = regexp)
+             | None, Some _ | Some _, None -> Ok false
+             | Some iset, Some ilist ->
+                Ok (Sets.Integers.S.elements iset = List.sort Int.compare ilist &&
+                  to_string re = regexp)
+           with
+           | Error msg -> prerr_endline msg; false
+           | Ok tof -> tof
+
+         let%test _ = expect "/a2/b/" (None, "/a2/b/")
+         let%test _ = expect "2-1/a1/b/" (Some [], "/a1/b/")
+         let%test _ = expect "1/a/b/i" (Some [1], "/a/b/i")
+         let%test _ = expect "1,3/a/b/x" (Some [1;3], "/a/b/x")
+         let%test _ = expect "1-2/a/b/" (Some [1;2], "/a/b/")
+
+       end)
 
   end
 
