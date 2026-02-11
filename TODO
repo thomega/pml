@@ -1,3 +1,5 @@
+ * change artists roles: select from disambiguation or add new ones
+
  * access artists' aliases
 
  * clean up the CLI
