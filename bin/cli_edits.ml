@@ -33,6 +33,11 @@ let perl_m =
   let pp ppf sub = Format.pp_print_string ppf (Perl.M.to_string sub) in
   Cmdliner.Arg.Conv.make ~docv:"/regexp/flags" ~parser ~pp ()
 
+let perl_m_ranged =
+  let parser = Perl.M.ranged_of_string in
+  let pp ppf sub = Format.pp_print_string ppf (Perl.M.ranged_to_string sub) in
+  Cmdliner.Arg.Conv.make ~docv:"range/regexp/flags" ~parser ~pp ()
+
 let edit_doc =
   "Note that the '/' can be replaced by any other
    character, but it can not be escaped by '\\\\'
@@ -74,13 +79,21 @@ let release_title =
   let doc = "Choose the release title." in
   Arg.(value & flag & info ["r"; "release"] ~doc)
 
+let ranged_regexp_doc =
+  "The optional ranges are specified as a comma separated list of integers
+   and intervals, e.g. $(b,1-3,5).  Absent ranges denote all tracks, of course.
+   The '/' can be replaced by any character, except digits,
+   but it can not be escaped by a '\\\\'."
+
 let delete_artists =
-  let doc = Printf.sprintf "Remove artists with name matching a pattern." in
-  Arg.(value & opt_all perl_m [] & info ["delete_artists"] ~doc)
+  let doc = "Remove artists with name matching a $(b,perl)-style regular expression
+             from the tracks specified. " ^ ranged_regexp_doc in
+  Arg.(value & opt_all perl_m_ranged [] & info ["delete_artists"] ~docv:"ranges/regexp/flags" ~doc)
 
 let delete_artists_sort =
-  let doc = Printf.sprintf "Remove artists with sort_name matching a pattern." ^ edit_doc in
-  Arg.(value & opt_all perl_m [] & info ["delete_artists_sort"] ~doc)
+  let doc = "Remove artists with sort_name matching a $(b,perl)-style regular expression
+             from the tracks specified. " ^ ranged_regexp_doc in
+  Arg.(value & opt_all perl_m_ranged [] & info ["delete_artists_sort"] ~docv:"ranges/regexp/flags" ~doc)
 
 let composer =
   let doc = Printf.sprintf "Overwrite derived composer (top billing)." in

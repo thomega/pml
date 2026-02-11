@@ -194,9 +194,20 @@ let select_tracks subset d =
   let composer, performer = common_tracks_artists tracks |> make_artists in
   Ok { d with titles; composer; performer; tracks; tracks_orig; track_width }
 
-let filter_artists predicate t =
+let filter_artists range predicate t =
   let artists = Artist.Collection.filter predicate t.artists
-  and tracks = List.map (Track.filter_artists predicate) t.tracks in
+  and tracks =
+    match range with
+    | None ->
+       List.map (Track.filter_artists predicate) t.tracks
+    | Some range ->
+       List.map
+         (fun track ->
+           if Sets.Integers.S.mem track.Track.number range then
+             Track.filter_artists predicate track
+           else
+             track)
+         t.tracks in
   let artists = add_tracks_artists artists tracks in
   let composer, performer = make_artists artists in
   { t with composer; performer; artists; tracks  }
@@ -287,11 +298,11 @@ let release_title d =
   let* title = get_release_title d in
   user_title title d
 
-let delete_artists perl_m d =
-  Ok (filter_artists (fun a -> Perl.M.exec perl_m a.Artist.name |> not) d)
+let delete_artists (range, perl_m) d =
+  Ok (filter_artists range (fun a -> Perl.M.exec perl_m a.Artist.name |> not) d)
 
-let delete_artists_sort perl_m d =
-  Ok (filter_artists (fun a -> Perl.M.exec perl_m a.Artist.sort_name |> not) d)
+let delete_artists_sort (range, perl_m) d =
+  Ok (filter_artists range (fun a -> Perl.M.exec perl_m a.Artist.sort_name |> not) d)
 
 let user_composer name d =
   Ok { d with composer = Some (Artist.of_sort_name name) }
@@ -328,8 +339,8 @@ module Edits =
         title : string option;
         edit_prefix : Perl.S.t list;
         edit_title : Perl.S.t list;
-        delete_artists : Perl.M.t list;
-        delete_artists_sort : Perl.M.t list;
+        delete_artists : Perl.M.ranged list;
+        delete_artists_sort : Perl.M.ranged list;
         composer_pattern : Perl.M.t option;
         performer_pattern : Perl.M.t option;
         composer : string option;

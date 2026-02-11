@@ -1,3 +1,7 @@
+2026-02-11  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
+
+	* --delete_artists accepts track ranges
+
 2026-02-10  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
 	* Sets.Integer: new
