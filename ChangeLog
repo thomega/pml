@@ -1,6 +1,7 @@
 2026-02-11  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
 	* --delete_artists accepts track ranges
+	* --edit_track_title new
 
 2026-02-10  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 

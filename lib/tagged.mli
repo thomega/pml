@@ -74,6 +74,7 @@ module Edits : sig
       recording_titles : bool (** Use the title the recording instead of the title of the track.
                                   There are MBID entries where the two differ slightly or
                                   are given in different languages. *);
+      edit_track_title : Perl.S.ranged list;
       release_title : bool (** Pick the title of the whole release as the title of the selection. *);
       medium_title : bool (** Pick the title of the medium as the title of the selection. *);
       title : string option (** Set the title of the selection explicitely. *);

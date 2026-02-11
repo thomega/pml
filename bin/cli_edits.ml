@@ -30,12 +30,17 @@ let perl_s =
 
 let perl_m =
   let parser = Perl.M.of_string in
-  let pp ppf sub = Format.pp_print_string ppf (Perl.M.to_string sub) in
+  let pp ppf pat = Format.pp_print_string ppf (Perl.M.to_string pat) in
   Cmdliner.Arg.Conv.make ~docv:"/regexp/flags" ~parser ~pp ()
+
+let perl_s_ranged =
+  let parser = Perl.S.ranged_of_string in
+  let pp ppf sub = Perl.S.ranged_to_string sub |> Format.pp_print_string ppf in
+  Cmdliner.Arg.Conv.make ~docv:"range/regexp/substitution/flags" ~parser ~pp ()
 
 let perl_m_ranged =
   let parser = Perl.M.ranged_of_string in
-  let pp ppf sub = Format.pp_print_string ppf (Perl.M.ranged_to_string sub) in
+  let pp ppf pat = Perl.M.ranged_to_string pat |> Format.pp_print_string ppf in
   Cmdliner.Arg.Conv.make ~docv:"range/regexp/flags" ~parser ~pp ()
 
 let edit_doc =
@@ -45,6 +50,10 @@ let edit_doc =
    The only flags accepted are 'i' for case insensitive
    and 'g' for repeated matching.
    Repeated arguments are applied in sequence."
+
+let edit_track_title =
+  let doc = Printf.sprintf "" in
+  Arg.(value & opt_all perl_s_ranged [] & info ["edit_track_title"] ~doc)
 
 let edit_prefix =
   let doc = Printf.sprintf "Edit the common prefix with a pair
@@ -143,8 +152,8 @@ let all =
      and+ recording_titles and+ release_title and+ medium_title
      and+ delete_artists and+ delete_artists_sort
      and+ composer and+ composer_pattern and+ performer and+ performer_pattern
-     and+ trackset in
+     and+ trackset and+ edit_track_title in
   Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
-                 delete_artists; delete_artists_sort;
+                 delete_artists; delete_artists_sort; edit_track_title;
                  composer; composer_pattern; performer; performer_pattern; trackset }
 

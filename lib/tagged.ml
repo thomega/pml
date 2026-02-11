@@ -105,6 +105,11 @@ let make_titles ~release_title ~medium_title tracks =
         Option.map (fun t -> Release t) release_title ] in
   (titles, tracks, tracks_orig)
 
+let refresh_titles tracks d =
+  let release_title = d.release_title
+  and medium_title = d.medium_title in
+  make_titles ~release_title ~medium_title tracks
+
 let add_tracks_artists artists tracks =
   List.fold_left
     (fun acc track -> Artists.union acc track.Track.artists)
@@ -186,11 +191,9 @@ let orig_tracks d =
   | None -> d.tracks
 
 let select_tracks subset d =
-  let release_title = d.release_title
-  and medium_title = d.medium_title
-  and track_width = subset.width in
+  let track_width = subset.width in
   let tracks = orig_tracks d |> select_tracklist subset in
-  let titles, tracks, tracks_orig = make_titles ~release_title ~medium_title tracks in
+  let titles, tracks, tracks_orig = refresh_titles tracks d in
   let composer, performer = common_tracks_artists tracks |> make_artists in
   Ok { d with titles; composer; performer; tracks; tracks_orig; track_width }
 
@@ -208,11 +211,23 @@ let filter_artists range predicate t =
   let composer, performer = make_artists artists in
   { t with composer; performer; artists; tracks  }
 
+let edit_track_title (range, perl_s) d =
+  let open Result.Syntax in
+  let* tracks =
+    Result_list.map
+      (fun track ->
+        if Edit.in_range track.Track.number range then
+          let* title = Perl.S.exec perl_s track.Track.title in
+          Ok { track with title }
+        else
+          Ok track)
+      (Option.value ~default:d.tracks d.tracks_orig) in
+  let titles, tracks, tracks_orig = refresh_titles tracks d in
+  Ok { d with titles; tracks; tracks_orig }
+
 let recording_titles d =
-  let release_title = d.release_title
-  and medium_title = d.medium_title in
   let tracks = orig_tracks d |> List.map Track.recording_title in
-  let titles, tracks, tracks_orig = make_titles ~release_title ~medium_title tracks in
+  let titles, tracks, tracks_orig = refresh_titles tracks d in
   Ok { d with titles; tracks; tracks_orig }
 
 let force_user_title title d =
@@ -330,6 +345,7 @@ module Edits =
     type all =
       { trackset : trackset option;
         recording_titles : bool;
+        edit_track_title : Perl.S.ranged list;
         release_title : bool;
         medium_title : bool;
         title : string option;
@@ -372,6 +388,7 @@ module Edits =
       Ok tagged
       |> apply select_tracks e.trackset
       |> apply_if e.recording_titles recording_titles
+      |> apply_pcre_s edit_track_title e.edit_track_title
       |> apply_if e.release_title release_title
       |> apply_if e.medium_title medium_title
       |> apply user_title e.title
