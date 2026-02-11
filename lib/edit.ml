@@ -125,14 +125,22 @@ let%test _ = shell_double_quote {|$abc|} = {|"\$abc"|}
 let%test _ = shell_double_quote {|$a"b`c|} = {|"\$a\"b\`c"|}
 let%test _ = shell_double_quote {|\$a""b`c|} = {|"\\\$a\"\"b\`c"|}
 
-type ranges = Sets.Integers.S.t
-type 'a ranged = ranges option * 'a
+type ranges = Sets.Integers.S.t option
+type 'a ranged = ranges * 'a
 
-let in_range = Sets.Integers.S.mem
-let ranges_to_list = Sets.Integers.S.elements
+let in_range i = function
+  | None -> true
+  | Some ranges -> Sets.Integers.S.mem i ranges
 
-let ranges_to_string ranges =
-  ranges_to_list ranges |> List.map string_of_int |> String.concat ","
+let ranges_to_list_opt = Option.map Sets.Integers.S.elements
+
+let ranges_to_string = function
+  | None -> ""
+  | Some ranges ->
+     if Sets.Integers.S.is_empty ranges then
+       "1-0"
+     else
+       Sets.Integers.S.elements ranges |> List.map string_of_int |> String.concat ","
 
 let range =
   Re.(seq [rep1 digit; opt (seq [char '-'; rep1 digit])])

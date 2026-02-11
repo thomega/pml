@@ -103,42 +103,35 @@ module M =
     let ranged_of_string text =
       Edit.ranged_of_string of_string text
 
+    let ranged_to_string (ranges, perl_m) =
+      Edit.ranges_to_string ranges ^ to_string perl_m
+
     let%test_module _ =
       (module struct
 
-         let expect s (ilist_opt, regexp) =
-           let open Result.Syntax in
+         let expect s expected =
            match
-             let* iset, re = ranged_of_string s in
-             match iset, ilist_opt with
-             | None, None -> Ok (to_string re = regexp)
-             | None, Some _ | Some _, None -> Ok false
-             | Some iset, Some ilist ->
-                Ok (Edit.ranges_to_list iset = List.sort Int.compare ilist &&
-                  to_string re = regexp)
+             let open Result.Syntax in
+             let* ranged = ranged_of_string s in
+             Ok (ranged_to_string ranged = expected)
            with
            | Error msg -> prerr_endline msg; false
            | Ok tof -> tof
 
-         let%test _ = expect "/a2/" (None, "/a2/")
-         let%test _ = expect "2-1/a1/" (Some [], "/a1/")
-         let%test _ = expect "1/a/i" (Some [1], "/a/i")
-         let%test _ = expect "1,3/a/x" (Some [1;3], "/a/x")
-         let%test _ = expect "1-2/a/" (Some [1;2], "/a/")
-         let%test _ = expect "1-3,2-4/a/x" (Some [1;2;3;4], "/a/x")
-         let%test _ = expect "1-3,2-4-a-x" (Some [1;2;3;4], "-a-x")
-         let%test _ = expect "1-a-" (Some [1], "-a-")
+         let%test _ = expect "/a2/" "/a2/"
+         let%test _ = expect "2-1/a1/" "1-0/a1/"
+         let%test _ = expect "1/a/i" "1/a/i"
+         let%test _ = expect "1,3/a/x" "1,3/a/x"
+         let%test _ = expect "1-2/a/" "1,2/a/"
+         let%test _ = expect "1-3,2-4/a/x" "1,2,3,4/a/x"
+         let%test _ = expect "1-3,2-4-a-x" "1,2,3,4-a-x"
+         let%test _ = expect "1-a-" "1-a-"
          let%test _ = ranged_of_string "1-/a1/" = Error {|Perl.M: missing second '-' in "-/a1/"|}
          let%test _ = ranged_of_string "-/a1/" = Error {|Perl.M: missing second '-' in "-/a1/"|}
          let%test _ = ranged_of_string "-1/a1/" = Error {|Perl.M: missing second '-' in "-1/a1/"|}
          let%test _ = ranged_of_string "1--2/a1/" = Error {|Perl.M: invalid flag '/' in "--2/a1/"|}
 
        end)
-
-    let ranged_to_string (ranges, perl_m) =
-      match ranges with
-      | Some ranges -> Edit.ranges_to_string ranges ^ to_string perl_m
-      | None -> to_string perl_m
 
   end
 
@@ -230,35 +223,28 @@ module S =
     let ranged_of_string text =
       Edit.ranged_of_string of_string text
 
+    let ranged_to_string (ranges, perl_s) =
+      Edit.ranges_to_string ranges ^ to_string perl_s
+
     let%test_module _ =
       (module struct
 
-         let expect s (ilist_opt, regexp) =
-           let open Result.Syntax in
+         let expect s expected  =
            match
-             let* iset, re = ranged_of_string s in
-             match iset, ilist_opt with
-             | None, None -> Ok (to_string re = regexp)
-             | None, Some _ | Some _, None -> Ok false
-             | Some iset, Some ilist ->
-                Ok (Edit.ranges_to_list iset = List.sort Int.compare ilist &&
-                  to_string re = regexp)
+             let open Result.Syntax in
+             let* ranged = ranged_of_string s in
+             Ok (ranged_to_string ranged = expected)
            with
            | Error msg -> prerr_endline msg; false
            | Ok tof -> tof
 
-         let%test _ = expect "/a2/b/" (None, "/a2/b/")
-         let%test _ = expect "2-1/a1/b/" (Some [], "/a1/b/")
-         let%test _ = expect "1/a/b/i" (Some [1], "/a/b/i")
-         let%test _ = expect "1,3/a/b/x" (Some [1;3], "/a/b/x")
-         let%test _ = expect "1-2/a/b/" (Some [1;2], "/a/b/")
+         let%test _ = expect "/a2/b/" "/a2/b/"
+         let%test _ = expect "2-1/a1/b/" "1-0/a1/b/"
+         let%test _ = expect "1/a/b/i" "1/a/b/i"
+         let%test _ = expect "1,3/a/b/x" "1,3/a/b/x"
+         let%test _ = expect "1-2/a/b/" "1,2/a/b/"
 
        end)
-
-    let ranged_to_string (ranges, perl_s) =
-      match ranges with
-      | Some ranges -> Edit.ranges_to_string ranges ^ to_string perl_s
-      | None -> to_string perl_s
 
   end
 

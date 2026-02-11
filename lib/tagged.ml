@@ -197,17 +197,13 @@ let select_tracks subset d =
 let filter_artists range predicate t =
   let artists = Artist.Collection.filter predicate t.artists
   and tracks =
-    match range with
-    | None ->
-       List.map (Track.filter_artists predicate) t.tracks
-    | Some range ->
-       List.map
-         (fun track ->
-           if Edit.in_range track.Track.number range then
-             Track.filter_artists predicate track
-           else
-             track)
-         t.tracks in
+    List.map
+      (fun track ->
+        if Edit.in_range track.Track.number range then
+          Track.filter_artists predicate track
+        else
+          track)
+      t.tracks in
   let artists = add_tracks_artists artists tracks in
   let composer, performer = make_artists artists in
   { t with composer; performer; artists; tracks  }

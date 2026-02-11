@@ -40,7 +40,7 @@ module M : sig
   type ranged = t Edit.ranged
   val ranged_of_string : string -> (ranged, string) result
   (** [ranges/regexp/flags], where [ranges] has, e.g. the form [1,3-5]
-      and will apply items 1, 3, 4, and 5 only. *)
+      and will apply to items 1, 3, 4, and 5 only. *)
 
   val ranged_to_string : ranged -> string
 
@@ -70,7 +70,7 @@ module S : sig
   type ranged = t Edit.ranged
   val ranged_of_string : string -> (ranged, string) result
   (** [ranges/regexp/substitution/flags], where [ranges] has, e.g. the form [1,3-5]
-      and will apply items 1, 3, 4, and 5 only. *)
+      and will apply to items 1, 3, 4, and 5 only. *)
 
   val ranged_to_string : ranged -> string
 
