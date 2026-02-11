@@ -156,6 +156,8 @@ module M =
          let%test _ = expect "1/a/i" (Some [1], "/a/i")
          let%test _ = expect "1,3/a/x" (Some [1;3], "/a/x")
          let%test _ = expect "1-2/a/" (Some [1;2], "/a/")
+         let%test _ = expect "1-3,2-4/a/x" (Some [1;2;3;4], "/a/x")
+         let%test _ = expect "1-3,2-4-a-x" (Some [1;2;3;4], "-a-x")
          let%test _ = expect "1-a-" (Some [1], "-a-")
          let%test _ = ranged_of_string "1-/a1/" = Error {|Perl.M: missing second '-' in "-/a1/"|}
          let%test _ = ranged_of_string "-/a1/" = Error {|Perl.M: missing second '-' in "-/a1/"|}
