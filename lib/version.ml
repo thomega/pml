@@ -15,7 +15,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
-let version = "0.1.6"
+let version = "0.1.7"
 let copyright = "2026"
 let name = "PML"
 let long_name = "Physical Media Library"

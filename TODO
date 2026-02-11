@@ -1,3 +1,2 @@
   * edit/rip: --add_artist range/name/sort_name/disambiguation/lifespan
                    or just range:name
-  * edit/rip: --edit_artist /regexp/substitution/flags
