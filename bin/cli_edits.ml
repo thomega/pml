@@ -43,37 +43,57 @@ let perl_m_ranged =
   let pp ppf pat = Perl.M.ranged_to_string pat |> Format.pp_print_string ppf in
   Cmdliner.Arg.Conv.make ~docv:"range/regexp/flags" ~parser ~pp ()
 
+let regexp_flags_doc =
+  "The flags accepted are 'i' for case insensitive,
+   'g' for repeated matching, and 'x' for extended syntax."
+
+let ranged_doc =
+  "The optional ranges are specified as a comma separated list of integers
+   and intervals, e.g. $(b,1-3,5).  Absent ranges denote all tracks, of course.
+   The tracks are numbeed from 1, $(b,after) track selection."
+
 let edit_doc =
-  "Note that the '/' can be replaced by any other
-   character, but it can not be escaped by '\\\\'
-   in the expressions.
-   The only flags accepted are 'i' for case insensitive
-   and 'g' for repeated matching.
-   Repeated arguments are applied in sequence."
+  String.concat " "
+    ["Note that the matching delimiters '/' can be replaced by any other character,
+      but they can not be escaped by '\\\\' in the expressions.";
+     regexp_flags_doc]
+
+let ranged_edit_doc =
+  String.concat " "
+    ["Note that the matching delimiters '/' can be replaced by any other character,
+      except digits, but they can not be escaped by '\\\\' in the expressions.";
+     regexp_flags_doc;
+     ranged_doc]
 
 let edit_track_title =
-  let doc = Printf.sprintf "" in
+  let doc =
+    String.concat " "
+      ["Edit the original track titles with a pair of perl regular expression
+        and substitution strings $(b,before) the extraction of a common prefix.";
+       ranged_edit_doc;
+       "Repeated arguments are applied in sequence."] in
   Arg.(value & opt_all perl_s_ranged [] & info ["edit_track_title"] ~doc)
 
 let edit_prefix =
-  let doc = Printf.sprintf "Edit the common prefix with a pair
-                            of perl regular expression and substitution
-                            string.  E.g. $(b,--edit_prefix '/:.*$//') will
-                            chop off everything after a colon.  This
-                            is helpful, if all track portions start with
-                            the same letter, for example if the movements
-                            of a classical piece are enumerated my roman
-                            numerals and there are fewer that five movements. " ^ edit_doc in
+  let doc =
+    String.concat " "
+      ["Edit the common prefix with a pair of perl regular expression and substitution
+        string.  E.g. $(b,--edit_prefix '/:.*$//') will chop off everything after a colon.
+        This is helpful, if all track portions start with the same letter, for example
+        if the movements of a classical piece are enumerated my roman numerals
+        and there are fewer that five movements.";
+       edit_doc] in
   Arg.(value & opt_all perl_s [] & info ["edit_prefix"] ~doc)
 
 let edit_title =
-  let doc = Printf.sprintf "Edit the title after all other edits. This does
-                            $(b,not) affect the extraction of the common
-                            prefix, but allows to normalize directory names.
-                            E.g. if there are titles containing single and
-                            double digit numbers,
-                            $(b,--edit_title '/ (\\\\d\\) / 0\\$1 /') will add a
-                            leading zero to single digits for simpler sorting. " ^ edit_doc in
+  let doc =
+    String.concat " "
+      ["Edit the title after all other edits. This does $(b,not) affect the extraction
+        of the common prefix, but allows to normalize directory names.
+        E.g. if there are titles containing single and double digit numbers,
+        $(b,--edit_title '/ (\\\\d\\) / 0\\$1 /') will add a
+        leading zero to single digits for simpler sorting. ";
+       edit_doc] in
   Arg.(value & opt_all perl_s [] & info ["edit_title"] ~doc)
 
 let recording_titles =
@@ -88,55 +108,58 @@ let release_title =
   let doc = "Choose the release title." in
   Arg.(value & flag & info ["r"; "release"] ~doc)
 
-let ranged_regexp_doc =
-  "The optional ranges are specified as a comma separated list of integers
-   and intervals, e.g. $(b,1-3,5).  Absent ranges denote all tracks, of course.
-   The '/' can be replaced by any character, except digits,
-   but it can not be escaped by a '\\\\'."
-
 let delete_artists =
-  let doc = "Remove artists with name matching a $(b,perl)-style regular expression
-             from the tracks specified. " ^ ranged_regexp_doc in
+  let doc =
+    String.concat " "
+      ["Remove artists with name matching a $(b,perl)-style regular expression
+        from the tracks specified.";
+       ranged_doc] in
   Arg.(value & opt_all perl_m_ranged [] & info ["delete_artists"] ~docv:"ranges/regexp/flags" ~doc)
 
 let delete_artists_sort =
-  let doc = "Remove artists with sort_name matching a $(b,perl)-style regular expression
-             from the tracks specified. " ^ ranged_regexp_doc in
+  let doc =
+    String.concat " "
+      ["Remove artists with sort_name matching a $(b,perl)-style regular expression
+        from the tracks specified.";
+       ranged_doc] in
   Arg.(value & opt_all perl_m_ranged [] & info ["delete_artists_sort"] ~docv:"ranges/regexp/flags" ~doc)
 
 let composer =
-  let doc = Printf.sprintf "Overwrite derived composer (top billing)." in
+  let doc = "Overwrite derived composer (top billing)." in
   Arg.(value & opt (some string) None & info ["c"; "composer"] ~docv:"name" ~doc)
 
 let performer =
-  let doc = Printf.sprintf "Overwrite derived performer (top billing)." in
+  let doc = "Overwrite derived performer (top billing)." in
   Arg.(value & opt (some string) None & info ["p"; "performer"] ~docv:"name" ~doc)
 
 let composer_pattern =
-  let doc = Printf.sprintf "Overwrite derived composer (top billing) by matching pattern." in
-  Arg.(value & opt (some perl_m) None & info ["C"; "Composer"] ~docv:"prefix" ~doc)
+  let doc =
+    String.concat " "
+      ["Overwrite derived composer (top billing) by the one matching the regular expression.";
+       edit_doc] in
+  Arg.(value & opt (some perl_m) None & info ["C"; "Composer"] ~docv:"/regexp/flags" ~doc)
 
 let performer_pattern =
-  let doc = Printf.sprintf "Overwrite derived performer (top billing) by matching pattern." in
-  Arg.(value & opt (some perl_m) None & info ["P"; "Performer"] ~docv:"prefix" ~doc)
+  let doc =
+    String.concat " "
+      ["Overwrite derived performer (top billing) by the one matching the regular expression.";
+       edit_doc] in
+  Arg.(value & opt (some perl_m) None & info ["P"; "Performer"] ~docv:"/regexp/flags" ~doc)
 
 let offset =
-  let doc = Printf.sprintf "Apply an offset to the track numbers." in
+  let doc = "Apply an offset to the track numbers." in
   Arg.(value & opt int Tagged.(default_trackset.offset) & info ["o"; "offset"] ~docv:"n" ~doc)
 
 let first =
-  let doc = Printf.sprintf "First track to select (counting from 1,
-                            $(b,before) applying offset)." in
+  let doc = "First track to select (counting from 1, $(b,before) applying offset)." in
   Arg.(value & opt int Tagged.(default_trackset.first) & info ["f"; "first"] ~docv:"n" ~doc)
 
 let last =
-  let doc = Printf.sprintf "Last track to select (counting from 1,
-                            $(b,before) applying offset)." in
+  let doc = "Last track to select (counting from 1, $(b,before) applying offset)." in
   Arg.(value & opt (some int) Tagged.(default_trackset.last) & info ["l"; "last"] ~docv:"n" ~doc)
 
 let width =
-  let doc = Printf.sprintf "The width of the printed track number,
-                            including leading zeros." in
+  let doc = "The width of the printed track number, including leading zeros." in
   Arg.(value & opt int Tagged.(default_trackset.width) & info ["w"; "width"] ~docv:"n" ~doc)
 
 let trackset =
