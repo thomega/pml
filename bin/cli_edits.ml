@@ -65,14 +65,14 @@ let ranged_edit_doc =
      regexp_flags_doc;
      ranged_doc]
 
-let edit_track_title =
+let edit_track_titles =
   let doc =
     String.concat " "
       ["Edit the original track titles with a pair of perl regular expression
         and substitution strings $(b,before) the extraction of a common prefix.";
        ranged_edit_doc;
        "Repeated arguments are applied in sequence."] in
-  Arg.(value & opt_all perl_s_ranged [] & info ["edit_track_title"] ~doc)
+  Arg.(value & opt_all perl_s_ranged [] & info ["edit_track_titles"] ~doc)
 
 let edit_prefix =
   let doc =
@@ -124,13 +124,13 @@ let delete_artists_sort =
        ranged_doc] in
   Arg.(value & opt_all perl_m_ranged [] & info ["delete_artists_sort"] ~docv:"ranges/regexp/flags" ~doc)
 
-let edit_artist =
+let edit_artists =
   let doc =
     String.concat " "
       ["Edit the names of artists with a pair of perl regular expression and substitution strings.";
        ranged_edit_doc;
        "Repeated arguments are applied in sequence."] in
-  Arg.(value & opt_all perl_s_ranged [] & info ["edit_artist"] ~doc)
+  Arg.(value & opt_all perl_s_ranged [] & info ["edit_artists"] ~doc)
 
 let composer =
   let doc = "Overwrite derived composer (top billing)." in
@@ -181,10 +181,10 @@ let trackset =
 let all =
   let+ title and+ edit_prefix and+ edit_title
      and+ recording_titles and+ release_title and+ medium_title
-     and+ delete_artists and+ delete_artists_sort and+ edit_artist
+     and+ delete_artists and+ delete_artists_sort and+ edit_artists
      and+ composer and+ composer_pattern and+ performer and+ performer_pattern
-     and+ trackset and+ edit_track_title in
+     and+ trackset and+ edit_track_titles in
   Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
-                 delete_artists; delete_artists_sort; edit_artist; edit_track_title;
+                 delete_artists; delete_artists_sort; edit_artists; edit_track_titles;
                  composer; composer_pattern; performer; performer_pattern; trackset }
 

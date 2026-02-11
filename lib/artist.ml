@@ -139,6 +139,11 @@ type artist_t = t
 
 module Collection = Set.Make (struct type t = artist_t let compare = compare end)
 
+let map_result f artists =
+  let open Result.Syntax in
+  let* artists = Collection.elements artists |> Result_list.map f in
+  Ok (Collection.of_list artists)
+
 let find_gaps is_gap sorted_list =
   let open List in
   let rec find_gaps' groups_rev group_rev = function

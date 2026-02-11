@@ -66,13 +66,7 @@ let recording_title t =
 let filter_artists predicate t =
   { t with artists = Artist.Collection.filter predicate t.artists }
 
-let edit_artists perl_s t =
+let map_artists f t =
   let open Result.Syntax in
-  let* artists =
-    Artist.Collection.elements t.artists
-    |> Result_list.map
-         (fun a ->
-           let* name = Perl.S.exec perl_s a.Artist.name in
-           Ok { a with name }) in
-  let artists = Artist.Collection.of_list artists in
+  let* artists = Artist.map_result f t.artists in
   Ok { t with artists }

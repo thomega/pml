@@ -41,8 +41,11 @@ val of_name_sort_name : string -> string -> t
 
 module Collection : Set.S with type elt = t
 
+val map_result : (t -> (t, 'e) result) -> Collection.t -> (Collection.t, 'e) result
+(** Like [Collection.map], but with error exits. *)
+
 val lifespan_gaps : Collection.t -> Collection.t list
-(** Check if there is are artists, who died before others where born.
+(** Check if there are artists, who died before others where born.
     Such artists must be the composer(s). *)
 
 val of_credits : Mb_artist_credit.t list -> Collection.t

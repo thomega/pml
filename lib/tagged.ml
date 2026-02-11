@@ -38,7 +38,7 @@ type t =
     performer : Artist.t option;
     artists : Artists.t;
     tracks : Track.t list;
-    tracks_orig : Track.t list option;
+    tracks_full : Track.t list option;
     track_width : int;
     discid : string;
     medium_title : string option;
@@ -89,7 +89,7 @@ let%test_module _ =
 
 (** Heuristics for selecting the title. *)
 let make_titles ~release_title ~medium_title tracks =
-  let prefix, tracks, tracks_orig =
+  let prefix, tracks, tracks_full =
     match List.map (fun t -> t.Track.title) tracks |> Edit.common_prefix with
     | "" , _ ->
        (None, tracks, None)
@@ -103,7 +103,7 @@ let make_titles ~release_title ~medium_title tracks =
       [ Option.map (fun t -> Tracks t) prefix;
         Option.map (fun t -> Medium t) medium_title;
         Option.map (fun t -> Release t) release_title ] in
-  (titles, tracks, tracks_orig)
+  (titles, tracks, tracks_full)
 
 let refresh_titles tracks d =
   let release_title = d.release_title
@@ -133,10 +133,10 @@ let of_mb mb =
   and release_title = release.Release.title in
   let artists = add_tracks_artists release.Release.artists medium.Medium.tracks in
   let composer, performer = make_artists artists in
-  let titles, tracks, tracks_orig =
+  let titles, tracks, tracks_full =
     make_titles ~release_title ~medium_title medium.Medium.tracks in
   { composer; titles; performer; artists;
-    tracks; tracks_orig; track_width;
+    tracks; tracks_full; track_width;
     discid; medium_id; medium_title; release_id; release_title }
 
 let sublist first last l =
@@ -186,16 +186,16 @@ let select_tracklist subset tracks =
   |> List.map (fun t -> Track.{ t with number = t.number + subset.offset - subset.first + 1 })
 
 let orig_tracks d =
-  match d.tracks_orig with
+  match d.tracks_full with
   | Some tracks -> tracks
   | None -> d.tracks
 
 let select_tracks subset d =
   let track_width = subset.width in
   let tracks = orig_tracks d |> select_tracklist subset in
-  let titles, tracks, tracks_orig = refresh_titles tracks d in
+  let titles, tracks, tracks_full = refresh_titles tracks d in
   let composer, performer = common_tracks_artists tracks |> make_artists in
-  Ok { d with titles; composer; performer; tracks; tracks_orig; track_width }
+  Ok { d with titles; composer; performer; tracks; tracks_full; track_width }
 
 let filter_artists range predicate t =
   let artists = Artist.Collection.filter predicate t.artists
@@ -211,13 +211,16 @@ let filter_artists range predicate t =
   let composer, performer = make_artists artists in
   { t with composer; performer; artists; tracks  }
 
-let edit_artist (range, perl_s) t =
+let edit_artists (range, perl_s) t =
   let open Result.Syntax in
   let* tracks =
     Result_list.map
       (fun track ->
         if Edit.in_range track.Track.number range then
-          Track.edit_artists perl_s track
+          Track.map_artists
+            (fun a ->
+              let* name = Perl.S.exec perl_s a.Artist.name in
+              Ok { a with name } ) track
         else
           Ok track)
       t.tracks in
@@ -225,7 +228,7 @@ let edit_artist (range, perl_s) t =
   let composer, performer = make_artists artists in
   Ok { t with composer; performer; artists; tracks  }
 
-let edit_track_title (range, perl_s) d =
+let edit_track_titles (range, perl_s) d =
   let open Result.Syntax in
   let* tracks =
     Result_list.map
@@ -235,20 +238,20 @@ let edit_track_title (range, perl_s) d =
           Ok { track with title }
         else
           Ok track)
-      (Option.value ~default:d.tracks d.tracks_orig) in
-  let titles, tracks, tracks_orig = refresh_titles tracks d in
-  Ok { d with titles; tracks; tracks_orig }
+      (Option.value ~default:d.tracks d.tracks_full) in
+  let titles, tracks, tracks_full = refresh_titles tracks d in
+  Ok { d with titles; tracks; tracks_full }
 
 let recording_titles d =
   let tracks = orig_tracks d |> List.map Track.recording_title in
-  let titles, tracks, tracks_orig = refresh_titles tracks d in
-  Ok { d with titles; tracks; tracks_orig }
+  let titles, tracks, tracks_full = refresh_titles tracks d in
+  Ok { d with titles; tracks; tracks_full }
 
 let force_user_title title d =
   let titles = User title :: d.titles
   and tracks = orig_tracks d
-  and tracks_orig = None in
-  { d with titles; tracks; tracks_orig }
+  and tracks_full = None in
+  { d with titles; tracks; tracks_full }
 
 let chop_prefix n s =
   String.sub s n (String.length s - n) |> strip_leading_punctuation
@@ -261,12 +264,12 @@ let user_title title d =
   match d.titles with
   | Tracks longest_prefix :: _ when String.starts_with ~prefix:title longest_prefix ->
      let titles = User title :: d.titles in
-     let tracks, tracks_orig =
+     let tracks, tracks_full =
        let n = String.length title in
-       match d.tracks_orig with
+       match d.tracks_full with
        | None -> (chop_prefixes n d.tracks, Some d.tracks)
-       | Some tracks_orig -> (chop_prefixes n tracks_orig, d.tracks_orig) in
-     Ok { d with titles; tracks; tracks_orig }
+       | Some tracks_full -> (chop_prefixes n tracks_full, d.tracks_full) in
+     Ok { d with titles; tracks; tracks_full }
   | _ -> Ok (force_user_title title d)
 
 let edit_prefix sub d =
@@ -280,12 +283,12 @@ let edit_prefix sub d =
        | e -> Error (Printexc.to_string e) in
      if String.starts_with ~prefix:title longest_prefix then
        let titles = User title :: d.titles in
-       let tracks, tracks_orig =
+       let tracks, tracks_full =
          let n = String.length title in
-         match d.tracks_orig with
+         match d.tracks_full with
          | None -> (chop_prefixes n d.tracks, Some d.tracks)
-         | Some tracks_orig -> (chop_prefixes n tracks_orig, d.tracks_orig) in
-       Ok { d with titles; tracks; tracks_orig }
+         | Some tracks_full -> (chop_prefixes n tracks_full, d.tracks_full) in
+       Ok { d with titles; tracks; tracks_full }
      else
        Ok d
   | _ -> Ok d
@@ -359,7 +362,7 @@ module Edits =
     type all =
       { trackset : trackset option;
         recording_titles : bool;
-        edit_track_title : Perl.S.ranged list;
+        edit_track_titles : Perl.S.ranged list;
         release_title : bool;
         medium_title : bool;
         title : string option;
@@ -367,7 +370,7 @@ module Edits =
         edit_title : Perl.S.t list;
         delete_artists : Perl.M.ranged list;
         delete_artists_sort : Perl.M.ranged list;
-        edit_artist : Perl.S.ranged list;
+        edit_artists : Perl.S.ranged list;
         composer_pattern : Perl.M.t option;
         performer_pattern : Perl.M.t option;
         composer : string option;
@@ -403,7 +406,7 @@ module Edits =
       Ok tagged
       |> apply select_tracks e.trackset
       |> apply_if e.recording_titles recording_titles
-      |> apply_pcre_s edit_track_title e.edit_track_title
+      |> apply_pcre_s edit_track_titles e.edit_track_titles
       |> apply_if e.release_title release_title
       |> apply_if e.medium_title medium_title
       |> apply user_title e.title
@@ -411,7 +414,7 @@ module Edits =
       |> apply_pcre_s edit_title e.edit_title
       |> apply_pcre_m delete_artists e.delete_artists
       |> apply_pcre_m delete_artists_sort e.delete_artists_sort
-      |> apply_pcre_s edit_artist e.edit_artist
+      |> apply_pcre_s edit_artists e.edit_artists
       |> apply composer_pattern e.composer_pattern
       |> apply performer_pattern e.performer_pattern
       |> apply user_composer e.composer
@@ -487,8 +490,8 @@ let print ?(no_artists=false) ?(factor_artists=false) ?(no_originals=false) ?(no
   if not no_artists then (printf "\n"; list_artists lcw d.artists);
   let _, dir = target_dir d in
   printf "\n%-*s '%s'\n\n" lcw "Directory:" dir;
-  begin match d.tracks_orig with
-  | Some tracks_orig ->
+  begin match d.tracks_full with
+  | Some tracks_full ->
      List.iter2
        (fun t ot ->
          printf "%-*s %0*d: '%s'\n" (lcw - d.track_width - 2) "Track"
@@ -496,7 +499,7 @@ let print ?(no_artists=false) ?(factor_artists=false) ?(no_originals=false) ?(no
          if not no_originals then printf "%*s '%s'\n" lcw "orig.:" ot.Track.title;
          if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
          if not no_artists then list_artists lcw t.Track.artists)
-       d.tracks tracks_orig
+       d.tracks tracks_full
   | None ->
      List.iter
        (fun t ->

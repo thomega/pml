@@ -32,4 +32,4 @@ val recording_title : t -> t
 
 val filter_artists : (Artist.t -> bool) -> t -> t
 
-val edit_artists : Perl.S.t -> t -> (t, string) result
+val map_artists : (Artist.t -> (Artist.t, 'e) result) -> t -> (t, 'e) result

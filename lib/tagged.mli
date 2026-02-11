@@ -43,7 +43,7 @@ type t =
                                      Empty for popular music. *)
     artists : Artist.Collection.t;
     tracks : Track.t list;
-    tracks_orig : Track.t list option; (** The tracks with the original names iff a common
+    tracks_full : Track.t list option; (** The tracks with the full names iff a common
                                            prefix has been stripped to be used as title. *)
     track_width : int; (** The width of the printed track number, including leading zeros. *)
     discid : string; (** The discid from which the audio was ripped. *)
@@ -74,7 +74,9 @@ module Edits : sig
       recording_titles : bool (** Use the title the recording instead of the title of the track.
                                   There are MBID entries where the two differ slightly or
                                   are given in different languages. *);
-      edit_track_title : Perl.S.ranged list;
+      edit_track_titles : Perl.S.ranged list (** List of [perl]-style
+                                                 [range/regexp/substitution/flags]
+                                                 expressions for editing track titles. *);
       release_title : bool (** Pick the title of the whole release as the title of the selection. *);
       medium_title : bool (** Pick the title of the medium as the title of the selection. *);
       title : string option (** Set the title of the selection explicitely. *);
@@ -87,8 +89,8 @@ module Edits : sig
                                               for deleting artists with matching name. *);
       delete_artists_sort : Perl.M.ranged list (** List of [perl]-style [/regexp/flags] expressions
                                                    for deleting artists with matching sort-name. *);
-      edit_artist : Perl.S.ranged list (** List of [perl]-style [range//regexp/substitution/flags]
-                                           expressions for editing artist's names. *);
+      edit_artists : Perl.S.ranged list (** List of [perl]-style [range/regexp/substitution/flags]
+                                            expressions for editing artist's names. *);
       composer_pattern : Perl.M.t option (** Select the composer among the artists by a regexp. *);
       performer_pattern : Perl.M.t option (** Select the top-billed performer among the artists
                                               by a regexp. *);
