@@ -1,2 +1,5 @@
-  * edit/rip: --add_artist range/name/sort_name/disambiguation/lifespan
-                   or just range:name
+ * clean up the CLI
+
+ * more tools for maintaing the cache
+
+ * more testing with many more real CDs

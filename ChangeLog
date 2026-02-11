@@ -1,8 +1,10 @@
 2026-02-11  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
+	* v0.2.0: feature set feels complete for the first time
 	* --delete_artists accepts track ranges
 	* --edit_track_titles new
 	* --edit_artists new
+	* --add_artist new
 
 2026-02-10  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 

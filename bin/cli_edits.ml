@@ -43,6 +43,22 @@ let perl_m_ranged =
   let pp ppf pat = Perl.M.ranged_to_string pat |> Format.pp_print_string ppf in
   Cmdliner.Arg.Conv.make ~docv:"range/regexp/flags" ~parser ~pp ()
 
+let string_ranged =
+  let open Result.Syntax in
+  let parser s =
+    let* ranges, name = Edit.ranged_of_string Result.ok s in
+    let l = String.length name in
+    if l <= 0 then
+      Error (Printf.sprintf {|empty name in "%s"|} s)
+    else if name.[0] = ':' then
+      Ok (ranges, String.sub name 1 (pred l))
+    else
+      Ok (ranges, name)
+  and pp ppf (ranges, name) =
+    Edit.ranges_to_string ranges ^ ":" ^ name
+    |> Format.pp_print_string ppf in
+  Cmdliner.Arg.Conv.make ~docv:"range:name" ~parser ~pp ()
+
 let regexp_flags_doc =
   "The flags accepted are 'i' for case insensitive,
    'g' for repeated matching, and 'x' for extended syntax."
@@ -50,7 +66,7 @@ let regexp_flags_doc =
 let ranged_doc =
   "The optional ranges are specified as a comma separated list of integers
    and intervals, e.g. $(b,1-3,5).  Absent ranges denote all tracks, of course.
-   The tracks are numbeed from 1, $(b,after) track selection."
+   The tracks are numbered from 1, $(b,after) track selection."
 
 let edit_doc =
   String.concat " "
@@ -132,6 +148,14 @@ let edit_artists =
        "Repeated arguments are applied in sequence."] in
   Arg.(value & opt_all perl_s_ranged [] & info ["edit_artists"] ~doc)
 
+let add_artist =
+  let doc =
+    String.concat " "
+      ["Add artists by name.";
+       ranged_doc;
+       "Repeated arguments are applied in sequence."] in
+  Arg.(value & opt_all string_ranged [] & info ["add_artist"] ~doc)
+
 let composer =
   let doc = "Overwrite derived composer (top billing)." in
   Arg.(value & opt (some string) None & info ["c"; "composer"] ~docv:"name" ~doc)
@@ -181,10 +205,10 @@ let trackset =
 let all =
   let+ title and+ edit_prefix and+ edit_title
      and+ recording_titles and+ release_title and+ medium_title
-     and+ delete_artists and+ delete_artists_sort and+ edit_artists
+     and+ delete_artists and+ delete_artists_sort and+ edit_artists and+ add_artist
      and+ composer and+ composer_pattern and+ performer and+ performer_pattern
      and+ trackset and+ edit_track_titles in
   Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
-                 delete_artists; delete_artists_sort; edit_artists; edit_track_titles;
+                 delete_artists; delete_artists_sort; edit_artists; add_artist; edit_track_titles;
                  composer; composer_pattern; performer; performer_pattern; trackset }
 

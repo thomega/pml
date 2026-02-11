@@ -220,7 +220,24 @@ let edit_artists (range, perl_s) t =
           Track.map_artists
             (fun a ->
               let* name = Perl.S.exec perl_s a.Artist.name in
-              Ok { a with name } ) track
+              Ok { a with name } )
+            track
+        else
+          Ok track)
+      t.tracks in
+  let artists = add_tracks_artists t.artists tracks in
+  let composer, performer = make_artists artists in
+  Ok { t with composer; performer; artists; tracks  }
+
+let add_artist (range, name) t =
+  let open Result.Syntax in
+  let* tracks =
+    Result_list.map
+      (fun track ->
+        if Edit.in_range track.Track.number range then
+          let artists =
+            Artist.Collection.add (Artist.of_name name) track.Track.artists in
+          Ok { track with artists }
         else
           Ok track)
       t.tracks in
@@ -371,6 +388,7 @@ module Edits =
         delete_artists : Perl.M.ranged list;
         delete_artists_sort : Perl.M.ranged list;
         edit_artists : Perl.S.ranged list;
+        add_artist : string Edit.ranged list;
         composer_pattern : Perl.M.t option;
         performer_pattern : Perl.M.t option;
         composer : string option;
@@ -401,6 +419,11 @@ module Edits =
       let* tagged in
       Result_list.fold_left (fun acc rex -> f rex acc) tagged pcre_list
 
+    let apply_names f ranged_names tagged =
+      let open Result.Syntax in
+      let* tagged in
+      Result_list.fold_left (fun acc sub -> f sub acc) tagged ranged_names
+
     (** The order is very significant! *)
     let apply_all e tagged =
       Ok tagged
@@ -415,6 +438,7 @@ module Edits =
       |> apply_pcre_m delete_artists e.delete_artists
       |> apply_pcre_m delete_artists_sort e.delete_artists_sort
       |> apply_pcre_s edit_artists e.edit_artists
+      |> apply_names add_artist e.add_artist
       |> apply composer_pattern e.composer_pattern
       |> apply performer_pattern e.performer_pattern
       |> apply user_composer e.composer

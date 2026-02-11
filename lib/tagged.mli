@@ -91,6 +91,7 @@ module Edits : sig
                                                    for deleting artists with matching sort-name. *);
       edit_artists : Perl.S.ranged list (** List of [perl]-style [range/regexp/substitution/flags]
                                             expressions for editing artist's names. *);
+      add_artist : string Edit.ranged list;
       composer_pattern : Perl.M.t option (** Select the composer among the artists by a regexp. *);
       performer_pattern : Perl.M.t option (** Select the top-billed performer among the artists
                                               by a regexp. *);
