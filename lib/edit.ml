@@ -124,3 +124,42 @@ let%test _ = shell_double_quote {|abc|} = {|"abc"|}
 let%test _ = shell_double_quote {|$abc|} = {|"\$abc"|}
 let%test _ = shell_double_quote {|$a"b`c|} = {|"\$a\"b\`c"|}
 let%test _ = shell_double_quote {|\$a""b`c|} = {|"\\\$a\"\"b\`c"|}
+
+type ranges = Sets.Integers.S.t
+type 'a ranged = ranges option * 'a
+
+let in_range = Sets.Integers.S.mem
+let ranges_to_list = Sets.Integers.S.elements
+
+let ranges_to_string ranges =
+  ranges_to_list ranges |> List.map string_of_int |> String.concat ","
+
+let range =
+  Re.(seq [rep1 digit; opt (seq [char '-'; rep1 digit])])
+
+let ranges =
+  Re.(seq [range; rep (seq [char ','; range])])
+
+let re_ranged =
+  Re.(seq [start;
+           group (opt ranges);
+           group (seq [compl [digit]; rep any]);
+           stop] |> compile)
+
+(** We use [Re.Group.get] instead of [Re.Group.get_opt] because
+    there are exactly 2 groups in [re_ranged]. *)
+let ranged_of_string of_string text =
+  let open Result.Syntax in
+  match Re.exec_opt re_ranged text with
+  | None -> Error (Printf.sprintf {|invalid integer range prefix in "%s"|} text)
+  | Some groups ->
+     let* iset =
+       match Re.Group.get groups 1 with
+       | "" -> Ok None
+       | iset ->
+          let* iset = Sets.Integers.of_string iset in
+          Ok (Some iset)
+     and* regexp =
+       Re.Group.get groups 2 |> of_string in
+     Ok (iset, regexp)
+

@@ -29,3 +29,13 @@ val filename_safe : string -> string
 
 val shell_single_quote : string -> string
 val shell_double_quote : string -> string
+
+type ranges (* = Sets.Integers.S.t *)
+type 'a ranged = ranges option * 'a
+
+val ranges_to_list : ranges -> int list
+val ranges_to_string : ranges -> string
+(** Error reporting. *)
+
+val ranged_of_string : (string -> ('a, string) result) -> string -> ('a ranged, string) result
+val in_range : int -> ranges -> bool

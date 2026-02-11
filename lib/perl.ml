@@ -32,37 +32,6 @@ let lookup_flag ?(err_prefix="") ?(err_postfix="") map c =
 let flags_of_cset ?err_prefix ?err_postfix map s =
   CSet.elements s |> Result_list.map (lookup_flag ?err_prefix ?err_postfix map)
 
-type 'a ranged' = Sets.Integers.S.t option * 'a
-
-let range =
-  Re.(seq [rep1 digit; opt (seq [char '-'; rep1 digit])])
-
-let ranges =
-  Re.(seq [range; rep (seq [char ','; range])])
-
-let re_ranged =
-  Re.(seq [start;
-           group (opt ranges);
-           group (seq [compl [digit]; rep any]);
-           stop] |> compile)
-
-(** We use [Re.Group.get] instead of [Re.Group.get_opt] because
-    there are exactly 2 groups in [re_ranged]. *)
-let ranged_of_string' of_string text =
-  let open Result.Syntax in
-  match Re.exec_opt re_ranged text with
-  | None -> Error (Printf.sprintf {|invalid integer range prefix in "%s"|} text)
-  | Some groups ->
-     let* iset =
-       match Re.Group.get groups 1 with
-       | "" -> Ok None
-       | iset ->
-          let* iset = Sets.Integers.of_string iset in
-          Ok (Some iset)
-     and* regexp =
-       Re.Group.get groups 2 |> of_string in
-     Ok (iset, regexp)
-
 module M =
   struct
 
@@ -129,10 +98,10 @@ module M =
     let%test _ = exec' "| a b|xix" "aab" = Ok true
     let%test _ = exec' "/a/Ix" "Aa" = Error (err_prefix ^ {|invalid flag 'I' in "/a/Ix"|})
 
-    type ranged = t ranged'
+    type ranged = t Edit.ranged
 
     let ranged_of_string text =
-      ranged_of_string' of_string text
+      Edit.ranged_of_string of_string text
 
     let%test_module _ =
       (module struct
@@ -145,7 +114,7 @@ module M =
              | None, None -> Ok (to_string re = regexp)
              | None, Some _ | Some _, None -> Ok false
              | Some iset, Some ilist ->
-                Ok (Sets.Integers.S.elements iset = List.sort Int.compare ilist &&
+                Ok (Edit.ranges_to_list iset = List.sort Int.compare ilist &&
                   to_string re = regexp)
            with
            | Error msg -> prerr_endline msg; false
@@ -168,7 +137,7 @@ module M =
 
     let ranged_to_string (ranges, perl_m) =
       match ranges with
-      | Some ranges -> Sets.Integers.to_string ranges ^ to_string perl_m
+      | Some ranges -> Edit.ranges_to_string ranges ^ to_string perl_m
       | None -> to_string perl_m
 
   end
@@ -256,10 +225,10 @@ module S =
     let%test _ = exec' "/a/b/I" "Aa" = Error (err_prefix ^ {|invalid flag 'I' in "/a/b/I"|})
     let%test _ = exec' "/[Дт]/X/g" "Дмитрий" = Ok "XмиXрий"
 
-    type ranged = t ranged'
+    type ranged = t Edit.ranged
 
     let ranged_of_string text =
-      ranged_of_string' of_string text
+      Edit.ranged_of_string of_string text
 
     let%test_module _ =
       (module struct
@@ -272,7 +241,7 @@ module S =
              | None, None -> Ok (to_string re = regexp)
              | None, Some _ | Some _, None -> Ok false
              | Some iset, Some ilist ->
-                Ok (Sets.Integers.S.elements iset = List.sort Int.compare ilist &&
+                Ok (Edit.ranges_to_list iset = List.sort Int.compare ilist &&
                   to_string re = regexp)
            with
            | Error msg -> prerr_endline msg; false
@@ -288,7 +257,7 @@ module S =
 
     let ranged_to_string (ranges, perl_s) =
       match ranges with
-      | Some ranges -> Sets.Integers.to_string ranges ^ to_string perl_s
+      | Some ranges -> Edit.ranges_to_string ranges ^ to_string perl_s
       | None -> to_string perl_s
 
   end

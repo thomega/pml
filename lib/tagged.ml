@@ -203,7 +203,7 @@ let filter_artists range predicate t =
     | Some range ->
        List.map
          (fun track ->
-           if Sets.Integers.S.mem track.Track.number range then
+           if Edit.in_range track.Track.number range then
              Track.filter_artists predicate track
            else
              track)

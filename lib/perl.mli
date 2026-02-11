@@ -37,7 +37,7 @@ module M : sig
   val exec' : string -> string -> (bool, string) result
   (** Combining [of_string] and [exec] for convenience. *)
 
-  type ranged = Sets.Integers.S.t option * t
+  type ranged = t Edit.ranged
   val ranged_of_string : string -> (ranged, string) result
   (** [ranges/regexp/flags], where [ranges] has, e.g. the form [1,3-5]
       and will apply items 1, 3, 4, and 5 only. *)
@@ -67,7 +67,7 @@ module S : sig
   val exec' : string -> string -> (string, string) result
   (** Combining [of_string] and [exec] for convenience. *)
 
-  type ranged = Sets.Integers.S.t option * t
+  type ranged = t Edit.ranged
   val ranged_of_string : string -> (ranged, string) result
   (** [ranges/regexp/substitution/flags], where [ranges] has, e.g. the form [1,3-5]
       and will apply items 1, 3, 4, and 5 only. *)
