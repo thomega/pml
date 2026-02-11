@@ -124,6 +124,14 @@ let delete_artists_sort =
        ranged_doc] in
   Arg.(value & opt_all perl_m_ranged [] & info ["delete_artists_sort"] ~docv:"ranges/regexp/flags" ~doc)
 
+let edit_artist =
+  let doc =
+    String.concat " "
+      ["Edit the names of artists with a pair of perl regular expression and substitution strings.";
+       ranged_edit_doc;
+       "Repeated arguments are applied in sequence."] in
+  Arg.(value & opt_all perl_s_ranged [] & info ["edit_artist"] ~doc)
+
 let composer =
   let doc = "Overwrite derived composer (top billing)." in
   Arg.(value & opt (some string) None & info ["c"; "composer"] ~docv:"name" ~doc)
@@ -173,10 +181,10 @@ let trackset =
 let all =
   let+ title and+ edit_prefix and+ edit_title
      and+ recording_titles and+ release_title and+ medium_title
-     and+ delete_artists and+ delete_artists_sort
+     and+ delete_artists and+ delete_artists_sort and+ edit_artist
      and+ composer and+ composer_pattern and+ performer and+ performer_pattern
      and+ trackset and+ edit_track_title in
   Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
-                 delete_artists; delete_artists_sort; edit_track_title;
+                 delete_artists; delete_artists_sort; edit_artist; edit_track_title;
                  composer; composer_pattern; performer; performer_pattern; trackset }
 

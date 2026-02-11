@@ -211,6 +211,20 @@ let filter_artists range predicate t =
   let composer, performer = make_artists artists in
   { t with composer; performer; artists; tracks  }
 
+let edit_artist (range, perl_s) t =
+  let open Result.Syntax in
+  let* tracks =
+    Result_list.map
+      (fun track ->
+        if Edit.in_range track.Track.number range then
+          Track.edit_artists perl_s track
+        else
+          Ok track)
+      t.tracks in
+  let artists = add_tracks_artists t.artists tracks in
+  let composer, performer = make_artists artists in
+  Ok { t with composer; performer; artists; tracks  }
+
 let edit_track_title (range, perl_s) d =
   let open Result.Syntax in
   let* tracks =
@@ -353,6 +367,7 @@ module Edits =
         edit_title : Perl.S.t list;
         delete_artists : Perl.M.ranged list;
         delete_artists_sort : Perl.M.ranged list;
+        edit_artist : Perl.S.ranged list;
         composer_pattern : Perl.M.t option;
         performer_pattern : Perl.M.t option;
         composer : string option;
@@ -396,6 +411,7 @@ module Edits =
       |> apply_pcre_s edit_title e.edit_title
       |> apply_pcre_m delete_artists e.delete_artists
       |> apply_pcre_m delete_artists_sort e.delete_artists_sort
+      |> apply_pcre_s edit_artist e.edit_artist
       |> apply composer_pattern e.composer_pattern
       |> apply performer_pattern e.performer_pattern
       |> apply user_composer e.composer
