@@ -34,31 +34,33 @@ let flags_of_cset ?err_prefix ?err_postfix map s =
 
 type 'a ranged' = Sets.Integers.S.t option * 'a
 
-let set_integers =
-  Re.(alt [rg '0' '9'; set ",-"])
+let range =
+  Re.(seq [rep1 digit; opt (seq [char '-'; rep1 digit])])
+
+let ranges =
+  Re.(seq [range; rep (seq [char ','; range])])
 
 let re_ranged =
   Re.(seq [start;
-           group (rep set_integers);
-           group (seq [compl [set_integers]; rep any]);
+           group (opt ranges);
+           group (seq [compl [digit]; rep any]);
            stop] |> compile)
 
+(** We use [Re.Group.get] instead of [Re.Group.get_opt] because
+    there are exactly 2 groups in [re_ranged]. *)
 let ranged_of_string' of_string text =
   let open Result.Syntax in
   match Re.exec_opt re_ranged text with
-  | None -> Error (Printf.sprintf {|ranged_of_string failed: "%s"|} text)
+  | None -> Error (Printf.sprintf {|invalid integer range prefix in "%s"|} text)
   | Some groups ->
      let* iset =
-       match Re.Group.get_opt groups 1 with
-       | Some "" -> Ok None
-       | Some iset ->
+       match Re.Group.get groups 1 with
+       | "" -> Ok None
+       | iset ->
           let* iset = Sets.Integers.of_string iset in
           Ok (Some iset)
-       | None -> Error ("")
      and* regexp =
-       match Re.Group.get_opt groups 2 with
-       | Some regexp -> of_string regexp
-       | None -> Error ("") in
+       Re.Group.get groups 2 |> of_string in
      Ok (iset, regexp)
 
 module M =
@@ -154,6 +156,11 @@ module M =
          let%test _ = expect "1/a/i" (Some [1], "/a/i")
          let%test _ = expect "1,3/a/x" (Some [1;3], "/a/x")
          let%test _ = expect "1-2/a/" (Some [1;2], "/a/")
+         let%test _ = expect "1-a-" (Some [1], "-a-")
+         let%test _ = ranged_of_string "1-/a1/" = Error {|Perl.M: missing second '-' in "-/a1/"|}
+         let%test _ = ranged_of_string "-/a1/" = Error {|Perl.M: missing second '-' in "-/a1/"|}
+         let%test _ = ranged_of_string "-1/a1/" = Error {|Perl.M: missing second '-' in "-1/a1/"|}
+         let%test _ = ranged_of_string "1--2/a1/" = Error {|Perl.M: invalid flag '/' in "--2/a1/"|}
 
        end)
 

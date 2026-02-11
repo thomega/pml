@@ -60,6 +60,9 @@ module Integers =
       | [first] ->
          let* first = parse_int first in
          Ok { first; last = first }
+      | ["";""] -> Error "missing lower and upper limits in integer range"
+      | ["";_] -> Error "missing lower limit in integer range"
+      | [_;""] -> Error "missing upper limit in integer range"
       | [first;last] ->
          let* first = parse_int first
          and* last = parse_int last in
