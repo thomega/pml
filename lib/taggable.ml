@@ -38,7 +38,11 @@ let discs_of_discid ~root discid =
         let media = List.filter (contains_discid discid) release.Mb_release.media in
         Ok (List.map (fun medium -> { medium; release; discid }) media))
       releases in
-  Ok (List.concat discs)
+  match List.concat discs with
+  | [] -> Error (Printf.sprintf
+                   "no disc for discid '%s' in releases %s"
+                   discid (String.concat ", " releases))
+  | disc :: other_discs -> Ok (disc, other_discs)
 
 let artist_ids d =
   Sets.MBID.union
@@ -80,9 +84,8 @@ let ambiguous_discid discid discs =
   Buffer.contents b
 
 let disambiguate_medium prefix discid discs =
-  ignore discid;
   match List.filter (fun d -> String.starts_with ~prefix d.medium.Mb_medium.id) discs with
-  | [disk] -> Ok disk
+  | [disc] -> Ok disc
   | [] -> Error (Printf.sprintf
                    "%s\nno match for medium '%s'"
                    (ambiguous_discid discid discs) prefix)
@@ -91,12 +94,11 @@ let disambiguate_medium prefix discid discs =
                   (ambiguous_discid discid discs) prefix)
 
 let of_discid_sans_lifespans ?medium ~root discid =
-  ignore medium;
-  let* discs = discs_of_discid ~root discid in
-  match discs with
-  | [disc] -> Ok disc
-  | [] -> Error (Printf.sprintf "no released disc for discid '%s'" discid)
+  let* disc, other_discs = discs_of_discid ~root discid in
+  match other_discs with
+  | [] -> Ok disc
   | _ ->
+     let discs = disc :: other_discs in
      begin match medium with
      | None -> Error (ambiguous_discid discid discs)
      | Some prefix -> disambiguate_medium prefix discid discs

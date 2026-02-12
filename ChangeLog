@@ -1,3 +1,7 @@
+2026-02-12  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
+
+	* better error reporting if discid is missing in release
+
 2026-02-11  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
 	* v0.2.0: feature set feels complete for the first time

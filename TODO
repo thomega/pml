@@ -1,4 +1,6 @@
- * handle long pieces without separation into movements better: no subdirectory
+ * handle long pieces without separation into movements better:
+     - no subdirectory, or
+     - repeat title as track title
 
  * suggest to refresh the release JSON if it doesn't point back to the disc
    (this can happen while entering multiple discids)
