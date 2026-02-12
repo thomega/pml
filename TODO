@@ -1,3 +1,6 @@
+ * suggest to refresh the release JSON if it doesn't point back to the disc
+   (this can happen while entering multiple discids)
+
  * find a good replacement for question marks in file names to make Android happy.
 
  * make directory- and filenames configurable (templates)
