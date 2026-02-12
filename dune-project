@@ -54,3 +54,5 @@
  (tags ("media")))
 
 (using ctypes 0.3)
+
+(cram enable)

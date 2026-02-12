@@ -90,6 +90,13 @@ let edit_track_titles =
        "Repeated arguments are applied in sequence."] in
   Arg.(value & opt_all perl_s_ranged [] & info ["edit_track_titles"] ~doc)
 
+(*
+  let default =
+    match Perl.S.of_string "/:.*$//" with
+    | Ok expr -> expr
+    | _ -> assert false in
+ *)
+
 let edit_prefix =
   let doc =
     String.concat " "
