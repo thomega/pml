@@ -292,7 +292,7 @@ module Curl : Unit_Result_Cmd =
       Arg.(required & pos 0 (some string) None & info [] ~docv:"url" ~doc)
 
     let default_user_agent =
-      Version.long_name ^ " [Test] / " ^ Version.version ^ " ( " ^ Version.email ^ " )"
+      Config.long_name ^ " [Test] / " ^ Config.version ^ " ( " ^ Config.email ^ " )"
 
     let user_agent =
       let doc = "The user agent string." in
@@ -329,7 +329,7 @@ module Version : Unit_Result_Cmd =
       Arg.(value & flag & info ["l"; "license"] ~doc)
 
     let version ~license =
-      let open Version in
+      let open Config in
       if license then
         let gpl =
           "you can redistribute

@@ -15,9 +15,10 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
-let client_version = Version.version
-let client_name = Version.long_name
-let contact = Version.email
+let client_version = Config.version
+let client_name = Config.long_name
+let contact = Config.email
+let only_local_queries = Config.only_local_queries
 
 type api =
   { ssl : bool;
@@ -99,7 +100,7 @@ let curl ?timeout ~user_agent url =
      end
 
 let curl ?timeout ~user_agent url =
-  if Version.only_local_queries then
+  if only_local_queries then
     Error (Printf.sprintf "curl '%s': disabled by PML_ONLY_LOCAL_QUERIES environment" url)
   else
     curl ?timeout ~user_agent url

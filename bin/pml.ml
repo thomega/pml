@@ -250,7 +250,7 @@ module Version : Unit_Result_Cmd =
       Arg.(value & flag & info ["l"; "license"] ~doc)
 
     let version ~license =
-      let open Version in
+      let open Config in
       if license then
         let gpl =
           "you can redistribute
