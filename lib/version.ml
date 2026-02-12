@@ -21,3 +21,9 @@ let name = "PML"
 let long_name = "Physical Media Library"
 let author = "Thorsten Ohl"
 let email = "ohl@physik.uni-wuerzburg.de"
+
+(** Don't overload the MusicBrainz servers with unit tests. *)
+let only_local_queries =
+  match Sys.getenv_opt "PML_ONLY_LOCAL_QUERIES" with
+  | Some _ -> true
+  | None -> false

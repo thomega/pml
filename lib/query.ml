@@ -98,5 +98,11 @@ let curl ?timeout ~user_agent url =
        | s -> Error (fmt_error url s)
      end
 
+let curl ?timeout ~user_agent url =
+  if Version.only_local_queries then
+    Error (Printf.sprintf "curl '%s': disabled by PML_ONLY_LOCAL_QUERIES environment" url)
+  else
+    curl ?timeout ~user_agent url
+
 let exec api query key =
   curl ?timeout:api.timeout ~user_agent:api.user_agent (url musicbrainz query key)
