@@ -317,77 +317,20 @@ module Curl : Unit_Result_Cmd =
 
 end
 
-module Version : Unit_Result_Cmd =
-  struct
+let man =
+  [ `S Manpage.s_synopsis;
+    `P "$(cmd) [$(i,OPTIONS)]";
+    `S Manpage.s_description;
+    `P "Manage the local cache for MusicBrainz database and debug
+        the library used by the $(b,pml) command.";
+    `S Manpage.s_authors;
+    `P "Thorsten Ohl <ohl@physik.uni-wuerzburg.de>" ] @ Common.man_footer
 
-    let man = [
-        `S Manpage.s_description;
-        `P "Print version information." ] @ Common.man_footer
-
-    let license =
-      let doc = "Print license information." in
-      Arg.(value & flag & info ["l"; "license"] ~doc)
-
-    let version ~license =
-      let open Config in
-      if license then
-        let gpl =
-          "you can redistribute
-it and/or modify it under the terms of the GNU General Public
-License as published by the Free Software Foundation, either
-version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-             
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>." in
-        Printf.printf "Copyright (C) %s %s <%s>\n\n" copyright author email;
-        Printf.printf "%s (%s) is free software: %s\n" name long_name gpl
-      else
-        print_endline version;
-      Ok ()
-    
-    let cmd =
-      let open Cmd in
-      make (info "version" ~man) @@
-        let+ license in
-        version ~license
-
-end
-
-module Main : Unit_Result_Cmd =
-  struct
-
-    let _doc = "Physical Media Library"
-    
-    let man =
-      [ `S Manpage.s_synopsis;
-        `P "$(cmd) [$(i,OPTIONS)]";
-        `S Manpage.s_description;
-        `P "Manage the local cache for MusicBrainz database and debug
-            the library used by the $(b,pml) command.";
-        `S Manpage.s_authors;
-        `P "Thorsten Ohl <ohl@physik.uni-wuerzburg.de>" ] @ Common.man_footer
-
-    let cmd =
-      let open Cmd in
-      group (info "pml_admin" ~man)
-        [ JSON.cmd;
-          Grep.cmd;
-          Init.cmd;
-          Cachetest.cmd;
-          Curl.cmd;
-          Version.cmd]
-
-  end
-
-let main () =
-  Cmd.eval_result Main.cmd
-
-let () =
-  if !Sys.interactive then
-    ()
-  else
-    exit (main ())
+let cmd =
+  let open Cmd in
+  group (info "admin" ~man)
+    [ JSON.cmd;
+      Grep.cmd;
+      Init.cmd;
+      Cachetest.cmd;
+      Curl.cmd]

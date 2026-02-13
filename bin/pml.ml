@@ -298,7 +298,8 @@ module Main : Unit_Result_Cmd =
           Medium.cmd;
           Editor.cmd;
           Ripper.cmd;
-          Version.cmd]
+          Version.cmd;
+          Cli_admin.cmd]
 
   end
 
