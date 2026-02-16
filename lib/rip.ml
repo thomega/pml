@@ -249,8 +249,10 @@ let execute ?dry ?verbose ?directory ~bitrate encoders d =
   let* () =
     Result_list.iter
       (fun t -> t.Track.number_on_disc |> rip_track ?verbose ?dry d)
-      d.Tagged.tracks in
+      (Tagged.edited_tracks d.Tagged.track_or_tracks) in
   let root, dir = Tagged.target_dir d in
   let* () = mkdir ?dry ?verbose root in
   let* () = mkdir ?dry ?verbose dir in
-  Result_list.iter (encode_track ?dry ?verbose bitrate encoders dir d) d.tracks
+  Result_list.iter
+    (encode_track ?dry ?verbose bitrate encoders dir d)
+    (Tagged.edited_tracks d.track_or_tracks)

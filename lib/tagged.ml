@@ -34,10 +34,9 @@ module Artists = Artist.Collection
 
 type multi =
   { tracks : Track.t list;
-    tracks_mb : Track.t list option;
-    width : int }
+    tracks_mb : Track.t list option }
 
-type cardinal =
+type track_or_tracks =
   | Single of Track.t
   | Multi of multi
 
@@ -46,8 +45,7 @@ type t =
     titles : title list;
     performer : Artist.t option;
     artists : Artists.t;
-    tracks : Track.t list;
-    tracks_mb : Track.t list option;
+    track_or_tracks : track_or_tracks;
     track_width : int;
     discid : string;
     medium_title : string option;
@@ -97,27 +95,35 @@ let%test_module _ =
    end)
 
 (** Heuristics for selecting the title. *)
-let make_titles ~release_title ~medium_title tracks =
-  let prefix, tracks, tracks_mb =
-    match List.map (fun t -> t.Track.title) tracks |> Edit.common_prefix with
-    | "" , _ ->
-       (None, tracks, None)
-    | pfx, tails ->
-       let title = strip_trailing_punctuation pfx
-       and tails = List.map strip_leading_punctuation tails in
-       let stripped_tracks = replace_track_titles tails tracks in
-       (Some title, stripped_tracks, Some tracks) in
-  let titles =
-    List.filter_map Fun.id
-      [ Option.map (fun t -> Tracks t) prefix;
-        Option.map (fun t -> Medium t) medium_title;
-        Option.map (fun t -> Release t) release_title ] in
-  (titles, tracks, tracks_mb)
+let make_titles ~release_title ~medium_title = function
+  | Multi multi ->
+     let prefix, tracks, tracks_mb =
+       match List.map (fun t -> t.Track.title) multi.tracks |> Edit.common_prefix with
+       | "" , _ ->
+          (None, multi.tracks, None)
+       | pfx, tails ->
+          let title = strip_trailing_punctuation pfx
+          and tails = List.map strip_leading_punctuation tails in
+          let stripped_tracks = replace_track_titles tails multi.tracks in
+          (Some title, stripped_tracks, Some multi.tracks) in
+     let titles =
+       List.filter_map Fun.id
+         [ Option.map (fun t -> Tracks t) prefix;
+           Option.map (fun t -> Medium t) medium_title;
+           Option.map (fun t -> Release t) release_title ] in
+     (titles, Multi { tracks; tracks_mb } )
+  | Single track ->
+     let titles =
+       Tracks track.Track.title ::
+         (List.filter_map Fun.id
+            [ Option.map (fun t -> Medium t) medium_title;
+              Option.map (fun t -> Release t) release_title ]) in
+     (titles, Single track)
 
-let refresh_titles tracks d =
+let refresh_titles track_or_tracks d =
   let release_title = d.release_title
   and medium_title = d.medium_title in
-  make_titles ~release_title ~medium_title tracks
+  make_titles ~release_title ~medium_title track_or_tracks
 
 let add_tracks_artists artists tracks =
   List.fold_left
@@ -142,10 +148,11 @@ let of_mb mb =
   and release_title = release.Release.title in
   let artists = add_tracks_artists release.Release.artists medium.Medium.tracks in
   let composer, performer = make_artists artists in
-  let titles, tracks, tracks_mb =
-    make_titles ~release_title ~medium_title medium.Medium.tracks in
+  let track_or_tracks = Multi { tracks = medium.Medium.tracks; tracks_mb = None } in
+  let titles, track_or_tracks =
+    make_titles ~release_title ~medium_title track_or_tracks in
   { composer; titles; performer; artists;
-    tracks; tracks_mb; track_width;
+    track_or_tracks; track_width;
     discid; medium_id; medium_title; release_id; release_title }
 
 let sublist first last l =
@@ -195,35 +202,61 @@ let select_tracklist subset tracks =
   |> List.map (fun t -> Track.{ t with number = t.number + subset.offset - subset.first + 1 })
 
 let mbid_tracks d =
-  match d.tracks_mb with
-  | Some tracks -> tracks
-  | None -> d.tracks
+  match d.track_or_tracks with
+  | Multi multi ->
+     begin match multi.tracks_mb with
+     | Some tracks -> tracks
+     | None -> multi.tracks
+     end
+  | Single track -> [track]
+
+let edited_tracks = function
+  | Multi multi -> multi.tracks
+  | Single track -> [track]
 
 let select_tracks subset d =
   let track_width = subset.width in
   let tracks = mbid_tracks d |> select_tracklist subset in
-  let titles, tracks, tracks_mb = refresh_titles tracks d in
+  let track_or_tracks = Multi { tracks; tracks_mb = None } in
+  let titles, track_or_tracks = refresh_titles track_or_tracks d in
   let composer, performer = common_tracks_artists tracks |> make_artists in
-  Ok { d with titles; composer; performer; tracks; tracks_mb; track_width }
+  Ok { d with titles; composer; performer; track_or_tracks; track_width }
+
+let map_tracks f = function
+  | Multi multi ->
+     let tracks = List.map f multi.tracks in
+     Multi { multi with tracks }
+  | Single single ->
+     Single (f single)
+
+let map_tracks_result f track_or_tracks =
+  let open Result.Syntax in
+  match track_or_tracks with
+  | Multi multi ->
+     let* tracks = Result_list.map f multi.tracks in
+     Ok (Multi { multi with tracks })
+  | Single track ->
+     let* track = f track in
+     Ok (Single track)
 
 let filter_artists range predicate t =
   let artists = Artist.Collection.filter predicate t.artists
-  and tracks =
-    List.map
+  and track_or_tracks =
+    map_tracks
       (fun track ->
         if Edit.in_range track.Track.number range then
           Track.filter_artists predicate track
         else
           track)
-      t.tracks in
-  let artists = add_tracks_artists artists tracks in
+      t.track_or_tracks in
+  let artists = add_tracks_artists artists (edited_tracks track_or_tracks) in
   let composer, performer = make_artists artists in
-  { t with composer; performer; artists; tracks  }
+  { t with composer; performer; artists; track_or_tracks  }
 
 let edit_artists (range, perl_s) t =
   let open Result.Syntax in
-  let* tracks =
-    Result_list.map
+  let* track_or_tracks =
+    map_tracks_result
       (fun track ->
         if Edit.in_range track.Track.number range then
           Track.map_artists
@@ -233,15 +266,15 @@ let edit_artists (range, perl_s) t =
             track
         else
           Ok track)
-      t.tracks in
-  let artists = add_tracks_artists t.artists tracks in
+      t.track_or_tracks in
+  let artists = add_tracks_artists t.artists (edited_tracks track_or_tracks) in
   let composer, performer = make_artists artists in
-  Ok { t with composer; performer; artists; tracks  }
+  Ok { t with composer; performer; artists; track_or_tracks  }
 
 let add_artist (range, name) t =
   let open Result.Syntax in
-  let* tracks =
-    Result_list.map
+  let* track_or_tracks =
+    map_tracks_result
       (fun track ->
         if Edit.in_range track.Track.number range then
           let artists =
@@ -249,35 +282,41 @@ let add_artist (range, name) t =
           Ok { track with artists }
         else
           Ok track)
-      t.tracks in
-  let artists = add_tracks_artists t.artists tracks in
+      t.track_or_tracks in
+  let artists = add_tracks_artists t.artists (edited_tracks track_or_tracks) in
   let composer, performer = make_artists artists in
-  Ok { t with composer; performer; artists; tracks  }
+  Ok { t with composer; performer; artists; track_or_tracks  }
 
 let edit_track_titles (range, perl_s) d =
   let open Result.Syntax in
-  let* tracks =
-    Result_list.map
+  let* track_or_tracks =
+    map_tracks_result
       (fun track ->
         if Edit.in_range track.Track.number range then
           let* title = Perl.S.exec perl_s track.Track.title in
           Ok { track with title }
         else
           Ok track)
-      (Option.value ~default:d.tracks d.tracks_mb) in
-  let titles, tracks, tracks_mb = refresh_titles tracks d in
-  Ok { d with titles; tracks; tracks_mb }
+      d.track_or_tracks in
+  let titles, track_or_tracks = refresh_titles track_or_tracks d in
+  Ok { d with titles; track_or_tracks }
 
 let recording_titles d =
   let tracks = mbid_tracks d |> List.map Track.recording_title in
-  let titles, tracks, tracks_mb = refresh_titles tracks d in
-  Ok { d with titles; tracks; tracks_mb }
+  let track_or_tracks = Multi { tracks; tracks_mb = None } in
+  let titles, track_or_tracks = refresh_titles track_or_tracks d in
+  Ok { d with titles; track_or_tracks }
 
 let force_user_title title d =
+  begin match d.track_or_tracks with
+  | Single _ -> assert false
+  | Multi _ -> ()
+  end;
   let titles = User title :: d.titles
   and tracks = mbid_tracks d
   and tracks_mb = None in
-  { d with titles; tracks; tracks_mb }
+  let track_or_tracks = Multi { tracks; tracks_mb } in
+  { d with titles; track_or_tracks }
 
 let chop_prefix n s =
   String.sub s n (String.length s - n) |> strip_leading_punctuation
@@ -290,12 +329,19 @@ let user_title title d =
   match d.titles with
   | Tracks longest_prefix :: _ when String.starts_with ~prefix:title longest_prefix ->
      let titles = User title :: d.titles in
-     let tracks, tracks_mb =
-       let n = String.length title in
-       match d.tracks_mb with
-       | None -> (chop_prefixes n d.tracks, Some d.tracks)
-       | Some tracks_mb -> (chop_prefixes n tracks_mb, d.tracks_mb) in
-     Ok { d with titles; tracks; tracks_mb }
+     let n = String.length title in
+     begin match d.track_or_tracks with
+     | Single _ -> 
+        Ok { d with titles }
+     | Multi multi ->
+        let tracks, tracks_mb =
+          begin match multi.tracks_mb with
+          | None -> (chop_prefixes n multi.tracks, Some multi.tracks)
+          | Some tracks_mb -> (chop_prefixes n tracks_mb, Some tracks_mb)
+          end in
+        let track_or_tracks = Multi { tracks; tracks_mb } in
+        Ok { d with titles; track_or_tracks }
+     end
   | _ -> Ok (force_user_title title d)
 
 let edit_prefix sub d =
@@ -309,12 +355,19 @@ let edit_prefix sub d =
        | e -> Error (Printexc.to_string e) in
      if String.starts_with ~prefix:title longest_prefix then
        let titles = User title :: d.titles in
-       let tracks, tracks_mb =
-         let n = String.length title in
-         match d.tracks_mb with
-         | None -> (chop_prefixes n d.tracks, Some d.tracks)
-         | Some tracks_mb -> (chop_prefixes n tracks_mb, d.tracks_mb) in
-       Ok { d with titles; tracks; tracks_mb }
+       let n = String.length title in
+       begin match d.track_or_tracks with
+       | Single _ -> 
+          Ok { d with titles }
+       | Multi multi ->
+          let tracks, tracks_mb =
+            begin match multi.tracks_mb with
+            | None -> (chop_prefixes n multi.tracks, Some multi.tracks)
+            | Some tracks_mb -> (chop_prefixes n tracks_mb, Some tracks_mb)
+            end in
+          let track_or_tracks = Multi { tracks; tracks_mb } in
+          Ok { d with titles; track_or_tracks }
+       end
      else
        Ok d
   | _ -> Ok d
@@ -471,11 +524,11 @@ let artist_intersection = function
      List.fold_left (fun acc t -> Artists.inter acc t.Track.artists) t.Track.artists tlist
 
 let factor_track_artists d =
-  let common = artist_intersection d.tracks in
-  let tracks =
-    List.map (fun t -> Track.{ t with artists = Artists.diff t.artists common }) d.tracks in
+  let common = artist_intersection (edited_tracks d.track_or_tracks) in
+  let track_or_tracks =
+    map_tracks (fun t -> Track.{ t with artists = Artists.diff t.artists common }) d.track_or_tracks in
   let artists = Artists.union d.artists common in
-  { d with artists; tracks }
+  { d with artists; track_or_tracks }
 
 let target_dir d =
   let root =
@@ -527,33 +580,31 @@ let print ?(no_artists=false) ?(factor_artists=false) ?(no_originals=false) ?(no
     match d.titles with
     | [] -> "Unnamed"
     | t :: _ -> title_to_string t in
-  begin match d.tracks, d.tracks_mb with
-  | [], None | [], Some [] -> ()
-  | [t], None when t.Track.title = "" ->
+  begin match d.track_or_tracks with
+  | Single t ->
      printf "%*s '%s'\n" lcw "Track:" title;
+     printf "%*s '%s'\n" lcw "*Track:" t.Track.title;
      if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
      if not no_artists then list_artists lcw t.Track.artists
-  | [t], Some [ft] when t.Track.title = "" ->
-     printf "%*s '%s'\n" lcw "Track:" title;
-     if not no_originals then printf "%*s '%s'\n" lcw "MB:" ft.Track.title;
-     if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
-     if not no_artists then list_artists lcw t.Track.artists
-  | tracks, None ->
-     List.iter
-       (fun t ->
-         printf "%-*s %0*d: '%s'\n" (lcw - d.track_width - 2) "Track"
-           d.track_width t.Track.number t.Track.title;
-         if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
-         if not no_artists then list_artists lcw t.Track.artists)
-       tracks
-  | tracks, Some tracks_mb ->
-     List.iter2
-       (fun t ft ->
-         printf "%-*s %0*d: '%s'\n" (lcw - d.track_width - 2) "Track"
-           d.track_width t.Track.number t.Track.title;
-         if not no_originals then printf "%*s '%s'\n" lcw "MB:" ft.Track.title;
-         if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
-         if not no_artists then list_artists lcw t.Track.artists)
-       tracks tracks_mb
+  | Multi multi ->
+     begin match multi.tracks_mb with
+     | None ->
+        List.iter
+          (fun t ->
+            printf "%-*s %0*d: '%s'\n" (lcw - d.track_width - 2) "Track"
+              d.track_width t.Track.number t.Track.title;
+            if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
+            if not no_artists then list_artists lcw t.Track.artists)
+          multi.tracks
+     | Some tracks_mb ->
+        List.iter2
+          (fun t ft ->
+            printf "%-*s %0*d: '%s'\n" (lcw - d.track_width - 2) "Track"
+              d.track_width t.Track.number t.Track.title;
+            if not no_originals then printf "%*s '%s'\n" lcw "MB:" ft.Track.title;
+            if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
+            if not no_artists then list_artists lcw t.Track.artists)
+          multi.tracks tracks_mb
+     end
   end
 
