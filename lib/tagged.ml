@@ -192,10 +192,11 @@ type trackset =
   { offset : int;
     first : int;
     last : int option;
-    width : int }
+    width : int;
+    single : bool }
 
 let default_trackset =
-  { offset = 0; first = 1; last = None; width = 2 }
+  { offset = 0; first = 1; last = None; width = 2; single = false }
 
 let select_tracklist subset tracks =
   sublist subset.first subset.last tracks
@@ -215,9 +216,16 @@ let edited_tracks = function
   | Single track -> [track]
 
 let select_tracks subset d =
+  let open Result.Syntax in
   let track_width = subset.width in
   let tracks = mbid_tracks d |> select_tracklist subset in
-  let track_or_tracks = Multi { tracks; tracks_mb = None } in
+  let* track_or_tracks =
+    if subset.single then
+      match tracks with
+      | [t] -> Ok (Single t)
+      | _ -> Error (Printf.sprintf "--single requires a single track, not %d" (List.length tracks))
+    else
+      Ok (Multi { tracks; tracks_mb = None }) in
   let titles, track_or_tracks = refresh_titles track_or_tracks d in
   let composer, performer = common_tracks_artists tracks |> make_artists in
   Ok { d with titles; composer; performer; track_or_tracks; track_width }

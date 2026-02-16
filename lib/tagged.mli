@@ -71,7 +71,8 @@ type trackset =
                      (counting from 1, {e before} applying the offset). *)
     last : int option; (** Last track to be included
                            (counting from 1, {e before} applying the offset). *)
-    width : int (** The width of the printed track number, including leading zeros. *)
+    width : int; (** The width of the printed track number, including leading zeros. *)
+    single : bool
   }
 (** Track subset selection. *)
 

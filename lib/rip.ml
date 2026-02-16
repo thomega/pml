@@ -178,16 +178,21 @@ let rip_track ?verbose ?dry ?(force=false) d i =
   else
     synchronously ?verbose ?dry "cdparanoia" args
 
-let encode_track ?dry ?verbose bitrate encoders dir d t =
+(** Iff [single=true], the target filename with be prefixed by the track number.
+    Iff [single=false], the title tag will be a combination of title and track title. *)
+let encode_track ?dry ?verbose ?(single=false) bitrate encoders dir d t =
   let album = List.hd d.Tagged.titles |> Tagged.title_to_string
   and discid = d.Tagged.discid
   and track_id = t.Track.id
   and album_id = d.Tagged.release_id in
   let tracknumber = t.Track.number in
+  let filename =
+    if single then
+      t.Track.title
+    else
+      Printf.sprintf "%0*d %s" d.track_width tracknumber t.Track.title in
   let input = wav_name d t.Track.number_on_disc
-  and output =
-    Printf.sprintf "%0*d %s" d.track_width tracknumber t.Track.title
-    |> Edit.filename_safe in
+  and output = Edit.filename_safe filename in
   let artist =
     match d.Tagged.composer with
     | Some a -> a.Artist.name
@@ -197,7 +202,10 @@ let encode_track ?dry ?verbose bitrate encoders dir d t =
        | None -> "Anonymous"
        end
   and title =
-    Printf.sprintf "%s: %s" (List.hd d.Tagged.titles |> Tagged.title_to_string) t.Track.title
+    if single then
+      List.hd d.Tagged.titles |> Tagged.title_to_string
+    else
+      (List.hd d.Tagged.titles |> Tagged.title_to_string) ^ ": " ^ t.Track.title
   and performers =
     Artist.Collection.to_list t.Track.artists |> List.map Artist.to_string in
   let tags =
@@ -253,6 +261,8 @@ let execute ?dry ?verbose ?directory ~bitrate encoders d =
   let root, dir = Tagged.target_dir d in
   let* () = mkdir ?dry ?verbose root in
   let* () = mkdir ?dry ?verbose dir in
-  Result_list.iter
-    (encode_track ?dry ?verbose bitrate encoders dir d)
-    (Tagged.edited_tracks d.track_or_tracks)
+  let single, tracks =
+    match d.track_or_tracks with
+    | Tagged.Single track -> (true, [track])
+    | Tagged.Multi multi -> (false, multi.tracks) in
+  Result_list.iter (encode_track ?dry ?verbose ~single bitrate encoders dir d) tracks

@@ -201,9 +201,13 @@ let width =
   let doc = "The width of the printed track number, including leading zeros." in
   Arg.(value & opt int Tagged.(default_trackset.width) & info ["w"; "width"] ~docv:"n" ~doc)
 
+let single =
+  let doc = "The piece consists of a single movement." in
+  Arg.(value & flag & info ["single"] ~doc)
+
 let trackset =
-  let+ offset and+ first and+ last and+ width in
-  let ts = Tagged.{ offset; first; last; width } in
+  let+ offset and+ first and+ last and+ width and+ single in
+  let ts = Tagged.{ offset; first; last; width; single } in
   if ts = Tagged.default_trackset then
     None
   else
