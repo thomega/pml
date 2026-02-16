@@ -514,8 +514,30 @@ let print ?(no_artists=false) ?(factor_artists=false) ?(no_originals=false) ?(no
   if not no_artists then (printf "\n"; list_artists lcw d.artists);
   let _, dir = target_dir d in
   printf "\n%-*s '%s'\n\n" lcw "Directory:" dir;
-  begin match d.tracks_mbid with
-  | Some tracks_mbid ->
+  let title =
+    match d.titles with
+    | [] -> "Unnamed"
+    | t :: _ -> title_to_string t in
+  begin match d.tracks, d.tracks_mbid with
+  | [], None | [], Some [] -> ()
+  | [t], None when t.Track.title = "" && false ->
+     printf "%*s '%s'\n" lcw "Track:" title;
+     if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
+     if not no_artists then list_artists lcw t.Track.artists
+  | [t], Some [ft] when t.Track.title = ""  && false ->
+     printf "%*s '%s'\n" lcw "Track:" title;
+     if not no_originals then printf "%*s '%s'\n" lcw "mbid:" ft.Track.title;
+     if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
+     if not no_artists then list_artists lcw t.Track.artists
+  | tracks, None ->
+     List.iter
+       (fun t ->
+         printf "%-*s %0*d: '%s'\n" (lcw - d.track_width - 2) "Track"
+           d.track_width t.Track.number t.Track.title;
+         if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
+         if not no_artists then list_artists lcw t.Track.artists)
+       tracks
+  | tracks, Some tracks_mbid ->
      List.iter2
        (fun t ft ->
          printf "%-*s %0*d: '%s'\n" (lcw - d.track_width - 2) "Track"
@@ -523,14 +545,6 @@ let print ?(no_artists=false) ?(factor_artists=false) ?(no_originals=false) ?(no
          if not no_originals then printf "%*s '%s'\n" lcw "mbid:" ft.Track.title;
          if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
          if not no_artists then list_artists lcw t.Track.artists)
-       d.tracks tracks_mbid
-  | None ->
-     List.iter
-       (fun t ->
-         printf "%-*s %0*d: '%s'\n" (lcw - d.track_width - 2) "Track"
-           d.track_width t.Track.number t.Track.title;
-         if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
-         if not no_artists then list_artists lcw t.Track.artists)
-       d.tracks
+       tracks tracks_mbid
   end
 
