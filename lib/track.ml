@@ -19,6 +19,7 @@ type t =
   { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
     number_on_disc : int;
     title : string;
+    title_full : string;
     recording_title : string option;
     artists : Artist.Collection.t;
     id : string }
@@ -48,6 +49,7 @@ let of_mb mb =
        | None -> ("(untitled)", None)
        end
     | None, None -> ("(untitled)", None) in
+  let title_full = title in
 
   let artists =
     Artist.of_credits mb.T.artist_credits in
@@ -56,11 +58,11 @@ let of_mb mb =
     | Some r -> Artist.Collection.union (Artist.of_credits r.R.artist_credits) artists
     | None -> artists in
 
-  { id; number; number_on_disc; title; recording_title; artists }
+  { id; number; number_on_disc; title; title_full; recording_title; artists }
 
 let recording_title t =
   match t.recording_title with
-  | Some title -> { t with title; recording_title = None }
+  | Some title -> { t with title; title_full = title }
   | None -> t
 
 let filter_artists predicate t =

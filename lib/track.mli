@@ -21,6 +21,7 @@ type t =
   { number : int;  (** Overall position of the track in the whole work, counting from 1. *)
     number_on_disc : int;
     title : string;
+    title_full : string;
     recording_title : string option;
     artists : Artist.Collection.t;
     id : string }
