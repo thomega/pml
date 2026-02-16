@@ -90,12 +90,12 @@ module Edits : sig
                                                  expressions for editing track titles. *);
       release_title : bool (** Pick the title of the whole release as the title of the selection. *);
       medium_title : bool (** Pick the title of the medium as the title of the selection. *);
-      title : string option (** Set the title of the selection explicitely. *);
       edit_prefix : Perl.S.t list (** Apply a [perl]-style [/regexp/substitution/flags]
                                       edit to the common prefix of the track titles,
                                       that we use as a candidate for the overall title. *);
       edit_title : Perl.S.t list (** Apply a [perl]-style [/regexp/substitution/flags]
                                      edit to the overall title. *);
+      title : string option (** Set the title of the selection explicitely. *);
       delete_artists : Perl.M.ranged list (** List of [perl]-style [/regexp/flags] expressions
                                               for deleting artists with matching name. *);
       delete_artists_sort : Perl.M.ranged list (** List of [perl]-style [/regexp/flags] expressions

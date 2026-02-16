@@ -251,6 +251,25 @@ let map_tracks_result f tracks =
      let* track = f track in
      Ok (Single track)
 
+let _tracks_full tracks =
+  match tracks with
+  | Multi multi ->
+     let tracks' =
+       match multi.tracks_full with
+       | Some tracks_full ->
+          List.map2 (fun t tf -> Track.{ t with title = tf.title }) multi.tracks' tracks_full
+       | None -> multi.tracks' in
+     Multi { multi with tracks' }
+  | Single track -> Single track
+
+let tracks_full tracks =
+  match tracks with
+  | Multi multi ->
+     let tracks' =
+       Option.value ~default:multi.tracks' multi.tracks_full in
+     Multi { multi with tracks' }
+  | Single track -> Single track
+
 let filter_artists range predicate t =
   let artists = Artist.Collection.filter predicate t.artists
   and tracks =
@@ -309,7 +328,7 @@ let edit_track_titles (range, perl_s) d =
           Ok { track with title }
         else
           Ok track)
-      d.tracks in
+      (tracks_full d.tracks) in
   let titles, tracks = refresh_titles tracks d in
   Ok { d with titles; tracks }
 
@@ -459,9 +478,9 @@ module Edits =
         edit_track_titles : Perl.S.ranged list;
         release_title : bool;
         medium_title : bool;
-        title : string option;
         edit_prefix : Perl.S.t list;
         edit_title : Perl.S.t list;
+        title : string option;
         delete_artists : Perl.M.ranged list;
         delete_artists_sort : Perl.M.ranged list;
         edit_artists : Perl.S.ranged list;
@@ -509,9 +528,9 @@ module Edits =
       |> apply_pcre_s edit_track_titles e.edit_track_titles
       |> apply_if e.release_title release_title
       |> apply_if e.medium_title medium_title
-      |> apply user_title e.title
       |> apply_pcre_s edit_prefix e.edit_prefix
       |> apply_pcre_s edit_title e.edit_title
+      |> apply user_title e.title
       |> apply_pcre_m delete_artists e.delete_artists
       |> apply_pcre_m delete_artists_sort e.delete_artists_sort
       |> apply_pcre_s edit_artists e.edit_artists
