@@ -28,14 +28,13 @@ val title_to_string : title -> string
 (** Just the title, ignoring the origin. *)
 
 type multi =
-  { tracks : Track.t list;
-    tracks_mb : Track.t list option (** The tracks with the MBID names iff a common
-                                        prefix has been stripped to be used as title. *)
+  { tracks' : Track.t list; (** The tracks with a common prefix removed from the title. *)
+    tracks_mb : Track.t list option (** The tracks with the full title. *)
   }
 
-type track_or_tracks =
-  | Single of Track.t (** will become [Track.t list]. *)
-  | Multi of multi
+type tracks =
+  | Single of Track.t (** The track is to be ripped as a single track. *)
+  | Multi of multi (** The tracks are to be ripped as a sequence. *)
 (** *)
 
 type t =
@@ -53,7 +52,7 @@ type t =
                                      to distinguish different interpretations.
                                      Empty for popular music. *)
     artists : Artist.Collection.t;
-    track_or_tracks : track_or_tracks;
+    tracks : tracks;
     track_width : int; (** The width of the printed track number, including leading zeros.
                            TODO: this should go into [multi] *)
     discid : string; (** The discid from which the audio was ripped. *)
@@ -116,7 +115,7 @@ end
 (** Modify the default filenames and tags derived from MusicBrainz.
     The order is significant, of course.*)
 
-val edited_tracks : track_or_tracks -> Track.t list
+val edited_tracks : tracks -> Track.t list
 
 val target_dir : t -> string * string
 (** Where to write the encoded tracks.
