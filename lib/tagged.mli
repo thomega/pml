@@ -29,13 +29,15 @@ val title_to_string : title -> string
 
 type multi =
   { tracks' : Track.t list; (** The tracks with a common prefix removed from the title. *)
-    tracks_mb : Track.t list option (** The tracks with the full title. *)
+    tracks_full : Track.t list option; (** The tracks with the full title *)
+    width : int (** The width of the printed track number, including leading zeros. *)
   }
+(** A sequence of tracks to be ripped as a group. *)
 
 type tracks =
   | Single of Track.t (** The track is to be ripped as a single track. *)
   | Multi of multi (** The tracks are to be ripped as a sequence. *)
-(** *)
+(** We treat single movement pieces specially. *)
 
 type t =
   { composer : Artist.t option; (** The primary sorting key for the ripped files.
@@ -53,8 +55,6 @@ type t =
                                      Empty for popular music. *)
     artists : Artist.Collection.t; (** The artists credited for the release. *)
     tracks : tracks; (** The tracks to be ripped, encoded and tagged. *)
-    track_width : int; (** The width of the printed track number, including leading zeros.
-                           TODO: this should go into [multi] *)
     discid : string; (** The discid from which the audio was ripped. *)
     medium_title : string option;
     medium_id : string;
@@ -116,8 +116,8 @@ end
 (** Modify the default filenames and tags derived from MusicBrainz.
     The order is significant, of course.*)
 
-val tracks' : t -> Track.t list
-(** Return all tracks to be ripped as a flat list. *)
+val iter_tracks : (Track.t -> (unit, 'e) result) -> t -> (unit, 'e) result
+(** Iterate over all tracks to be ripped. *)
 
 val target_dir : t -> string * string
 (** Where to write the encoded tracks.
