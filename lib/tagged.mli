@@ -51,8 +51,8 @@ type t =
     performer : Artist.t option; (** The top billed performer for classical music, 
                                      to distinguish different interpretations.
                                      Empty for popular music. *)
-    artists : Artist.Collection.t;
-    tracks : tracks;
+    artists : Artist.Collection.t; (** The artists credited for the release. *)
+    tracks : tracks; (** The tracks to be ripped, encoded and tagged. *)
     track_width : int; (** The width of the printed track number, including leading zeros.
                            TODO: this should go into [multi] *)
     discid : string; (** The discid from which the audio was ripped. *)
@@ -71,7 +71,8 @@ type trackset =
     last : int option; (** Last track to be included
                            (counting from 1, {e before} applying the offset). *)
     width : int; (** The width of the printed track number, including leading zeros. *)
-    single : bool
+    single : bool (** Whether to rip the track as as single track and not as a part of
+                      a multi track piece. *)
   }
 (** Track subset selection. *)
 
@@ -115,7 +116,8 @@ end
 (** Modify the default filenames and tags derived from MusicBrainz.
     The order is significant, of course.*)
 
-val edited_tracks : tracks -> Track.t list
+val tracks' : t -> Track.t list
+(** Return all tracks to be ripped as a flat list. *)
 
 val target_dir : t -> string * string
 (** Where to write the encoded tracks.

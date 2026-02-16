@@ -202,8 +202,7 @@ let select_tracklist subset tracks =
   sublist subset.first subset.last tracks
   |> List.map (fun t -> Track.{ t with number = t.number + subset.offset - subset.first + 1 })
 
-let mbid_tracks d =
-  match d.tracks with
+let tracks_mb = function
   | Multi multi ->
      begin match multi.tracks_mb with
      | Some tracks -> tracks
@@ -211,21 +210,27 @@ let mbid_tracks d =
      end
   | Single track -> [track]
 
-let edited_tracks = function
+let edited = function
   | Multi multi -> multi.tracks'
   | Single track -> [track]
+
+let tracks' d =
+  edited d.tracks
+
+let multi tracks' =
+  Multi { tracks'; tracks_mb = None }
 
 let select_tracks subset d =
   let open Result.Syntax in
   let track_width = subset.width in
-  let tracks' = mbid_tracks d |> select_tracklist subset in
+  let tracks' = tracks_mb d.tracks |> select_tracklist subset in
   let* tracks =
     if subset.single then
       match tracks' with
       | [t] -> Ok (Single t)
       | _ -> Error (Printf.sprintf "--single requires a single track, not %d" (List.length tracks'))
     else
-      Ok (Multi { tracks'; tracks_mb = None }) in
+      Ok (multi tracks') in
   let titles, tracks = refresh_titles tracks d in
   let composer, performer = common_tracks_artists tracks' |> make_artists in
   Ok { d with titles; composer; performer; tracks; track_width }
@@ -257,7 +262,7 @@ let filter_artists range predicate t =
         else
           track)
       t.tracks in
-  let artists = add_tracks_artists artists (edited_tracks tracks) in
+  let artists = add_tracks_artists artists (edited tracks) in
   let composer, performer = make_artists artists in
   { t with composer; performer; artists; tracks  }
 
@@ -275,7 +280,7 @@ let edit_artists (range, perl_s) t =
         else
           Ok track)
       t.tracks in
-  let artists = add_tracks_artists t.artists (edited_tracks tracks) in
+  let artists = add_tracks_artists t.artists (edited tracks) in
   let composer, performer = make_artists artists in
   Ok { t with composer; performer; artists; tracks  }
 
@@ -291,7 +296,7 @@ let add_artist (range, name) t =
         else
           Ok track)
       t.tracks in
-  let artists = add_tracks_artists t.artists (edited_tracks tracks) in
+  let artists = add_tracks_artists t.artists (edited tracks) in
   let composer, performer = make_artists artists in
   Ok { t with composer; performer; artists; tracks  }
 
@@ -310,8 +315,8 @@ let edit_track_titles (range, perl_s) d =
   Ok { d with titles; tracks }
 
 let recording_titles d =
-  let tracks' = mbid_tracks d |> List.map Track.recording_title in
-  let tracks = Multi { tracks'; tracks_mb = None } in
+  let tracks' = tracks_mb d.tracks |> List.map Track.recording_title in
+  let tracks = multi tracks' in
   let titles, tracks = refresh_titles tracks d in
   Ok { d with titles; tracks }
 
@@ -321,7 +326,7 @@ let force_user_title title d =
   | Multi _ -> ()
   end;
   let titles = User title :: d.titles
-  and tracks' = mbid_tracks d
+  and tracks' = tracks_mb d.tracks
   and tracks_mb = None in
   let tracks = Multi { tracks'; tracks_mb } in
   { d with titles; tracks }
@@ -532,7 +537,7 @@ let artist_intersection = function
      List.fold_left (fun acc t -> Artists.inter acc t.Track.artists) t.Track.artists tlist
 
 let factor_track_artists d =
-  let common = artist_intersection (edited_tracks d.tracks) in
+  let common = artist_intersection (tracks' d) in
   let tracks =
     map_tracks (fun t -> Track.{ t with artists = Artists.diff t.artists common }) d.tracks in
   let artists = Artists.union d.artists common in
