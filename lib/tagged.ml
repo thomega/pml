@@ -34,28 +34,18 @@ module Artists = Artist.Collection
 
 type multi =
   { tracks' : Track.t list;
-    tracks_full : Track.t list option;
     width : int }
 
 type tracks =
   | Single of Track.t
   | Multi of multi
 
-let as_multi width tracks' =
-  let tracks_full = None in
-  Multi { tracks'; tracks_full; width }
-
-let unedited = function
-  | Multi multi ->
-     begin match multi.tracks_full with
-     | Some tracks -> tracks
-     | None -> multi.tracks'
-     end
-  | Single track -> [track]
-
-let edited = function
+let to_list = function
   | Multi multi -> multi.tracks'
   | Single track -> [track]
+
+let as_multi width tracks' =
+  Multi { tracks'; width }
 
 type t =
   { composer : Artist.t option;
@@ -70,7 +60,7 @@ type t =
     release_id : string }
 
 let iter_tracks f d =
-  Result_list.iter f (edited d.tracks)
+  Result_list.iter f (to_list d.tracks)
 
 (** TODO: sanitize titles for filenames, rotate articles, ... *)
 
@@ -116,21 +106,21 @@ let%test_module _ =
 (** Heuristics for selecting the title. *)
 let make_titles ~release_title ~medium_title = function
   | Multi multi ->
-     let prefix, tracks', tracks_full =
+     let prefix, tracks' =
        match List.map (fun t -> t.Track.title) multi.tracks' |> Edit.common_prefix with
        | "" , _ ->
-          (None, multi.tracks', None)
+          (None, multi.tracks')
        | pfx, tails ->
           let title = strip_trailing_punctuation pfx
           and tails = List.map strip_leading_punctuation tails in
           let stripped_tracks = replace_track_titles tails multi.tracks' in
-          (Some title, stripped_tracks, Some multi.tracks') in
+          (Some title, stripped_tracks) in
      let titles =
        List.filter_map Fun.id
          [ Option.map (fun t -> Tracks t) prefix;
            Option.map (fun t -> Medium t) medium_title;
            Option.map (fun t -> Release t) release_title ] in
-     (titles, Multi { multi with tracks'; tracks_full } )
+     (titles, Multi { multi with tracks' } )
   | Single track ->
      let titles =
        Tracks track.Track.title ::
@@ -222,7 +212,7 @@ let select_tracklist subset tracks =
 let select_tracks subset d =
   let open Result.Syntax in
   let track_width = subset.width in
-  let tracks' = unedited d.tracks |> select_tracklist subset in
+  let tracks' = to_list d.tracks |> select_tracklist subset in
   let* tracks =
     if subset.single then
       match tracks' with
@@ -251,25 +241,6 @@ let map_tracks_result f tracks =
      let* track = f track in
      Ok (Single track)
 
-let _tracks_full tracks =
-  match tracks with
-  | Multi multi ->
-     let tracks' =
-       match multi.tracks_full with
-       | Some tracks_full ->
-          List.map2 (fun t tf -> Track.{ t with title = tf.title }) multi.tracks' tracks_full
-       | None -> multi.tracks' in
-     Multi { multi with tracks' }
-  | Single track -> Single track
-
-let tracks_full tracks =
-  match tracks with
-  | Multi multi ->
-     let tracks' =
-       Option.value ~default:multi.tracks' multi.tracks_full in
-     Multi { multi with tracks' }
-  | Single track -> Single track
-
 let filter_artists range predicate t =
   let artists = Artist.Collection.filter predicate t.artists
   and tracks =
@@ -280,7 +251,7 @@ let filter_artists range predicate t =
         else
           track)
       t.tracks in
-  let artists = add_tracks_artists artists (edited tracks) in
+  let artists = add_tracks_artists artists (to_list tracks) in
   let composer, performer = make_artists artists in
   { t with composer; performer; artists; tracks  }
 
@@ -298,7 +269,7 @@ let edit_artists (range, perl_s) t =
         else
           Ok track)
       t.tracks in
-  let artists = add_tracks_artists t.artists (edited tracks) in
+  let artists = add_tracks_artists t.artists (to_list tracks) in
   let composer, performer = make_artists artists in
   Ok { t with composer; performer; artists; tracks  }
 
@@ -314,7 +285,7 @@ let add_artist (range, name) t =
         else
           Ok track)
       t.tracks in
-  let artists = add_tracks_artists t.artists (edited tracks) in
+  let artists = add_tracks_artists t.artists (to_list tracks) in
   let composer, performer = make_artists artists in
   Ok { t with composer; performer; artists; tracks  }
 
@@ -324,11 +295,11 @@ let edit_track_titles (range, perl_s) d =
     map_tracks_result
       (fun track ->
         if Edit.in_range track.Track.number range then
-          let* title = Perl.S.exec perl_s track.Track.title in
-          Ok { track with title }
+          let* title = Perl.S.exec perl_s track.Track.title_full in
+          Ok { track with title; title_full = title }
         else
           Ok track)
-      (tracks_full d.tracks) in
+      d.tracks in
   let titles, tracks = refresh_titles tracks d in
   Ok { d with titles; tracks }
 
@@ -337,7 +308,7 @@ let recording_titles d =
     map_tracks
       (fun track ->
         match track.Track.recording_title with
-        | Some title -> { track with title }
+        | Some title -> { track with title; title_full = title }
         | None -> track)
       d.tracks in
   let titles, tracks = refresh_titles tracks d in
@@ -558,7 +529,7 @@ let artist_intersection = function
      List.fold_left (fun acc t -> Artists.inter acc t.Track.artists) t.Track.artists tlist
 
 let factor_track_artists d =
-  let common = edited d.tracks |> artist_intersection in
+  let common = to_list d.tracks |> artist_intersection in
   let tracks =
     map_tracks (fun t -> Track.{ t with artists = Artists.diff t.artists common }) d.tracks in
   let artists = Artists.union d.artists common in

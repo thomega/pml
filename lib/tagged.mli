@@ -28,8 +28,9 @@ val title_to_string : title -> string
 (** Just the title, ignoring the origin. *)
 
 type multi =
-  { tracks' : Track.t list; (** The tracks with a common prefix removed from the title. *)
-    tracks_full : Track.t list option; (** The tracks with the full title *)
+  { tracks' : Track.t list; (** The tracks ripped as part of a group. This can consist
+                                of a single track if the group contains tracks from
+                                another disc.  *)
     width : int (** The width of the printed track number, including leading zeros. *)
   }
 (** A sequence of tracks to be ripped as a group. *)
