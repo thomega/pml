@@ -29,10 +29,11 @@ module Init : Unit_Result_Cmd =
         `P "Initialize the cache." ] @ Common.man_footer
 
     let cmd =
-      let open Cmd in
-      make (info "init" ~man) @@
+      Cmd.(make (info "init" ~man)) @@
         let+ root in
-        Cached.init ~root
+        let open Result.Syntax in
+        let* () = Cached.init ~root in
+        Ok (Printf.printf "pml admin: initialized cache at '%s'\n" root)
 
   end
 

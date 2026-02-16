@@ -43,7 +43,7 @@ type t =
                                      Empty for popular music. *)
     artists : Artist.Collection.t;
     tracks : Track.t list;
-    tracks_full : Track.t list option; (** The tracks with the full names iff a common
+    tracks_mbid : Track.t list option; (** The tracks with the MBID names iff a common
                                            prefix has been stripped to be used as title. *)
     track_width : int; (** The width of the printed track number, including leading zeros. *)
     discid : string; (** The discid from which the audio was ripped. *)
