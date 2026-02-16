@@ -137,6 +137,9 @@ let common_tracks_artists = function
        (fun acc track -> Artists.inter acc track.Track.artists)
        track.Track.artists tracks
 
+let as_multi tracks' =
+  Multi { tracks'; tracks_mb = None }
+
 let of_mb mb =
   let medium = Medium.of_mb mb.Taggable.medium
   and release = Release.of_mb mb.Taggable.release
@@ -148,9 +151,7 @@ let of_mb mb =
   and release_title = release.Release.title in
   let artists = add_tracks_artists release.Release.artists medium.Medium.tracks in
   let composer, performer = make_artists artists in
-  let tracks = Multi { tracks' = medium.Medium.tracks; tracks_mb = None } in
-  let titles, tracks =
-    make_titles ~release_title ~medium_title tracks in
+  let titles, tracks = make_titles ~release_title ~medium_title (as_multi medium.Medium.tracks) in
   { composer; titles; performer; artists;
     tracks; track_width;
     discid; medium_id; medium_title; release_id; release_title }
@@ -202,7 +203,7 @@ let select_tracklist subset tracks =
   sublist subset.first subset.last tracks
   |> List.map (fun t -> Track.{ t with number = t.number + subset.offset - subset.first + 1 })
 
-let tracks_mb = function
+let unedited = function
   | Multi multi ->
      begin match multi.tracks_mb with
      | Some tracks -> tracks
@@ -217,20 +218,17 @@ let edited = function
 let tracks' d =
   edited d.tracks
 
-let multi tracks' =
-  Multi { tracks'; tracks_mb = None }
-
 let select_tracks subset d =
   let open Result.Syntax in
   let track_width = subset.width in
-  let tracks' = tracks_mb d.tracks |> select_tracklist subset in
+  let tracks' = unedited d.tracks |> select_tracklist subset in
   let* tracks =
     if subset.single then
       match tracks' with
       | [t] -> Ok (Single t)
       | _ -> Error (Printf.sprintf "--single requires a single track, not %d" (List.length tracks'))
     else
-      Ok (multi tracks') in
+      Ok (as_multi tracks') in
   let titles, tracks = refresh_titles tracks d in
   let composer, performer = common_tracks_artists tracks' |> make_artists in
   Ok { d with titles; composer; performer; tracks; track_width }
@@ -315,21 +313,24 @@ let edit_track_titles (range, perl_s) d =
   Ok { d with titles; tracks }
 
 let recording_titles d =
-  let tracks' = tracks_mb d.tracks |> List.map Track.recording_title in
-  let tracks = multi tracks' in
+  let tracks =
+    map_tracks
+      (fun track ->
+        match track.Track.recording_title with
+        | Some title -> { track with title }
+        | None -> track)
+      d.tracks in
   let titles, tracks = refresh_titles tracks d in
   Ok { d with titles; tracks }
 
 let force_user_title title d =
-  begin match d.tracks with
-  | Single _ -> assert false
-  | Multi _ -> ()
-  end;
-  let titles = User title :: d.titles
-  and tracks' = tracks_mb d.tracks
-  and tracks_mb = None in
-  let tracks = Multi { tracks'; tracks_mb } in
-  { d with titles; tracks }
+  let titles = User title :: d.titles in
+  match d.tracks with
+  | Single _ ->
+     { d with titles }
+  | Multi m ->
+     let tracks = Option.value ~default:m.tracks' m.tracks_mb |> as_multi in
+     { d with titles; tracks }
 
 let chop_prefix n s =
   String.sub s n (String.length s - n) |> strip_leading_punctuation
