@@ -32,17 +32,13 @@ let title_to_string = function
 
 module Artists = Artist.Collection
 
-type single =
-  { track : Track.t;
-    track_mbid : Track.t option }
-
 type multi =
-  { track : Track.t list;
-    track_mbid : Track.t list option;
+  { tracks : Track.t list;
+    tracks_mb : Track.t list option;
     width : int }
 
 type cardinal =
-  | Single of single
+  | Single of Track.t
   | Multi of multi
 
 type t =

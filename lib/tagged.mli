@@ -27,17 +27,14 @@ type title =
 val title_to_string : title -> string
 (** Just the title, ignoring the origin. *)
 
-type single =
-  { track : Track.t;
-    track_mbid : Track.t option }
-
 type multi =
-  { track : Track.t list;
-    track_mbid : Track.t list option;
+  { tracks : Track.t list;
+    tracks_mb : Track.t list option; (** The tracks with the MBID names iff a common
+                                         prefix has been stripped to be used as title. *)
     width : int }
 
 type cardinal =
-  | Single of single
+  | Single of Track.t
   | Multi of multi
 (** *)
 
@@ -57,8 +54,7 @@ type t =
                                      Empty for popular music. *)
     artists : Artist.Collection.t;
     tracks : Track.t list;
-    tracks_mb : Track.t list option; (** The tracks with the MBID names iff a common
-                                         prefix has been stripped to be used as title. *)
+    tracks_mb : Track.t list option;
     track_width : int; (** The width of the printed track number, including leading zeros. *)
     discid : string; (** The discid from which the audio was ripped. *)
     medium_title : string option;
