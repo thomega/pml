@@ -200,7 +200,7 @@ let encode_track ?dry ?verbose bitrate encoders dir d t =
        end
   and title =
     match d.tracks with
-    | Single _ -> List.hd d.Tagged.titles |> Tagged.title_to_string
+    | Single _ -> t.Track.title
     | Multi _ -> (List.hd d.Tagged.titles |> Tagged.title_to_string) ^ ": " ^ t.Track.title
   and performers =
     Artist.Collection.to_list t.Track.artists |> List.map Artist.to_string in
