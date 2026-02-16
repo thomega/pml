@@ -1,3 +1,7 @@
+2026-02-16  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
+
+	* Tagged: special treatment of single movement pieces
+
 2026-02-12  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
 	* better error reporting if discid is missing in release
