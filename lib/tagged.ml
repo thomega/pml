@@ -32,6 +32,19 @@ let title_to_string = function
 
 module Artists = Artist.Collection
 
+type single =
+  { track : Track.t;
+    track_mbid : Track.t option }
+
+type multi =
+  { track : Track.t list;
+    track_mbid : Track.t list option;
+    width : int }
+
+type cardinal =
+  | Single of single
+  | Multi of multi
+
 type t =
   { composer : Artist.t option;
     titles : title list;
@@ -520,11 +533,11 @@ let print ?(no_artists=false) ?(factor_artists=false) ?(no_originals=false) ?(no
     | t :: _ -> title_to_string t in
   begin match d.tracks, d.tracks_mbid with
   | [], None | [], Some [] -> ()
-  | [t], None when t.Track.title = "" && false ->
+  | [t], None when t.Track.title = "" ->
      printf "%*s '%s'\n" lcw "Track:" title;
      if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
      if not no_artists then list_artists lcw t.Track.artists
-  | [t], Some [ft] when t.Track.title = ""  && false ->
+  | [t], Some [ft] when t.Track.title = "" ->
      printf "%*s '%s'\n" lcw "Track:" title;
      if not no_originals then printf "%*s '%s'\n" lcw "mbid:" ft.Track.title;
      if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;

@@ -27,6 +27,20 @@ type title =
 val title_to_string : title -> string
 (** Just the title, ignoring the origin. *)
 
+type single =
+  { track : Track.t;
+    track_mbid : Track.t option }
+
+type multi =
+  { track : Track.t list;
+    track_mbid : Track.t list option;
+    width : int }
+
+type cardinal =
+  | Single of single
+  | Multi of multi
+(** *)
+
 type t =
   { composer : Artist.t option; (** The primary sorting key for the ripped files.
                                     From this, we will derive the name of the top
