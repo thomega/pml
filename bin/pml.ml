@@ -49,6 +49,27 @@ let get_discid ?device ?discid () =
      let* ids = Libdiscid.get ?device () in
      Ok (ids.Libdiscid.id)
 
+module Ls : Unit_Result_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "List the contents of the local cache, search for entries
+            and trigger updates." ] @ Common.man_footer
+
+    let f ~root () =
+      ignore root;
+      Ok ()
+
+    let cmd =
+      let open Cmd in
+      let doc = "List the contents of the local cache." in
+      make (info "ls" ~doc ~man) @@
+        let+ root in
+        f ~root ()
+
+  end
+
 module Medium : Unit_Result_Cmd =
   struct
 
@@ -308,6 +329,7 @@ module Main : Unit_Result_Cmd =
       let open Cmd in
       group (info "pml" ~man)
         [ Disc.cmd;
+          Ls.cmd;
           Medium.cmd;
           Editor.cmd;
           Ripper.cmd;

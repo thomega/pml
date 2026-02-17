@@ -181,17 +181,15 @@ module Make (Table : Table) : T with type key = Table.key and type value = Table
         Error (Printf.sprintf "entry '%s' not found in table '%s'" key name)
 
     let to_alist ~root =
-      let* dir = table ~root in
       try
+        let* dir = table ~root in
         Array.to_list (Sys.readdir dir)
-        |> List.fold_left
-             (fun acc key ->
-               let value = IC.with_open_text (Filename.concat dir key) IC.input_all in
-               let* acc = acc
-               and* key = key_of_string key
-               and* value = value_of_string value in
-               Ok ((key, value) :: acc))
-             (Ok [])
+        |> Result_list.map
+             (fun key_string ->
+               let* key = key_of_string key_string in
+               let* name = filename ~root key in
+               let* value = value_of_string (IC.with_open_text name IC.input_all) in
+               Ok (key, value))
       with
       | exn -> Error (Printexc.to_string exn)
       
@@ -218,7 +216,7 @@ let%test_module _ =
                 Ok i
 
          let key_to_string i =
-           let s =string_of_int i in
+           let s = string_of_int i in
            if i < 0 then
              Error ("negative: " ^ s)
            else
