@@ -251,17 +251,16 @@ let map_tracks_result f tracks =
      Ok (Single track)
 
 let filter_artists range predicate t =
-  let artists = Artist.Collection.filter predicate t.artists
-  and tracks =
+  let tracks =
     map_tracks
       (fun track ->
         if Edit.in_range track.Track.number range then
           Track.filter_artists predicate track
         else
           track)
-      t.tracks in
-  let artists = add_tracks_artists artists (to_list tracks) in
-  let composer, performer = make_artists artists in
+      t.tracks
+  and artists = Artist.Collection.filter predicate t.artists in
+  let composer, performer = to_list tracks |> common_tracks_artists |> make_artists in
   { t with composer; performer; artists; tracks  }
 
 let edit_artists (range, perl_s) t =
@@ -278,9 +277,8 @@ let edit_artists (range, perl_s) t =
         else
           Ok track)
       t.tracks in
-  let artists = add_tracks_artists t.artists (to_list tracks) in
-  let composer, performer = make_artists artists in
-  Ok { t with composer; performer; artists; tracks  }
+  let composer, performer = to_list tracks |> common_tracks_artists |> make_artists in
+  Ok { t with composer; performer; tracks }
 
 let add_artist (range, name) t =
   let open Result.Syntax in
@@ -294,9 +292,8 @@ let add_artist (range, name) t =
         else
           Ok track)
       t.tracks in
-  let artists = add_tracks_artists t.artists (to_list tracks) in
-  let composer, performer = make_artists artists in
-  Ok { t with composer; performer; artists; tracks  }
+  let composer, performer = to_list tracks |> common_tracks_artists |> make_artists in
+  Ok { t with composer; performer; tracks }
 
 let edit_track_titles (range, perl_s) d =
   let open Result.Syntax in

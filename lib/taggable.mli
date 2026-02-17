@@ -55,6 +55,7 @@ type t =
     release : Mb_release.t;
     discid : string }
 
+val of_discid_sans_lifespans : ?medium:string -> root:string -> string -> (t, string) result
 val of_discid : ?medium:string -> root:string -> string -> (t, string) result
 (** Find the released disc matching the discid.
     Behind the scenes, it also inserts the extended [artist] records

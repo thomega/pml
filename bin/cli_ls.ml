@@ -101,7 +101,7 @@ module Ls_discids : Unit_Result_Cmd =
         `P "List the releases in the local cache, search for entries
             and trigger updates." ] @ Common.man_footer
 
-    let f ~root () =
+    let _f ~root () =
       let open Result.Syntax in
       let* discids = Cached.Discid.all_local ~root in
       let* discids =
@@ -115,6 +115,28 @@ module Ls_discids : Unit_Result_Cmd =
         (fun (discid, releases) ->
           Printf.printf "%s %s\n" discid (String.concat " " releases))
         discids;
+      Ok ()
+
+    let f ~root () =
+      let open Result.Syntax in
+      let* discids = Cached.Discid.all_local ~root in
+      List.map fst discids
+      |> List.iter
+           (fun discid ->
+             match Taggable.of_discid_sans_lifespans ~root discid with
+             | Error msg ->
+                begin match Cached.releases_of_discid ~root discid with
+                | Error msg ->
+                   Printf.printf "%s error: %s\n" discid msg
+                | Ok releases ->
+                   Printf.printf "%s -> %s\n%s\n" discid (String.concat " " releases) msg
+                end
+             | Ok t ->
+                Printf.printf
+                  "%s '%s' '%s'\n"
+                  t.Taggable.discid
+                  (Option.value ~default:"???" t.Taggable.release.Mb_release.title)
+                  (Option.value ~default:"" t.Taggable.medium.Mb_medium.title));
       Ok ()
 
     let cmd =

@@ -1,5 +1,9 @@
 2026-02-17  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
+	* v0.3.1 bugfix: --add_artists reincarnated artists from
+  	  deselected tracks, messing up the heuristics for composer
+	  and performer.
+
 	* v0.3.0
 	* streamlined the treatment of single movement pieces
 	* much cleaner interplay of editing and extracting
