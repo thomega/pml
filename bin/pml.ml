@@ -64,9 +64,8 @@ module Ls_artists : Unit_Result_Cmd =
         Result_list.map
           (fun (key, text) ->
             let* a = Jsont_bytesrw.decode_string Mb_artist.jsont text in
-            Ok (key,
-                Option.value ~default:"???" a.Mb_artist.sort_name |> Ubase.from_utf8,
-                Option.value ~default:"???" a.Mb_artist.name))
+            let a = Artist.of_mb a in
+            Ok (key, Ubase.from_utf8 a.Artist.sort_name, a.Artist.name))
           artists in
       let artists =
         List.sort (fun (_, s1, _) (_, s2, _) -> String.compare s1 s2) artists in
