@@ -1,4 +1,4 @@
-(* pml_admin.ml -- part of PML (Physical Media Library)
+(* cli_admin.ml -- part of PML (Physical Media Library)
 
    Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
