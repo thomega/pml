@@ -329,7 +329,9 @@ let man =
 
 let cmd =
   let open Cmd in
-  group (info "admin" ~man)
+  let doc = "For maintaining the local cache and debugging.
+             Only $(b,pml admin init) should be important for users." in
+  group (info "admin" ~doc ~man)
     [ JSON.cmd;
       Grep.cmd;
       Init.cmd;

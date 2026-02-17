@@ -66,7 +66,9 @@ module Medium : Unit_Result_Cmd =
 
     let cmd =
       let open Cmd in
-      make (info "medium" ~man) @@
+      let doc = "Print the information on the disc in the MusicBrainz
+                 database unchanged." in
+      make (info "medium" ~doc ~man) @@
         let+ root and+ medium and+ discid and+ device in
         f ~root ?medium ?discid ~device ()
 
@@ -114,7 +116,10 @@ module Editor : Unit_Result_Cmd =
     let cmd =
       let open Cmd in
       let edits = Cli_edits.all in
-      make (info "edit" ~man) @@
+      let doc = "Apply edits to the information obtained from the MusicBrainz
+                 database and display the result.  The same edits can subsequently
+                 be used in $(b,pml rip)." in
+      make (info "edit" ~doc ~man) @@
         let+ root and+ medium and+ discid and+ device
            and+ no_artists and+ factor_artists
            and+ no_originals and+ no_recordings and+ edits in
@@ -173,7 +178,12 @@ module Ripper : Unit_Result_Cmd =
     let cmd =
       let open Cmd in
       let edits = Cli_edits.all in
-      make (info "rip" ~man) @@
+      let doc = "Call $(b,cdparanoia) and external encoders to rip the
+                 requested tracks from the CD and encode and tag them
+                 according to the edited information obtained from the
+                 MusicBrainz database.  The edits can be previewed in
+                 a human readable form with $(b,pml edit)." in
+      make (info "rip" ~doc ~man) @@
         let+ dry and+ verbose and+ directory
            and+ root and+ medium and+ discid and+ device
            and+ bitrate and+ encoders and+ edits in
@@ -231,7 +241,9 @@ module Disc : Unit_Result_Cmd =
     
     let cmd =
       let open Cmd in
-      make (info "discid" ~man) @@
+      let doc = "Ask the CD-Rom drive to identify the current disc.  Also return
+                 the URL for adding it into the MusicBrainz database." in
+      make (info "discid" ~doc ~man) @@
         let+ device and+ verbose and+ root and+ lookup
            and+ print_id and+ print_toc and+ print_submission_url in
         f ~device ~verbose ~root ~lookup ~print_id ~print_toc ~print_submission_url
@@ -272,7 +284,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>." in
     
     let cmd =
       let open Cmd in
-      make (info "version" ~man) @@
+      let doc = "Print version and license information." in
+      make (info "version" ~doc ~man) @@
         let+ license in
         version ~license
 
