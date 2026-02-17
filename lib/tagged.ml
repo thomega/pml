@@ -104,27 +104,31 @@ let%test_module _ =
    end)
 
 (** Suggestions for selecting the title. *)
-let suggested_titles ~release_title ~medium_title = function
-  | Multi _ ->
-     List.filter_map Fun.id
-       [ Option.map (fun t -> Medium t) medium_title;
-         Option.map (fun t -> Release t) release_title ]
-  | Single track ->
-     Tracks track.Track.title ::
-       (List.filter_map Fun.id
-          [ Option.map (fun t -> Medium t) medium_title;
-            Option.map (fun t -> Release t) release_title ])
+let suggested_titles ~release_title ~medium_title tracks =
+  let titles =
+    begin match medium_title, release_title with
+    | Some mt, Some rt -> [Medium mt; Release rt]
+    | Some mt, None -> [Medium mt]
+    | None, Some rt -> [Release rt]
+    | None, None -> []
+    end in
+  match tracks with
+  | Multi _ -> titles
+  | Single track -> Tracks track.Track.title :: titles
 
-let refresh_title_suggestions tracks d =
+let refresh_suggestions tracks d =
   let release_title = d.release_title
   and medium_title = d.medium_title in
   suggested_titles ~release_title ~medium_title tracks
 
 (** Heuristics for selecting the title. *)
+let common_prefix tracks =
+  List.map (fun t -> t.Track.title_full) tracks |> Edit.common_prefix
+
 let factor_common_prefix t =
   match t.tracks with
   | Multi multi ->
-     begin match List.map (fun t -> t.Track.title) multi.tracks' |> Edit.common_prefix with
+     begin match common_prefix multi.tracks' with
      | "" , _ ->
         t
      | prefix, tails ->
@@ -225,7 +229,7 @@ let select_tracks subset d =
       | _ -> Error (Printf.sprintf "--single requires a single track, not %d" (List.length tracks'))
     else
       Ok (as_multi track_width tracks') in
-  let titles = refresh_title_suggestions tracks d in
+  let titles = refresh_suggestions tracks d in
   let composer, performer = common_tracks_artists tracks' |> make_artists in
   Ok { d with titles; composer; performer; tracks }
 
@@ -305,7 +309,7 @@ let edit_track_titles (range, perl_s) d =
         else
           Ok track)
       d.tracks in
-  let titles = refresh_title_suggestions tracks d in
+  let titles = refresh_suggestions tracks d in
   Ok { d with titles; tracks }
 
 let recording_titles d =
@@ -316,30 +320,37 @@ let recording_titles d =
         | Some title -> { track with title; title_full = title }
         | None -> track)
       d.tracks in
-  let titles = refresh_title_suggestions tracks d in
+  let titles = refresh_suggestions tracks d in
   Ok { d with titles; tracks }
 
-(** TODO: restore [title_full] or not?*)
+let restore_title_full track =
+  Track.{ track with title = track.title_full }
+
+(** TODO: decide if we want to restore [title_full] or not! *)
 let force_user_title title d =
   let titles = User title :: d.titles
-  and tracks = map_tracks (fun t -> { t with title = t.title_full }) d.tracks in
+  and tracks = map_tracks restore_title_full d.tracks in
   { d with titles; tracks }
 
 let chop_prefix n s =
   String.sub s n (String.length s - n) |> strip_leading_punctuation
 
 let chop_prefixes n tracks =
-  map_tracks (fun t -> { t with Track.title = chop_prefix n t.Track.title_full }) tracks
+  map_tracks (fun t -> Track.{ t with title = chop_prefix n t.title_full }) tracks
+
+let extract_title title d =
+  let n = String.length title in
+  let titles = User title :: d.titles
+  and tracks = chop_prefixes n d.tracks in
+  { d with titles; tracks }
 
 let user_title title d =
   let title = strip_trailing_punctuation title in
   match d.titles with
   | Tracks longest_prefix :: _ when String.starts_with ~prefix:title longest_prefix ->
-     let n = String.length title in
-     let titles = User title :: d.titles
-     and tracks = chop_prefixes n d.tracks in
-     Ok { d with titles; tracks }
-  | _ -> Ok (force_user_title title d)
+     Ok (extract_title title d)
+  | _ ->
+     Ok (force_user_title title d)
 
 let edit_prefix sub d =
   match d.titles with
@@ -351,10 +362,7 @@ let edit_prefix sub d =
        with
        | e -> Error (Printexc.to_string e) in
      if String.starts_with ~prefix:title longest_prefix then
-       let n = String.length title in
-       let titles = User title :: d.titles
-       and tracks = chop_prefixes n d.tracks in
-       Ok { d with titles; tracks }
+       Ok (extract_title title d)
      else
        Ok d
   | _ ->
@@ -371,7 +379,8 @@ let edit_title sub d =
        | e -> Error (Printexc.to_string e) in
      let titles = User title :: d.titles in
      Ok { d with titles }
-  | _ -> Ok d
+  | _ ->
+     Ok d
 
 let get_medium_title d =
   match List.find_opt (function Medium _ -> true | _ -> false) d.titles with
