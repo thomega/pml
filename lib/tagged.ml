@@ -453,6 +453,9 @@ module Edits =
         composer : string option;
         performer : string option }
 
+    (** Apply always, no argument, can't fail. *)
+    let apply_always = Result.map
+
     let apply f opt tagged =
       let open Result.Syntax in
       let* tagged in
@@ -460,7 +463,7 @@ module Edits =
       | None -> Ok tagged
       | Some s -> f s tagged
 
-    let apply_if flag f tagged =
+    let apply_if f flag tagged =
       let open Result.Syntax in
       let* tagged in
       if flag then
@@ -468,39 +471,27 @@ module Edits =
       else
         Ok tagged
 
-    let apply_pcre_s f pcre_list tagged =
+    let apply_list f edit_list tagged =
       let open Result.Syntax in
       let* tagged in
-      Result_list.fold_left (fun acc sub -> f sub acc) tagged pcre_list
-
-    let apply_pcre_m f pcre_list tagged =
-      let open Result.Syntax in
-      let* tagged in
-      Result_list.fold_left (fun acc rex -> f rex acc) tagged pcre_list
-
-    let apply_names f ranged_names tagged =
-      let open Result.Syntax in
-      let* tagged in
-      Result_list.fold_left (fun acc sub -> f sub acc) tagged ranged_names
-
-    let perform = Result.map
+      Result_list.fold_left (fun acc sub -> f sub acc) tagged edit_list
 
     (** The order is very significant! *)
     let apply_all e tagged =
       Ok tagged
       |> apply select_tracks e.trackset
-      |> apply_if e.recording_titles recording_titles
-      |> apply_pcre_s edit_track_titles e.edit_track_titles
-      |> perform factor_common_prefix
-      |> apply_if e.release_title release_title
-      |> apply_if e.medium_title medium_title
-      |> apply_pcre_s edit_prefix e.edit_prefix
-      |> apply_pcre_s edit_title e.edit_title
+      |> apply_if recording_titles e.recording_titles
+      |> apply_list edit_track_titles e.edit_track_titles
+      |> apply_always factor_common_prefix
+      |> apply_if release_title e.release_title
+      |> apply_if medium_title e.medium_title
+      |> apply_list edit_prefix e.edit_prefix
+      |> apply_list edit_title e.edit_title
       |> apply user_title e.title
-      |> apply_pcre_m delete_artists e.delete_artists
-      |> apply_pcre_m delete_artists_sort e.delete_artists_sort
-      |> apply_pcre_s edit_artists e.edit_artists
-      |> apply_names add_artist e.add_artist
+      |> apply_list delete_artists e.delete_artists
+      |> apply_list delete_artists_sort e.delete_artists_sort
+      |> apply_list edit_artists e.edit_artists
+      |> apply_list add_artist e.add_artist
       |> apply composer_pattern e.composer_pattern
       |> apply performer_pattern e.performer_pattern
       |> apply user_composer e.composer
