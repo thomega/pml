@@ -58,6 +58,74 @@ module Ls_artists : Unit_Result_Cmd =
 
   end
 
+module Ls_releases : Unit_Result_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "List the releases in the local cache, search for entries
+            and trigger updates." ] @ Common.man_footer
+
+    let f ~root () =
+      let open Result.Syntax in
+      let* releases = Cached.Release.all_local ~root in
+      let* releases =
+        Result_list.map
+          (fun (key, text) ->
+            let* a = Jsont_bytesrw.decode_string Mb_release.jsont text in
+            let a = Release.of_mb a in
+            Ok (key, Option.value ~default:"???" a.Release.title |> Ubase.from_utf8 ))
+          releases in
+      let releases =
+        List.sort (fun (_, s1) (_, s2) -> String.compare s1 s2) releases in
+      List.iter
+        (fun (key, title) ->
+          Printf.printf "%s %s\n" key title)
+        releases;
+      Ok ()
+
+    let cmd =
+      let open Cmd in
+      let doc = "List the releases in the local cache." in
+      make (info "releases" ~doc ~man) @@
+        let+ root in
+        f ~root ()
+
+  end
+
+module Ls_discids : Unit_Result_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "List the releases in the local cache, search for entries
+            and trigger updates." ] @ Common.man_footer
+
+    let f ~root () =
+      let open Result.Syntax in
+      let* discids = Cached.Discid.all_local ~root in
+      let* discids =
+        List.map fst discids
+        |> List.sort String.compare
+        |> Result_list.map
+             (fun discid ->
+               let* releases = Cached.releases_of_discid ~root discid in
+               Ok (discid, List.sort String.compare releases)) in
+      List.iter
+        (fun (discid, releases) ->
+          Printf.printf "%s %s\n" discid (String.concat " " releases))
+        discids;
+      Ok ()
+
+    let cmd =
+      let open Cmd in
+      let doc = "List the discids in the local cache." in
+      make (info "discids" ~doc ~man) @@
+        let+ root in
+        f ~root ()
+
+  end
+
 let man = [
     `S Manpage.s_description;
     `P "List the contents of the local cache, search for entries
@@ -66,4 +134,6 @@ let man = [
 let cmd =
   let open Cmd in
   group (info "ls" ~man)
-    [ Ls_artists.cmd ]
+    [ Ls_artists.cmd;
+      Ls_releases.cmd;
+      Ls_discids.cmd ]
