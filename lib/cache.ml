@@ -144,7 +144,6 @@ module Make (Table : Table) : T with type key = Table.key and type value = Table
         with
         | exn -> Error (Printexc.to_string exn)
         
-
     let remove ~root key =
       let* name = filename ~root key in
       if Sys.file_exists name then

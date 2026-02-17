@@ -49,6 +49,44 @@ let get_discid ?device ?discid () =
      let* ids = Libdiscid.get ?device () in
      Ok (ids.Libdiscid.id)
 
+module Ls_artists : Unit_Result_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "List the artists in the local cache, search for entries
+            and trigger updates." ] @ Common.man_footer
+
+    let f ~root () =
+      let open Result.Syntax in
+      let* artists = Cached.Artist.all_local ~root in
+      let* artists =
+        Result_list.map
+          (fun (key, text) ->
+            let* a = Jsont_bytesrw.decode_string Mb_artist.jsont text in
+            Ok (key,
+                Option.value ~default:"???" a.Mb_artist.sort_name |> Ubase.from_utf8,
+                Option.value ~default:"???" a.Mb_artist.name))
+          artists in
+      let artists =
+        List.sort (fun (_, s1, _) (_, s2, _) -> String.compare s1 s2) artists in
+      let width =
+        List.fold_left (fun acc (_, s, _) -> max acc (String.length s)) 0 artists in
+      List.iter
+        (fun (key, sort_name, name) ->
+          Printf.printf "%s %-*s %s\n" key width sort_name name)
+        artists;
+      Ok ()
+
+    let cmd =
+      let open Cmd in
+      let doc = "List the artists in the local cache." in
+      make (info "artists" ~doc ~man) @@
+        let+ root in
+        f ~root ()
+
+  end
+
 module Ls : Unit_Result_Cmd =
   struct
 
@@ -57,16 +95,10 @@ module Ls : Unit_Result_Cmd =
         `P "List the contents of the local cache, search for entries
             and trigger updates." ] @ Common.man_footer
 
-    let f ~root () =
-      ignore root;
-      Ok ()
-
     let cmd =
       let open Cmd in
-      let doc = "List the contents of the local cache." in
-      make (info "ls" ~doc ~man) @@
-        let+ root in
-        f ~root ()
+      group (info "ls" ~man)
+        [ Ls_artists.cmd ]
 
   end
 
