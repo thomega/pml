@@ -103,24 +103,14 @@ let%test_module _ =
 
    end)
 
-(** Heuristics for selecting the title. *)
-let make_titles ~release_title ~medium_title = function
+(** Suggestions for selecting the title. *)
+let suggested_titles ~release_title ~medium_title = function
   | Multi multi ->
-     let prefix, tracks' =
-       match List.map (fun t -> t.Track.title) multi.tracks' |> Edit.common_prefix with
-       | "" , _ ->
-          (None, multi.tracks')
-       | pfx, tails ->
-          let title = strip_trailing_punctuation pfx
-          and tails = List.map strip_leading_punctuation tails in
-          let stripped_tracks = replace_track_titles tails multi.tracks' in
-          (Some title, stripped_tracks) in
      let titles =
        List.filter_map Fun.id
-         [ Option.map (fun t -> Tracks t) prefix;
-           Option.map (fun t -> Medium t) medium_title;
+         [ Option.map (fun t -> Medium t) medium_title;
            Option.map (fun t -> Release t) release_title ] in
-     (titles, Multi { multi with tracks' } )
+     (titles, Multi multi )
   | Single track ->
      let titles =
        Tracks track.Track.title ::
@@ -129,10 +119,29 @@ let make_titles ~release_title ~medium_title = function
               Option.map (fun t -> Release t) release_title ]) in
      (titles, Single track)
 
-let refresh_titles tracks d =
+let refresh_title_suggestions tracks d =
   let release_title = d.release_title
   and medium_title = d.medium_title in
-  make_titles ~release_title ~medium_title tracks
+  suggested_titles ~release_title ~medium_title tracks
+
+(** Heuristics for selecting the title. *)
+let factor_common_prefix t =
+  match t.tracks with
+  | Multi multi ->
+     begin match List.map (fun t -> t.Track.title) multi.tracks' |> Edit.common_prefix with
+     | "" , _ ->
+        t
+     | prefix, tails ->
+        let titles = Tracks (strip_trailing_punctuation prefix) :: t.titles in
+        let tails = List.map strip_leading_punctuation tails in
+        let tracks' = replace_track_titles tails multi.tracks' in
+        let tracks = Multi { multi with tracks' } in
+        { t with titles; tracks }
+     end
+  | Single track ->
+     let titles = Tracks (strip_trailing_punctuation track.title) :: t.titles in
+     let tracks = Single { track with title = "" } in
+     { t with titles; tracks }
 
 let add_tracks_artists artists tracks =
   List.fold_left
@@ -158,7 +167,7 @@ let of_mb mb =
   let artists = add_tracks_artists release.Release.artists medium.Medium.tracks in
   let composer, performer = make_artists artists in
   let titles, tracks =
-    make_titles ~release_title ~medium_title (as_multi track_width medium.Medium.tracks) in
+    suggested_titles ~release_title ~medium_title (as_multi track_width medium.Medium.tracks) in
   { composer; titles; performer; artists; tracks;
     discid; medium_id; medium_title; release_id; release_title }
 
@@ -220,7 +229,7 @@ let select_tracks subset d =
       | _ -> Error (Printf.sprintf "--single requires a single track, not %d" (List.length tracks'))
     else
       Ok (as_multi track_width tracks') in
-  let titles, tracks = refresh_titles tracks d in
+  let titles, tracks = refresh_title_suggestions tracks d in
   let composer, performer = common_tracks_artists tracks' |> make_artists in
   Ok { d with titles; composer; performer; tracks }
 
@@ -300,7 +309,7 @@ let edit_track_titles (range, perl_s) d =
         else
           Ok track)
       d.tracks in
-  let titles, tracks = refresh_titles tracks d in
+  let titles, tracks = refresh_title_suggestions tracks d in
   Ok { d with titles; tracks }
 
 let recording_titles d =
@@ -311,7 +320,7 @@ let recording_titles d =
         | Some title -> { track with title; title_full = title }
         | None -> track)
       d.tracks in
-  let titles, tracks = refresh_titles tracks d in
+  let titles, tracks = refresh_title_suggestions tracks d in
   Ok { d with titles; tracks }
 
 (** TODO: restore [title_full] or not?*)
@@ -469,12 +478,15 @@ module Edits =
       let* tagged in
       Result_list.fold_left (fun acc sub -> f sub acc) tagged ranged_names
 
+    let perform = Result.map
+
     (** The order is very significant! *)
     let apply_all e tagged =
       Ok tagged
       |> apply select_tracks e.trackset
       |> apply_if e.recording_titles recording_titles
       |> apply_pcre_s edit_track_titles e.edit_track_titles
+      |> perform factor_common_prefix
       |> apply_if e.release_title release_title
       |> apply_if e.medium_title medium_title
       |> apply_pcre_s edit_prefix e.edit_prefix
@@ -561,7 +573,7 @@ let print ?(no_artists=false) ?(factor_artists=false) ?(no_originals=false) ?(no
   printf "\n%-*s '%s'\n\n" lcw "Directory:" dir;
   match d.tracks with
   | Single t ->
-     printf "%*s '%s'\n" lcw "Track:" t.Track.title;
+     printf "%*s '%s'\n" lcw "Track:" t.Track.title_full;
      if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
      if not no_artists then list_artists lcw t.Track.artists
   | Multi multi ->
