@@ -314,39 +314,26 @@ let recording_titles d =
   let titles, tracks = refresh_titles tracks d in
   Ok { d with titles; tracks }
 
+(** TODO: restore [title_full] or not?*)
 let force_user_title title d =
-  let titles = User title :: d.titles in
-  match d.tracks with
-  | Single _ ->
-     { d with titles }
-  | Multi m ->
-     let tracks = Option.value ~default:m.tracks' m.tracks_full |> as_multi m.width in
-     { d with titles; tracks }
+  let titles = User title :: d.titles
+  and tracks = map_tracks (fun t -> { t with title = t.title_full }) d.tracks in
+  { d with titles; tracks }
 
 let chop_prefix n s =
   String.sub s n (String.length s - n) |> strip_leading_punctuation
 
 let chop_prefixes n tracks =
-  List.map (fun t -> { t with Track.title = chop_prefix n t.Track.title }) tracks
+  map_tracks (fun t -> { t with Track.title = chop_prefix n t.Track.title_full }) tracks
 
 let user_title title d =
   let title = strip_trailing_punctuation title in
   match d.titles with
   | Tracks longest_prefix :: _ when String.starts_with ~prefix:title longest_prefix ->
-     let titles = User title :: d.titles in
      let n = String.length title in
-     begin match d.tracks with
-     | Single _ -> 
-        Ok { d with titles }
-     | Multi multi ->
-        let tracks', tracks_full =
-          begin match multi.tracks_full with
-          | None -> (chop_prefixes n multi.tracks', Some multi.tracks')
-          | Some tracks_full -> (chop_prefixes n tracks_full, Some tracks_full)
-          end in
-        let tracks = Multi { multi with tracks'; tracks_full } in
-        Ok { d with titles; tracks }
-     end
+     let titles = User title :: d.titles
+     and tracks = chop_prefixes n d.tracks in
+     Ok { d with titles; tracks }
   | _ -> Ok (force_user_title title d)
 
 let edit_prefix sub d =
@@ -359,23 +346,14 @@ let edit_prefix sub d =
        with
        | e -> Error (Printexc.to_string e) in
      if String.starts_with ~prefix:title longest_prefix then
-       let titles = User title :: d.titles in
        let n = String.length title in
-       begin match d.tracks with
-       | Single _ -> 
-          Ok { d with titles }
-       | Multi multi ->
-          let tracks', tracks_full =
-            begin match multi.tracks_full with
-            | None -> (chop_prefixes n multi.tracks', Some multi.tracks')
-            | Some tracks_full -> (chop_prefixes n tracks_full, Some tracks_full)
-            end in
-          let tracks = Multi { multi with tracks'; tracks_full } in
-          Ok { d with titles; tracks }
-       end
+       let titles = User title :: d.titles
+       and tracks = chop_prefixes n d.tracks in
+       Ok { d with titles; tracks }
      else
        Ok d
-  | _ -> Ok d
+  | _ ->
+     Ok d
 
 let edit_title sub d =
   match d.titles with
@@ -581,30 +559,18 @@ let print ?(no_artists=false) ?(factor_artists=false) ?(no_originals=false) ?(no
   if not no_artists then (printf "\n"; list_artists lcw d.artists);
   let _, dir = target_dir d in
   printf "\n%-*s '%s'\n\n" lcw "Directory:" dir;
-  begin match d.tracks with
+  match d.tracks with
   | Single t ->
      printf "%*s '%s'\n" lcw "Track:" t.Track.title;
      if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
      if not no_artists then list_artists lcw t.Track.artists
   | Multi multi ->
      let width = multi.width in
-     begin match multi.tracks_full with
-     | None ->
-        List.iter
-          (fun t ->
-            printf "%-*s %0*d: '%s'\n" (lcw - width - 2) "Track"
-              width t.Track.number t.Track.title;
-            if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
-            if not no_artists then list_artists lcw t.Track.artists)
-          multi.tracks'
-     | Some tracks_full ->
-        List.iter2
-          (fun t ft ->
-            printf "%-*s %0*d: '%s'\n" (lcw - width - 2) "Track"
-              width t.Track.number t.Track.title;
-            if not no_originals then printf "%*s '%s'\n" lcw "full:" ft.Track.title;
-            if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
-            if not no_artists then list_artists lcw t.Track.artists)
-          multi.tracks' tracks_full
-     end
-  end
+     List.iter
+       (fun t ->
+         printf "%-*s %0*d: '%s'\n" (lcw - width - 2) "Track"
+           width t.Track.number t.Track.title;
+         if not no_originals then printf "%*s '%s'\n" lcw "full:" t.Track.title_full;
+         if not no_recordings then Option.iter (printf "%*s '%s'\n" lcw "rec.:") t.recording_title;
+         if not no_artists then list_artists lcw t.Track.artists)
+       multi.tracks'
