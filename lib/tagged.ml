@@ -105,19 +105,15 @@ let%test_module _ =
 
 (** Suggestions for selecting the title. *)
 let suggested_titles ~release_title ~medium_title = function
-  | Multi multi ->
-     let titles =
-       List.filter_map Fun.id
-         [ Option.map (fun t -> Medium t) medium_title;
-           Option.map (fun t -> Release t) release_title ] in
-     (titles, Multi multi )
+  | Multi _ ->
+     List.filter_map Fun.id
+       [ Option.map (fun t -> Medium t) medium_title;
+         Option.map (fun t -> Release t) release_title ]
   | Single track ->
-     let titles =
-       Tracks track.Track.title ::
-         (List.filter_map Fun.id
-            [ Option.map (fun t -> Medium t) medium_title;
-              Option.map (fun t -> Release t) release_title ]) in
-     (titles, Single track)
+     Tracks track.Track.title ::
+       (List.filter_map Fun.id
+          [ Option.map (fun t -> Medium t) medium_title;
+            Option.map (fun t -> Release t) release_title ])
 
 let refresh_title_suggestions tracks d =
   let release_title = d.release_title
@@ -166,8 +162,8 @@ let of_mb mb =
   and release_title = release.Release.title in
   let artists = add_tracks_artists release.Release.artists medium.Medium.tracks in
   let composer, performer = make_artists artists in
-  let titles, tracks =
-    suggested_titles ~release_title ~medium_title (as_multi track_width medium.Medium.tracks) in
+  let tracks = as_multi track_width medium.Medium.tracks in
+  let titles = suggested_titles ~release_title ~medium_title tracks in
   { composer; titles; performer; artists; tracks;
     discid; medium_id; medium_title; release_id; release_title }
 
@@ -229,7 +225,7 @@ let select_tracks subset d =
       | _ -> Error (Printf.sprintf "--single requires a single track, not %d" (List.length tracks'))
     else
       Ok (as_multi track_width tracks') in
-  let titles, tracks = refresh_title_suggestions tracks d in
+  let titles = refresh_title_suggestions tracks d in
   let composer, performer = common_tracks_artists tracks' |> make_artists in
   Ok { d with titles; composer; performer; tracks }
 
@@ -309,7 +305,7 @@ let edit_track_titles (range, perl_s) d =
         else
           Ok track)
       d.tracks in
-  let titles, tracks = refresh_title_suggestions tracks d in
+  let titles = refresh_title_suggestions tracks d in
   Ok { d with titles; tracks }
 
 let recording_titles d =
@@ -320,7 +316,7 @@ let recording_titles d =
         | Some title -> { track with title; title_full = title }
         | None -> track)
       d.tracks in
-  let titles, tracks = refresh_title_suggestions tracks d in
+  let titles = refresh_title_suggestions tracks d in
   Ok { d with titles; tracks }
 
 (** TODO: restore [title_full] or not?*)
