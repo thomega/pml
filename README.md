@@ -4,6 +4,10 @@ The focus of this tool is the almost automatic ripping, encoding and tagging of 
 are only a subset of tracks on a disc or are spread over more than one disc.
 It supports recordings that are identified by composer, title and performer.
 
+# Caveat
+If you only want to perform one-to-one encoding of entire CDs with
+tagging based on MusicBrainz, most options of this tool is probably overkill.
+## Examples
 # Typical workflow:
 1. Explore the choices for directories, files and tags with `pml edit`.
 In this example we extract Shostakovich's 12th symphony on tracks 4 to 7
