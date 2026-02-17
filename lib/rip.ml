@@ -186,7 +186,7 @@ let encode_track ?dry ?verbose bitrate encoders dir d t =
   let tracknumber = t.Track.number in
   let filename =
     match d.tracks with
-    | Single _ -> t.Track.title
+    | Single _ -> t.Track.title_full
     | Multi m -> Printf.sprintf "%0*d %s" m.width tracknumber t.Track.title in
   let input = wav_name d t.Track.number_on_disc
   and output = Edit.filename_safe filename in
@@ -200,8 +200,12 @@ let encode_track ?dry ?verbose bitrate encoders dir d t =
        end
   and title =
     match d.tracks with
-    | Single _ -> t.Track.title
-    | Multi _ -> (List.hd d.Tagged.titles |> Tagged.title_to_string) ^ ": " ^ t.Track.title
+    | Single _ -> t.Track.title_full
+    | Multi _ ->
+       begin match t.Track.title with
+       | "" -> (List.hd d.Tagged.titles |> Tagged.title_to_string)
+       | title -> (List.hd d.Tagged.titles |> Tagged.title_to_string) ^ ": " ^ title
+       end
   and performers =
     Artist.Collection.to_list t.Track.artists |> List.map Artist.to_string in
   let tags =
