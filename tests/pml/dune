@@ -3,10 +3,10 @@
  (deps %{project_root}/tests/etc/test-cache.tar.gz)
  (action (run tar xzf %{deps})))
 (rule
- (target run)
- (deps %{project_root}/tests/etc/run.sh)
+ (target pml)
+ (deps %{project_root}/tests/etc/pml.sh)
  (action
    (progn
      (copy %{deps} %{target})
      (run chmod 755 %{target}))))
-(cram (deps %{bin:pml} %{bin:pml_admin} test-cache run))
+(cram (deps %{bin:pml} %{bin:pml_admin} test-cache pml))

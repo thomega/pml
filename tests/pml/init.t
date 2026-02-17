@@ -1,9 +1,9 @@
 Trivial test:
   $ MUSICBRAINZ_CACHE=test-cache2
   $ export MUSICBRAINZ_CACHE
-  $ pml admin init
+  $ ./pml admin init
   pml admin: initialized cache at 'test-cache2'
-  $ pml admin cache -A
+  $ ./pml admin cache -A
   $ find test-cache2
   test-cache2
   test-cache2/artist
@@ -11,9 +11,9 @@ Trivial test:
   test-cache2/discid
 
 The same with the command line
-  $ ./run pml admin init --cache test-cache3
+  $ ./pml admin init --cache test-cache3
   pml admin: initialized cache at 'test-cache3'
-  $ ./run pml admin cache -A --cache test-cache3
+  $ ./pml admin cache -A --cache test-cache3
   $ find test-cache3
   test-cache3
   test-cache3/artist
@@ -21,6 +21,6 @@ The same with the command line
   test-cache3/discid
 
 Will produce an error:
-  $ ./run pml admin cache -A --cache no/such/cache
+  $ ./pml admin cache -A --cache no/such/cache
   pml: no such file or directory: no/such/cache
   [123]

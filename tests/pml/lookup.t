@@ -1,15 +1,15 @@
 Invalid discid
-  $ ./run pml medium fubar
+  $ ./pml medium fubar
   pml: 'fubar' is not a valid discid
   [123]
 
 Unknown discid
-  $ ./run pml medium 012345678901234567890123456-
+  $ ./pml medium 012345678901234567890123456-
   pml: curl 'https://musicbrainz.org/ws/2/discid/012345678901234567890123456-?fmt=json': disabled by PML_ONLY_LOCAL_QUERIES environment
   [123]
 
 Ambiguous discid
-  $ ./run pml medium Jo2dahDBN1Q_oT78dplbTyJ08Ig-
+  $ ./pml medium Jo2dahDBN1Q_oT78dplbTyJ08Ig-
   pml: 2 released discs for discid 'Jo2dahDBN1Q_oT78dplbTyJ08Ig-':
          MEDIUM ID/TITLE                      RELEASE ID/TITLE                    
        / ecc0c211-0dd0-36e7-811f-aa8e94889434 0ad2c0d1-0e19-4247-b7c2-a3003f85dc0b \
@@ -19,7 +19,7 @@ Ambiguous discid
   [123]
 
 Resolved
-  $ ./run pml medium Jo2dahDBN1Q_oT78dplbTyJ08Ig- -M ecc0
+  $ ./pml medium Jo2dahDBN1Q_oT78dplbTyJ08Ig- -M ecc0
   Disc:    Jo2dahDBN1Q_oT78dplbTyJ08Ig-
   Medium:  ecc0c211-0dd0-36e7-811f-aa8e94889434
   Release: 0ad2c0d1-0e19-4247-b7c2-a3003f85dc0b
@@ -35,7 +35,7 @@ Resolved
                 Michael Gielen (comp./cond.) [*1927, †2019]
 
 Ripping
-  $ ./run pml edit Jo2dahDBN1Q_oT78dplbTyJ08Ig- -M ecc0 -AON --edit_prefix '/:.*$//'
+  $ ./pml edit Jo2dahDBN1Q_oT78dplbTyJ08Ig- -M ecc0 -AON --edit_prefix '/:.*$//'
   Discid:  Jo2dahDBN1Q_oT78dplbTyJ08Ig-
   Medium:  ecc0c211-0dd0-36e7-811f-aa8e94889434
   Release: 0ad2c0d1-0e19-4247-b7c2-a3003f85dc0b
@@ -53,7 +53,7 @@ Ripping
   
   Track  01: 'Erste Abteilung. I. Kräftig. Entschieden'
 
-  $ ./run pml rip -d Jo2dahDBN1Q_oT78dplbTyJ08Ig- -M ecc0 --edit_prefix '/:.*$//'
+  $ ./pml rip -d Jo2dahDBN1Q_oT78dplbTyJ08Ig- -M ecc0 --edit_prefix '/:.*$//'
   executing: cdparanoia -w 1 cd-Jo2dahDBN1Q_oT78dplbTyJ08Ig-01.wav
   executing: mkdir "Mahler, Gustav"
   executing: mkdir "Mahler, Gustav/Sinfonie Nr. 3 d-Moll - Gielen, Michael"
