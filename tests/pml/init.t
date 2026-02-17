@@ -1,9 +1,9 @@
-Trivial test:
+Trivial test (don't use ./pml, because it will overide the environment):
   $ MUSICBRAINZ_CACHE=test-cache2
   $ export MUSICBRAINZ_CACHE
-  $ ./pml admin init
+  $ pml admin init
   pml admin: initialized cache at 'test-cache2'
-  $ ./pml admin cache -A
+  $ pml admin cache -A
   $ find test-cache2
   test-cache2
   test-cache2/artist
