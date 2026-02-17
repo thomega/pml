@@ -1,12 +1,16 @@
 # PML: Physical Media Library
 ## Tagging CD Rips with data from MusicBrainz
-The focus of this tool is the almost automatic ripping, encoding and tagging of musical works that
+The focus of `pml` tool is the almost automatic ripping, encoding and tagging of musical works that
 are only a subset of tracks on a disc or are spread over more than one disc.
 It supports recordings that are identified by composer, title and performer.
 
 ## Caveat
 If you only want to perform one-to-one encoding of entire CDs with
-tagging based on MusicBrainz, most options of this tool are probably overkill.
+tagging based on MusicBrainz, most options of `pml` are probably overkill.
+
+On the other hand, `pml` currently uses `cdparanoia` for ripping only
+with the default options.  Other tools will probably be more
+sophisticated.
 
 # Typical workflow:
 1. Explore the choices for directories, files and tags with `pml edit`.
