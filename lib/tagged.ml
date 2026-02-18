@@ -276,7 +276,7 @@ let chop_prefixes n tracks =
 
 let extract_title title d =
   let n = String.length title in
-  let titles = User title :: d.titles
+  let titles = Tracks title :: d.titles
   and tracks = chop_prefixes n d.tracks in
   { d with titles; tracks }
 
