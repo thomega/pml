@@ -1,3 +1,7 @@
+2026-02-18  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
+
+	* v0.3.2 new option -u/--unitary
+
 2026-02-17  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
 	* v0.3.1 bugfix: --add_artists reincarnated artists from

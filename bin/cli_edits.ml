@@ -203,7 +203,12 @@ let width =
 
 let single =
   let doc = "The piece consists of a single movement." in
-  Arg.(value & flag & info ["single"] ~doc)
+  Arg.(value & flag & info ["s"; "single"] ~doc)
+
+let unitary =
+  let doc = "The composer and performer are a unit, don't append the latter to the
+             directory name." in
+  Arg.(value & flag & info ["u"; "unitary"] ~doc)
 
 let trackset =
   let+ offset and+ first and+ last and+ width and+ single in
@@ -218,8 +223,8 @@ let all =
      and+ recording_titles and+ release_title and+ medium_title
      and+ delete_artists and+ delete_artists_sort and+ edit_artists and+ add_artist
      and+ composer and+ composer_pattern and+ performer and+ performer_pattern
-     and+ trackset and+ edit_track_titles in
+     and+ unitary and+ trackset and+ edit_track_titles in
   Tagged.Edits.{ title; edit_prefix; edit_title; recording_titles; release_title; medium_title;
                  delete_artists; delete_artists_sort; edit_artists; add_artist; edit_track_titles;
-                 composer; composer_pattern; performer; performer_pattern; trackset }
+                 composer; composer_pattern; performer; performer_pattern; unitary; trackset }
 

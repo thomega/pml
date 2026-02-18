@@ -121,6 +121,9 @@ let refresh_suggestions tracks d =
   and medium_title = d.medium_title in
   suggested_titles ~release_title ~medium_title tracks
 
+let update_tracks tracks d =
+  { d with tracks; titles = refresh_suggestions tracks d }
+
 (** Heuristics for selecting the title. *)
 let common_prefix tracks =
   List.map (fun t -> t.Track.title_full) tracks |> Edit.common_prefix
@@ -229,9 +232,7 @@ let select_tracks subset d =
       | _ -> Error (Printf.sprintf "--single requires a single track, not %d" (List.length tracks'))
     else
       Ok (as_multi track_width tracks') in
-  let titles = refresh_suggestions tracks d in
-  let composer, performer = common_tracks_artists tracks' |> make_artists in
-  Ok { d with titles; composer; performer; tracks }
+  Ok (update_tracks tracks d)
 
 let map_tracks f = function
   | Multi multi ->
@@ -250,18 +251,24 @@ let map_tracks_result f tracks =
      let* track = f track in
      Ok (Single track)
 
+let suggest_composer_performer t =
+  let composer, performer =
+    to_list t.tracks
+    |> common_tracks_artists
+    |> make_artists in
+  { t with composer; performer }
+
 let filter_artists range predicate t =
-  let tracks =
+  let artists = Artist.Collection.filter predicate t.artists
+  and tracks =
     map_tracks
       (fun track ->
         if Edit.in_range track.Track.number range then
           Track.filter_artists predicate track
         else
           track)
-      t.tracks
-  and artists = Artist.Collection.filter predicate t.artists in
-  let composer, performer = to_list tracks |> common_tracks_artists |> make_artists in
-  { t with composer; performer; artists; tracks  }
+      t.tracks in
+  { t with artists; tracks  }
 
 let edit_artists (range, perl_s) t =
   let open Result.Syntax in
@@ -277,8 +284,7 @@ let edit_artists (range, perl_s) t =
         else
           Ok track)
       t.tracks in
-  let composer, performer = to_list tracks |> common_tracks_artists |> make_artists in
-  Ok { t with composer; performer; tracks }
+  Ok { t with tracks }
 
 let add_artist (range, name) t =
   let open Result.Syntax in
@@ -292,8 +298,7 @@ let add_artist (range, name) t =
         else
           Ok track)
       t.tracks in
-  let composer, performer = to_list tracks |> common_tracks_artists |> make_artists in
-  Ok { t with composer; performer; tracks }
+  Ok { t with tracks }
 
 let edit_track_titles (range, perl_s) d =
   let open Result.Syntax in
@@ -306,8 +311,7 @@ let edit_track_titles (range, perl_s) d =
         else
           Ok track)
       d.tracks in
-  let titles = refresh_suggestions tracks d in
-  Ok { d with titles; tracks }
+  Ok (update_tracks tracks d)
 
 let recording_titles d =
   let tracks =
@@ -317,8 +321,7 @@ let recording_titles d =
         | Some title -> { track with title; title_full = title }
         | None -> track)
       d.tracks in
-  let titles = refresh_suggestions tracks d in
-  Ok { d with titles; tracks }
+  Ok (update_tracks tracks d)
 
 let restore_title_full track =
   Track.{ track with title = track.title_full }
@@ -429,6 +432,9 @@ let performer_pattern rex d =
   let* name = match_artist rex d in
   user_performer name d
 
+let unitary_artist d =
+  Ok { d with performer = None }
+
 module Edits =
   struct
 
@@ -448,7 +454,8 @@ module Edits =
         composer_pattern : Perl.M.t option;
         performer_pattern : Perl.M.t option;
         composer : string option;
-        performer : string option }
+        performer : string option;
+        unitary : bool }
 
     (** Apply always, no argument, can't fail. *)
     let apply_always = Result.map
@@ -476,23 +483,33 @@ module Edits =
     (** The order is very significant! *)
     let apply_all e tagged =
       Ok tagged
+
+      (** Phase 1: select tracks, edit their titles and suggest an overall title. *)
       |> apply select_tracks e.trackset
       |> apply_if recording_titles e.recording_titles
       |> apply_list edit_track_titles e.edit_track_titles
       |> apply_always factor_common_prefix
+
+      (** Phase 2: edit the overall title. *)
       |> apply_if release_title e.release_title
       |> apply_if medium_title e.medium_title
       |> apply_list edit_prefix e.edit_prefix
       |> apply_list edit_title e.edit_title
       |> apply user_title e.title
+
+      (** Phase 3: edit the artists an suggest composer/performer. *)
       |> apply_list delete_artists e.delete_artists
       |> apply_list delete_artists_sort e.delete_artists_sort
       |> apply_list edit_artists e.edit_artists
       |> apply_list add_artist e.add_artist
+      |> apply_always suggest_composer_performer
+
+      (** Phase 4: edit composer/performer. *)
       |> apply composer_pattern e.composer_pattern
       |> apply performer_pattern e.performer_pattern
       |> apply user_composer e.composer
       |> apply user_performer e.performer
+      |> apply_if unitary_artist e.unitary
 
   end
 

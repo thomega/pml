@@ -108,7 +108,10 @@ module Edits : sig
       performer_pattern : Perl.M.t option (** Select the top-billed performer among the artists
                                               by a regexp. *);
       composer : string option (** Set the name of the composer explicitely. *);
-      performer : string option (** Set the name of the top-billed performer explicitely. *) }
+      performer : string option (** Set the name of the top-billed performer explicitely. *);
+      unitary : bool (** If the performer can't b separated from the composer, don't add the
+                         name to the directory. *)
+    }
 
   val apply_all : all -> t -> (t, string) result
   (** Apply all edits in the order of the fields of [all]. *)
