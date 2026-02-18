@@ -75,12 +75,14 @@ let truncate n s =
   else
     invalid_arg "truncate: n < 3"
 
+(*
 type discid_error =
   | Ambiguous of t list
   | Ambiguous_prefix of string * t list
   | Invalid_prefix of string * t list
   | No_Backreference of Mb_release.t list
   | MB_Error of string
+ *)
 
 let ambiguous_discid discid discs =
   let b = Buffer.create 16 in
@@ -125,6 +127,7 @@ let of_discid_local ?medium ~root discid =
   let* disc = of_discid_sans_lifespans ?medium ~root discid in
   add_lifespans_local ~root disc
 
+(*
 let discid_error_to_string discid = function
   | Ambiguous releases ->
      ambiguous_discid discid releases
@@ -137,6 +140,7 @@ let discid_error_to_string discid = function
   | No_Backreference releases ->
      let releases = List.map (fun r -> r.Mb_release.id) releases |> String.concat ", " in
      Printf.sprintf "no disc for discid '%s' in releases %s" discid releases
+ *)
 
 let print disc =
   let open Printf in

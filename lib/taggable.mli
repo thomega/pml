@@ -55,6 +55,9 @@ type t =
     release : Mb_release.t;
     discid : string }
 
+(* If we try to introduce [('a, discid_error) result] here,
+   we break chains of [let*] that also include [('a, string) result].
+
 type discid_error =
   | Ambiguous of t list
   | Ambiguous_prefix of string * t list
@@ -63,6 +66,7 @@ type discid_error =
   | MB_Error of string
 
 val discid_error_to_string : string -> discid_error -> string
+ *)
 
 val of_discid : ?medium:string -> root:string -> string -> (t, string) result
 (** Find the released disc matching the discid.

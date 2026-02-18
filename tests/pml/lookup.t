@@ -45,7 +45,7 @@ Ripping
   
   Title:
   
-     user choice: 'Sinfonie Nr. 3 d-Moll'
+    track prefix: 'Sinfonie Nr. 3 d-Moll'
     track prefix: 'Sinfonie Nr. 3 d-Moll: Erste Abteilung. I. Kräftig. Entschieden'
          release: 'Michael Gielen Edition Vol. 6: Complete Symphonies'
   

@@ -10,7 +10,7 @@ As first movement of symphony
   
   Title:
   
-     user choice: 'Sinfonie Nr. 3 d-Moll'
+    track prefix: 'Sinfonie Nr. 3 d-Moll'
     track prefix: 'Sinfonie Nr. 3 d-Moll: Erste Abteilung. I. Kräftig. Entschieden'
          release: 'Michael Gielen Edition Vol. 6: Complete Symphonies'
   
@@ -87,7 +87,7 @@ As if single movement (not correct for this piece!)
   
   Title:
   
-     user choice: 'Sinfonie Nr. 3 d-Moll'
+    track prefix: 'Sinfonie Nr. 3 d-Moll'
     track prefix: 'Sinfonie Nr. 3 d-Moll: Erste Abteilung. I. Kräftig. Entschieden'
     track prefix: 'Sinfonie Nr. 3 d-Moll: Erste Abteilung. I. Kräftig. Entschieden'
          release: 'Michael Gielen Edition Vol. 6: Complete Symphonies'
