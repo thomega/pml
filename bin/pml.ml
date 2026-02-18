@@ -202,7 +202,7 @@ module Ripper : Unit_Result_Cmd =
       let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = Tagged.Edits.apply_all edits (Tagged.of_mb disc) in
       let encoders = ESet.of_list encoders |> ESet.elements in
-      Rip.execute ~dry ~verbose ?directory ~bitrate extra_args encoders tagged
+      Rip.execute ~dry ~verbose ?directory ?device ~bitrate extra_args encoders tagged
 
     let cmd =
       let open Cmd in
