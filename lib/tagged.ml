@@ -64,15 +64,6 @@ let iter_tracks f d =
 
 (** TODO: sanitize titles for filenames, rotate articles, ... *)
 
-(** Heuristics for selecting composer and top billed performer.
-    This relies on the ordering in [Artist_types]. *)
-let make_artists artists =
-  match Artists.min_elt_opt artists with
-  | None -> (None, None)
-  | Some composer ->
-     let performer_opt = Artists.min_elt_opt (Artists.remove composer artists) in
-     (Some composer, performer_opt)
-
 let replace_track_titles strings tracks =
   List.map2 (fun s t -> { t with Track.title = s }) strings tracks
 
@@ -124,39 +115,10 @@ let refresh_suggestions tracks d =
 let update_tracks tracks d =
   { d with tracks; titles = refresh_suggestions tracks d }
 
-(** Heuristics for selecting the title. *)
-let common_prefix tracks =
-  List.map (fun t -> t.Track.title_full) tracks |> Edit.common_prefix
-
-let factor_common_prefix t =
-  match t.tracks with
-  | Multi multi ->
-     begin match common_prefix multi.tracks' with
-     | "" , _ ->
-        t
-     | prefix, tails ->
-        let titles = Tracks (strip_trailing_punctuation prefix) :: t.titles in
-        let tails = List.map strip_leading_punctuation tails in
-        let tracks' = replace_track_titles tails multi.tracks' in
-        let tracks = Multi { multi with tracks' } in
-        { t with titles; tracks }
-     end
-  | Single track ->
-     let titles = Tracks (strip_trailing_punctuation track.title) :: t.titles in
-     let tracks = Single { track with title = "" } in
-     { t with titles; tracks }
-
 let add_tracks_artists artists tracks =
   List.fold_left
     (fun acc track -> Artists.union acc track.Track.artists)
     artists tracks
-
-let common_tracks_artists = function
-  | [] -> Artists.empty
-  | track :: tracks ->
-     List.fold_left
-       (fun acc track -> Artists.inter acc track.Track.artists)
-       track.Track.artists tracks
 
 let of_mb mb =
   let medium = Medium.of_mb mb.Taggable.medium
@@ -167,9 +129,10 @@ let of_mb mb =
   and medium_title = medium.Medium.title
   and release_id = release.Release.id
   and release_title = release.Release.title in
-  let artists = add_tracks_artists release.Release.artists medium.Medium.tracks in
-  let composer, performer = make_artists artists in
-  let tracks = as_multi track_width medium.Medium.tracks in
+  let composer = None
+  and performer = None
+  and artists = add_tracks_artists release.Release.artists medium.Medium.tracks
+  and tracks = as_multi track_width medium.Medium.tracks in
   let titles = suggested_titles ~release_title ~medium_title tracks in
   { composer; titles; performer; artists; tracks;
     discid; medium_id; medium_title; release_id; release_title }
@@ -251,54 +214,27 @@ let map_tracks_result f tracks =
      let* track = f track in
      Ok (Single track)
 
-let suggest_composer_performer t =
-  let composer, performer =
-    to_list t.tracks
-    |> common_tracks_artists
-    |> make_artists in
-  { t with composer; performer }
+(** Heuristics for selecting the title. *)
+let common_prefix tracks =
+  List.map (fun t -> t.Track.title_full) tracks |> Edit.common_prefix
 
-let filter_artists range predicate t =
-  let artists = Artist.Collection.filter predicate t.artists
-  and tracks =
-    map_tracks
-      (fun track ->
-        if Edit.in_range track.Track.number range then
-          Track.filter_artists predicate track
-        else
-          track)
-      t.tracks in
-  { t with artists; tracks  }
-
-let edit_artists (range, perl_s) t =
-  let open Result.Syntax in
-  let* tracks =
-    map_tracks_result
-      (fun track ->
-        if Edit.in_range track.Track.number range then
-          Track.map_artists
-            (fun a ->
-              let* name = Perl.S.exec perl_s a.Artist.name in
-              Ok { a with name } )
-            track
-        else
-          Ok track)
-      t.tracks in
-  Ok { t with tracks }
-
-let add_artist (range, name) t =
-  let open Result.Syntax in
-  let* tracks =
-    map_tracks_result
-      (fun track ->
-        if Edit.in_range track.Track.number range then
-          let artists =
-            Artist.Collection.add (Artist.of_name name) track.Track.artists in
-          Ok { track with artists }
-        else
-          Ok track)
-      t.tracks in
-  Ok { t with tracks }
+let factor_common_prefix t =
+  match t.tracks with
+  | Multi multi ->
+     begin match common_prefix multi.tracks' with
+     | "" , _ ->
+        t
+     | prefix, tails ->
+        let titles = Tracks (strip_trailing_punctuation prefix) :: t.titles in
+        let tails = List.map strip_leading_punctuation tails in
+        let tracks' = replace_track_titles tails multi.tracks' in
+        let tracks = Multi { multi with tracks' } in
+        { t with titles; tracks }
+     end
+  | Single track ->
+     let titles = Tracks (strip_trailing_punctuation track.title) :: t.titles in
+     let tracks = Single { track with title = "" } in
+     { t with titles; tracks }
 
 let edit_track_titles (range, perl_s) d =
   let open Result.Syntax in
@@ -401,6 +337,69 @@ let release_title d =
   let open Result.Syntax in
   let* title = get_release_title d in
   user_title title d
+
+(** Heuristics for selecting composer and top billed performer.
+    This relies on the ordering in [Artist_types]. *)
+let possible_composer_performer artists =
+  match Artists.min_elt_opt artists with
+  | None -> (None, None)
+  | Some composer ->
+     let performer_opt = Artists.min_elt_opt (Artists.remove composer artists) in
+     (Some composer, performer_opt)
+
+let common_tracks_artists t =
+  match to_list t.tracks with
+  | [] -> Artists.empty
+  | track :: tracks ->
+     List.fold_left
+       (fun acc track -> Artists.inter acc track.Track.artists)
+       track.Track.artists tracks
+
+let suggest_composer_performer t =
+  let composer, performer = common_tracks_artists t |> possible_composer_performer in
+  { t with composer; performer }
+
+let filter_artists range predicate t =
+  let artists = Artist.Collection.filter predicate t.artists
+  and tracks =
+    map_tracks
+      (fun track ->
+        if Edit.in_range track.Track.number range then
+          Track.filter_artists predicate track
+        else
+          track)
+      t.tracks in
+  { t with artists; tracks  }
+
+let edit_artists (range, perl_s) t =
+  let open Result.Syntax in
+  let* tracks =
+    map_tracks_result
+      (fun track ->
+        if Edit.in_range track.Track.number range then
+          Track.map_artists
+            (fun a ->
+              let* name = Perl.S.exec perl_s a.Artist.name in
+              Ok { a with name } )
+            track
+        else
+          Ok track)
+      t.tracks in
+  Ok { t with tracks }
+
+let add_artist (range, name) t =
+  let open Result.Syntax in
+  let* tracks =
+    map_tracks_result
+      (fun track ->
+        if Edit.in_range track.Track.number range then
+          let artists =
+            Artist.Collection.add (Artist.of_name name) track.Track.artists in
+          Ok { track with artists }
+        else
+          Ok track)
+      t.tracks in
+  Ok { t with tracks }
 
 let delete_artists (range, perl_m) d =
   Ok (filter_artists range (fun a -> Perl.M.exec perl_m a.Artist.name |> not) d)

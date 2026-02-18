@@ -1,4 +1,4 @@
-(* version.ml -- part of PML (Physical Media Library)
+(* config.ml -- part of PML (Physical Media Library)
 
    Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
