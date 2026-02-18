@@ -62,6 +62,9 @@ let blank_to_none = function
      else
        string_option
 
+let re_question_mark =
+  Re.(set {|?|} |> compile)
+
 let re_double_quote =
   Re.(set {|"|} |> compile)
 
@@ -85,15 +88,18 @@ let re_colon =
 
 (** Android appears wants us to kill double quotes. *)
 
-(** TODO: Android doesn't like question marks '?'. What's a good replacement? *)
+(** TODO: Android doesn't like question marks '?'.
+    Just deleting it is not very nice.
+    What's a good replacement? *)
 let filename_safe s =
   s
   |> Re.replace_string re_slash ~by:"-"
   |> Re.replace_string re_colon ~by:" -"
   |> Re.replace_string re_double_quote ~by:"'"
+  |> Re.replace_string re_question_mark ~by:""
   |> Re.replace_string re_boundary_white ~by:""
 
-(** NB: We have removed the comprssion of whitespace:
+(** NB: We have removed the compression of whitespace:
     [|> Re.replace_string re_rep_white ~by:" "].  *)
 
 let%test _ = filename_safe {|a: b|} = {|a - b|}
