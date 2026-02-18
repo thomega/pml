@@ -23,6 +23,7 @@ val encoders : encoder list
 
 type extra_args =
   { cdparanoia : string list;
+    use_icedax : bool;
     opus : string list;
     vorbis : string list;
     flac : string list;

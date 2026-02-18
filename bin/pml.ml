@@ -165,8 +165,13 @@ module Ripper : Unit_Result_Cmd =
       Arg.(value & opt_all (enum enc_enum) [Rip.Opus] & info ["e"; "encoder"] ~doc ~docv:"encoder")
 
     let cdparanoia =
-      let doc = "Add additional arguments to the $(b,cdparanoia) command line." in
+      let doc = "Add additional arguments to the $(b,cdparanoia) or $(b,icedax) command line." in
       Arg.(value & opt_all string [] & info ["cdparanoia"] ~doc ~docv:"arg")
+
+    let use_icedax =
+      let doc = "Use $(b,icedax) instead of $(b,cdparanoia) to rip the CD in the
+                 case that the latter fails." in
+      Arg.(value & flag & info ["icedax"] ~doc)
 
     let opus =
       let doc = "Add additional arguments to the $(b,opusenc) command line." in
@@ -185,8 +190,8 @@ module Ripper : Unit_Result_Cmd =
       Arg.(value & opt_all string [] & info ["mp3"] ~doc ~docv:"arg")
 
     let extra_args =
-      let+ cdparanoia and+ opus and+ vorbis and+ flac and+ mp3 in
-      Rip.{ cdparanoia; opus; vorbis; flac; mp3 }
+      let+ cdparanoia and+ use_icedax and+ opus and+ vorbis and+ flac and+ mp3 in
+      Rip.{ cdparanoia; use_icedax; opus; vorbis; flac; mp3 }
 
     module ESet = Set.Make (struct type t = Rip.encoder let compare = Stdlib.compare end)
 
