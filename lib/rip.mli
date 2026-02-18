@@ -21,6 +21,15 @@ type encoder = Opus | Vorbis | Flac | Mp3
 val encoder_to_string : encoder -> string
 val encoders : encoder list
 
-val execute : ?dry:bool -> ?verbose:bool -> ?directory:string ->
+type extra_args =
+  { cdparanoia : string list;
+    opus : string list;
+    vorbis : string list;
+    flac : string list;
+    mp3 : string list }
+
+val default_extra_args : extra_args
+
+val execute : ?dry:bool -> ?verbose:bool -> ?directory:string -> extra_args ->
               bitrate:int -> encoder list -> Tagged.t -> (unit, string) result
 (** Execute the external programs for ripping, encoding and tagging. *)

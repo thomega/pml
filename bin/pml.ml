@@ -164,16 +164,40 @@ module Ripper : Unit_Result_Cmd =
         List.map (fun enc -> (Rip.encoder_to_string enc, enc)) Rip.encoders in
       Arg.(value & opt_all (enum enc_enum) [Rip.Opus] & info ["e"; "encoder"] ~doc ~docv:"encoder")
 
+    let cdparanoia =
+      let doc = "Add additional arguments to the $(b,cdparanoia) command line." in
+      Arg.(value & opt_all string [] & info ["cdparanoia"] ~doc ~docv:"arg")
+
+    let opus =
+      let doc = "Add additional arguments to the $(b,opusenc) command line." in
+      Arg.(value & opt_all string [] & info ["opus"] ~doc ~docv:"arg")
+
+    let vorbis =
+      let doc = "Add additional arguments to the $(b,oggenc) command line." in
+      Arg.(value & opt_all string [] & info ["vorbis"] ~doc ~docv:"arg")
+
+    let flac =
+      let doc = "Add additional arguments to the $(b,flac) command line." in
+      Arg.(value & opt_all string [] & info ["flac"] ~doc ~docv:"arg")
+
+    let mp3 =
+      let doc = "Add additional arguments to the $(b,lame) command line." in
+      Arg.(value & opt_all string [] & info ["mp3"] ~doc ~docv:"arg")
+
+    let extra_args =
+      let+ cdparanoia and+ opus and+ vorbis and+ flac and+ mp3 in
+      Rip.{ cdparanoia; opus; vorbis; flac; mp3 }
+
     module ESet = Set.Make (struct type t = Rip.encoder let compare = Stdlib.compare end)
 
     let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ~edits
-          ~bitrate ~encoders () =
+          ~bitrate ~encoders ~extra_args () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = Tagged.Edits.apply_all edits (Tagged.of_mb disc) in
       let encoders = ESet.of_list encoders |> ESet.elements in
-      Rip.execute ~dry ~verbose ?directory ~bitrate encoders tagged
+      Rip.execute ~dry ~verbose ?directory ~bitrate extra_args encoders tagged
 
     let cmd =
       let open Cmd in
@@ -186,8 +210,9 @@ module Ripper : Unit_Result_Cmd =
       make (info "rip" ~doc ~man) @@
         let+ dry and+ verbose and+ directory
            and+ root and+ medium and+ discid and+ device
-           and+ bitrate and+ encoders and+ edits in
-        f ~root ~dry ~verbose ?directory ?medium ?discid ~device ~bitrate ~encoders ~edits ()
+           and+ bitrate and+ encoders and+ extra_args and+ edits in
+        f ~root ~dry ~verbose ?directory ?medium ?discid ~device
+          ~bitrate ~encoders ~extra_args ~edits ()
 
   end
 

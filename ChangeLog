@@ -1,5 +1,7 @@
 2026-02-18  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
+	* rip accepts extra arguments for the external tools
+
 	* v0.3.3 only prepend the overall title to the track title,
 	  if the overall title has been derived from a prefix
 

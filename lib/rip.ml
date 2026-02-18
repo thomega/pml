@@ -30,6 +30,16 @@ let encoder_to_string = function
 let encoders =
   [Opus; Vorbis; Flac; Mp3]
 
+type extra_args =
+  { cdparanoia : string list;
+    opus : string list;
+    vorbis : string list;
+    flac : string list;
+    mp3 : string list }
+
+let default_extra_args =
+  { cdparanoia = []; opus = []; vorbis = []; flac = []; mp3 = [] }
+
 (** We use a prefix for the WAV file, because discids can start with a period. *)
 let wav_prefix = "cd-"
 
@@ -160,9 +170,9 @@ let mp3enc ?verbose ?dry ~bitrate tags ~input ~output () =
 let wav_name d i =
   Printf.sprintf "%s%s%02d.wav" wav_prefix d.Tagged.discid i
 
-let rip_track ?verbose ?dry ?(force=false) d i =
+let rip_track ?verbose ?dry ?(force=false) ?(extra_args=[]) d i =
   let wav = wav_name d i in
-  let args = ["-w"; string_of_int i; wav] in
+  let args = extra_args @ ["-w"; string_of_int i; wav] in
   if Sys.file_exists wav then
     if Sys.is_regular_file wav then
       if force then
@@ -259,10 +269,12 @@ let chdir ?(dry=false) ?(verbose=false) ?directory () =
        with
        | e -> Error (Printexc.to_string e)
 
-let execute ?dry ?verbose ?directory ~bitrate encoders d =
+let execute ?dry ?verbose ?directory extra_args ~bitrate encoders d =
   let open Result.Syntax in
   let* () = chdir ?dry ?verbose ?directory () in
-  let* () = Tagged.iter_tracks (fun t -> t.Track.number_on_disc |> rip_track ?verbose ?dry d) d in
+  let* () =
+    let extra_args = extra_args.cdparanoia in
+    Tagged.iter_tracks (fun t -> rip_track ?verbose ?dry ~extra_args d t.Track.number_on_disc) d in
   let root, dir = Tagged.target_dir d in
   let* () = mkdir ?dry ?verbose root in
   let* () = mkdir ?dry ?verbose dir in
