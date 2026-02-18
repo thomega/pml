@@ -55,6 +55,15 @@ type t =
     release : Mb_release.t;
     discid : string }
 
+type discid_error =
+  | Ambiguous of t list
+  | Ambiguous_prefix of string * t list
+  | Invalid_prefix of string * t list
+  | No_Backreference of Mb_release.t list
+  | MB_Error of string
+
+val discid_error_to_string : string -> discid_error -> string
+
 val of_discid : ?medium:string -> root:string -> string -> (t, string) result
 (** Find the released disc matching the discid.
     Behind the scenes, it also inserts the extended [artist] records
