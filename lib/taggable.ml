@@ -60,6 +60,12 @@ let add_lifespans ~root disc =
     Cached.Artist.map_of_ids ~root (Jsont_bytesrw.decode_string Mb_artist.jsont) ids in
   update_artists artist_map disc
 
+let add_lifespans_local ~root disc =
+  let ids = artist_ids disc |> Sets.MBID.elements in
+  let* artist_map =
+    Cached.Artist.map_of_ids_local ~root (Jsont_bytesrw.decode_string Mb_artist.jsont) ids in
+  update_artists artist_map disc
+
 let truncate n s =
   let l = String.length s in
   if l <= n then
@@ -107,6 +113,10 @@ let of_discid_sans_lifespans ?medium ~root discid =
 let of_discid ?medium ~root discid =
   let* disc = of_discid_sans_lifespans ?medium ~root discid in
   add_lifespans ~root disc
+
+let of_discid_local ?medium ~root discid =
+  let* disc = of_discid_sans_lifespans ?medium ~root discid in
+  add_lifespans_local ~root disc
       
 let print disc =
   let open Printf in

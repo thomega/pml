@@ -123,7 +123,7 @@ module Ls_discids : Unit_Result_Cmd =
       List.map fst discids
       |> List.iter
            (fun discid ->
-             match Taggable.of_discid_sans_lifespans ~root discid with
+             match Taggable.of_discid_local ~root discid with
              | Error msg ->
                 begin match Cached.releases_of_discid ~root discid with
                 | Error msg ->
@@ -132,11 +132,19 @@ module Ls_discids : Unit_Result_Cmd =
                    Printf.printf "%s -> %s\n%s\n" discid (String.concat " " releases) msg
                 end
              | Ok t ->
+                begin match t.Taggable.medium.Mb_medium.title with
+                | Some medium ->
                 Printf.printf
                   "%s '%s' '%s'\n"
                   t.Taggable.discid
                   (Option.value ~default:"???" t.Taggable.release.Mb_release.title)
-                  (Option.value ~default:"" t.Taggable.medium.Mb_medium.title));
+                  medium
+                | None ->
+                   Printf.printf
+                     "%s '%s'\n"
+                     t.Taggable.discid
+                     (Option.value ~default:"???" t.Taggable.release.Mb_release.title)
+                end);
       Ok ()
 
     let cmd =

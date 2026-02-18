@@ -125,6 +125,8 @@ module type T =
     module M : Map.S with type key = string
     val map_of_ids : root:string -> (string -> ('a, string) result) ->
                      string list -> ('a M.t, string) result
+    val map_of_ids_local : root:string -> (string -> ('a, string) result) ->
+                           string list -> ('a M.t, string) result
     module Internal : Cache.T with type key = string and type value = string
   end
 
@@ -146,8 +148,8 @@ module Make (Table : Table) : T =
         end)
 
     (* This version deosn't check its argument.
-       It can be used in [get] below,
-       because the argument has been checked. *)
+       It can be used in [get], i.e. [C.lookup], below,
+       because the argument will have been checked. *)
     let remote_unsafe key =
       let* text = Query.(exec musicbrainz Table.query key) in
       Json.normalize text
@@ -178,6 +180,18 @@ module Make (Table : Table) : T =
           let* text = get ~root key in
           let* value = value_of_string text in
           Ok (M.add key value map))
+        M.empty keys
+
+    let map_of_ids_local ~root value_of_string keys =
+      Result_list.fold_left
+        (fun map key ->
+          let* text_opt = local ~root key in
+          match text_opt with
+          | None ->
+             Ok map
+          | Some text ->
+             let* value = value_of_string text in
+             Ok (M.add key value map))
         M.empty keys
 
     module Internal = C

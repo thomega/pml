@@ -44,6 +44,11 @@ module type T =
 
     val map_of_ids : root:string -> (string -> ('a, string) result) ->
                      string list -> ('a M.t, string) result
+    (** Build a map of [(key, value)] pairs using remote lookup, if necessary. *)
+
+    val map_of_ids_local : root:string -> (string -> ('a, string) result) ->
+                     string list -> ('a M.t, string) result
+    (** Build a map of [(key, value)] pairs that are available locally. *)
 
     module Internal : Cache.T with type key = string and type value = string
     (** Access the public interface of the [Cache.T] used to implement
