@@ -32,14 +32,13 @@ let encoders =
 
 type extra_args =
   { cdparanoia : string list;
-    use_icedax : bool;
     opus : string list;
     vorbis : string list;
     flac : string list;
     mp3 : string list }
 
 let default_extra_args =
-  { cdparanoia = []; use_icedax = false; opus = []; vorbis = []; flac = []; mp3 = [] }
+  { cdparanoia = []; opus = []; vorbis = []; flac = []; mp3 = [] }
 
 (** We use a prefix for the WAV file, because discids can start with a period. *)
 let wav_prefix = "cd-"
@@ -171,8 +170,8 @@ let mp3enc ?verbose ?dry ~bitrate tags ~input ~output () =
 let wav_name d i =
   Printf.sprintf "%s%s%02d.wav" wav_prefix d.Tagged.discid i
 
-let rip_synchronously ?verbose ?dry ?device ?(extra_args=[]) ?(use_icedax=false) i wav =
-  if use_icedax then
+let rip_synchronously ?verbose ?dry ?device ?(extra_args=[]) ?(icedax=false) i wav =
+  if icedax then
     let device =
       match device with
       | Some device -> ["dev=" ^ device]
@@ -187,12 +186,12 @@ let rip_synchronously ?verbose ?dry ?device ?(extra_args=[]) ?(use_icedax=false)
     let args = extra_args @ device @ ["-w"; string_of_int i; wav] in
     synchronously ?verbose ?dry "cdparanoia" args
 
-let rip_track ?verbose ?dry ?(force=false) ?device ?use_icedax ?extra_args d i =
+let rip_track ?verbose ?dry ?(force=false) ?device ?icedax ?extra_args d i =
   let wav = wav_name d i in
   if Sys.file_exists wav then
     if Sys.is_regular_file wav then
       if force then
-        rip_synchronously ?verbose ?dry ?device ?use_icedax ?extra_args i wav
+        rip_synchronously ?verbose ?dry ?device ?icedax ?extra_args i wav
       else
         begin
           Printf.printf "not ripping %s again\n" wav;
@@ -202,7 +201,7 @@ let rip_track ?verbose ?dry ?(force=false) ?device ?use_icedax ?extra_args d i =
     else
       Error (Printf.sprintf "%s exists and is not a regular file" wav)
   else
-    rip_synchronously ?verbose ?dry ?device ?use_icedax ?extra_args i wav
+    rip_synchronously ?verbose ?dry ?device ?icedax ?extra_args i wav
 
 let encode_track ?dry ?verbose bitrate encoders dir d t =
   let album = List.hd d.Tagged.titles |> Tagged.title_to_string
@@ -285,15 +284,14 @@ let chdir ?(dry=false) ?(verbose=false) ?directory () =
        with
        | e -> Error (Printexc.to_string e)
 
-let execute ?dry ?verbose ?directory ?device extra_args ~bitrate encoders d =
+let execute ?dry ?verbose ?directory ?device ?icedax extra_args ~bitrate encoders d =
   ignore device;
   let open Result.Syntax in
   let* () = chdir ?dry ?verbose ?directory () in
   let* () =
-    let use_icedax = extra_args.use_icedax
-    and extra_args = extra_args.cdparanoia in
+    let extra_args = extra_args.cdparanoia in
     Tagged.iter_tracks
-      (fun t -> rip_track ?verbose ?dry ?device ~use_icedax ~extra_args d t.Track.number_on_disc)
+      (fun t -> rip_track ?verbose ?dry ?device ?icedax ~extra_args d t.Track.number_on_disc)
       d in
   let root, dir = Tagged.target_dir d in
   let* () = mkdir ?dry ?verbose root in

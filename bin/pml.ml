@@ -168,11 +168,6 @@ module Ripper : Unit_Result_Cmd =
       let doc = "Add additional arguments to the $(b,cdparanoia) or $(b,icedax) command line." in
       Arg.(value & opt_all string [] & info ["cdparanoia"] ~doc ~docv:"arg")
 
-    let use_icedax =
-      let doc = "Use $(b,icedax) instead of $(b,cdparanoia) to rip the CD in the
-                 case that the latter fails." in
-      Arg.(value & flag & info ["icedax"] ~doc)
-
     let opus =
       let doc = "Add additional arguments to the $(b,opusenc) command line." in
       Arg.(value & opt_all string [] & info ["opus"] ~doc ~docv:"arg")
@@ -190,19 +185,24 @@ module Ripper : Unit_Result_Cmd =
       Arg.(value & opt_all string [] & info ["mp3"] ~doc ~docv:"arg")
 
     let extra_args =
-      let+ cdparanoia and+ use_icedax and+ opus and+ vorbis and+ flac and+ mp3 in
-      Rip.{ cdparanoia; use_icedax; opus; vorbis; flac; mp3 }
+      let+ cdparanoia and+ opus and+ vorbis and+ flac and+ mp3 in
+      Rip.{ cdparanoia; opus; vorbis; flac; mp3 }
+
+    let icedax =
+      let doc = "Use $(b,icedax) instead of $(b,cdparanoia) to rip the CD in the
+                 case that the latter fails." in
+      Arg.(value & flag & info ["icedax"] ~doc)
 
     module ESet = Set.Make (struct type t = Rip.encoder let compare = Stdlib.compare end)
 
-    let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ~edits
+    let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ?icedax ~edits
           ~bitrate ~encoders ~extra_args () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = Tagged.Edits.apply_all edits (Tagged.of_mb disc) in
       let encoders = ESet.of_list encoders |> ESet.elements in
-      Rip.execute ~dry ~verbose ?directory ?device ~bitrate extra_args encoders tagged
+      Rip.execute ~dry ~verbose ?directory ?device ?icedax ~bitrate extra_args encoders tagged
 
     let cmd =
       let open Cmd in
@@ -213,10 +213,10 @@ module Ripper : Unit_Result_Cmd =
                  MusicBrainz database.  The edits can be previewed in
                  a human readable form with $(b,pml edit)." in
       make (info "rip" ~doc ~man) @@
-        let+ dry and+ verbose and+ directory
+        let+ dry and+ verbose and+ directory and+ icedax
            and+ root and+ medium and+ discid and+ device
            and+ bitrate and+ encoders and+ extra_args and+ edits in
-        f ~root ~dry ~verbose ?directory ?medium ?discid ~device
+        f ~root ~dry ~verbose ?directory ~icedax ?medium ?discid ~device
           ~bitrate ~encoders ~extra_args ~edits ()
 
   end

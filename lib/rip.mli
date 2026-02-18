@@ -23,7 +23,6 @@ val encoders : encoder list
 
 type extra_args =
   { cdparanoia : string list;
-    use_icedax : bool;
     opus : string list;
     vorbis : string list;
     flac : string list;
@@ -32,6 +31,6 @@ type extra_args =
 val default_extra_args : extra_args
 
 val execute : ?dry:bool -> ?verbose:bool -> ?directory:string ->
-              ?device:string -> extra_args ->
+              ?device:string -> ?icedax:bool -> extra_args ->
               bitrate:int -> encoder list -> Tagged.t -> (unit, string) result
 (** Execute the external programs for ripping, encoding and tagging. *)

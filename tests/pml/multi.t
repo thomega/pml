@@ -25,11 +25,11 @@ Multiple movements with offset (suppress artists, for brevity)
 Let it rip:
 
   $ ./pml rip -d rYnHujOBunoYhjdNe88TV_aD4A4- -o 1 --edit_prefix '/:.*$//'
-  executing: cdparanoia -w 1 cd-rYnHujOBunoYhjdNe88TV_aD4A4-01.wav
-  executing: cdparanoia -w 2 cd-rYnHujOBunoYhjdNe88TV_aD4A4-02.wav
-  executing: cdparanoia -w 3 cd-rYnHujOBunoYhjdNe88TV_aD4A4-03.wav
-  executing: cdparanoia -w 4 cd-rYnHujOBunoYhjdNe88TV_aD4A4-04.wav
-  executing: cdparanoia -w 5 cd-rYnHujOBunoYhjdNe88TV_aD4A4-05.wav
+  executing: cdparanoia -d /dev/cdrom -w 1 cd-rYnHujOBunoYhjdNe88TV_aD4A4-01.wav
+  executing: cdparanoia -d /dev/cdrom -w 2 cd-rYnHujOBunoYhjdNe88TV_aD4A4-02.wav
+  executing: cdparanoia -d /dev/cdrom -w 3 cd-rYnHujOBunoYhjdNe88TV_aD4A4-03.wav
+  executing: cdparanoia -d /dev/cdrom -w 4 cd-rYnHujOBunoYhjdNe88TV_aD4A4-04.wav
+  executing: cdparanoia -d /dev/cdrom -w 5 cd-rYnHujOBunoYhjdNe88TV_aD4A4-05.wav
   executing: mkdir "Mahler, Gustav"
   executing: mkdir "Mahler, Gustav/Sinfonie Nr. 3 d-Moll - Gielen, Michael"
   executing: opusenc --quiet --bitrate 128 --comment MUSICBRAINZ_TRACKID=ff5def33-3202-442e-b767-142a34517285 --comment MUSICBRAINZ_ALBUMID=0ad2c0d1-0e19-4247-b7c2-a3003f85dc0b --comment MUSICBRAINZ_DISCID=rYnHujOBunoYhjdNe88TV_aD4A4- --comment TRACKNUMBER=2 --comment "ALBUM=Sinfonie Nr. 3 d-Moll" --comment "TITLE=Sinfonie Nr. 3 d-Moll: Zweite Abteilung. II. Tempo di Menuetto. Sehr mäßig" --comment "ARTIST=Gustav Mahler (comp.) [*1860, †1911]" --comment "ARTIST=Michael Gielen (comp./cond.) [*1927, †2019]" --comment "ARTIST=SWR Sinfonieorchester Baden‐Baden und Freiburg [*1946, †2016]" cd-rYnHujOBunoYhjdNe88TV_aD4A4-01.wav "Mahler, Gustav/Sinfonie Nr. 3 d-Moll - Gielen, Michael/02 Zweite Abteilung. II. Tempo di Menuetto. Sehr mäßig.opus"
@@ -64,11 +64,11 @@ The same, but don't include performer in the directory
 Let it rip:
 
   $ ./pml rip -d rYnHujOBunoYhjdNe88TV_aD4A4- -o 1 --edit_prefix '/:.*$//' -u
-  executing: cdparanoia -w 1 cd-rYnHujOBunoYhjdNe88TV_aD4A4-01.wav
-  executing: cdparanoia -w 2 cd-rYnHujOBunoYhjdNe88TV_aD4A4-02.wav
-  executing: cdparanoia -w 3 cd-rYnHujOBunoYhjdNe88TV_aD4A4-03.wav
-  executing: cdparanoia -w 4 cd-rYnHujOBunoYhjdNe88TV_aD4A4-04.wav
-  executing: cdparanoia -w 5 cd-rYnHujOBunoYhjdNe88TV_aD4A4-05.wav
+  executing: cdparanoia -d /dev/cdrom -w 1 cd-rYnHujOBunoYhjdNe88TV_aD4A4-01.wav
+  executing: cdparanoia -d /dev/cdrom -w 2 cd-rYnHujOBunoYhjdNe88TV_aD4A4-02.wav
+  executing: cdparanoia -d /dev/cdrom -w 3 cd-rYnHujOBunoYhjdNe88TV_aD4A4-03.wav
+  executing: cdparanoia -d /dev/cdrom -w 4 cd-rYnHujOBunoYhjdNe88TV_aD4A4-04.wav
+  executing: cdparanoia -d /dev/cdrom -w 5 cd-rYnHujOBunoYhjdNe88TV_aD4A4-05.wav
   executing: mkdir "Mahler, Gustav"
   executing: mkdir "Mahler, Gustav/Sinfonie Nr. 3 d-Moll"
   executing: opusenc --quiet --bitrate 128 --comment MUSICBRAINZ_TRACKID=ff5def33-3202-442e-b767-142a34517285 --comment MUSICBRAINZ_ALBUMID=0ad2c0d1-0e19-4247-b7c2-a3003f85dc0b --comment MUSICBRAINZ_DISCID=rYnHujOBunoYhjdNe88TV_aD4A4- --comment TRACKNUMBER=2 --comment "ALBUM=Sinfonie Nr. 3 d-Moll" --comment "TITLE=Sinfonie Nr. 3 d-Moll: Zweite Abteilung. II. Tempo di Menuetto. Sehr mäßig" --comment "ARTIST=Gustav Mahler (comp.) [*1860, †1911]" --comment "ARTIST=Michael Gielen (comp./cond.) [*1927, †2019]" --comment "ARTIST=SWR Sinfonieorchester Baden‐Baden und Freiburg [*1946, †2016]" cd-rYnHujOBunoYhjdNe88TV_aD4A4-01.wav "Mahler, Gustav/Sinfonie Nr. 3 d-Moll/02 Zweite Abteilung. II. Tempo di Menuetto. Sehr mäßig.opus"

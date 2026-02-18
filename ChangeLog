@@ -1,6 +1,9 @@
-2026-02-18  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
+2026-02-19  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
-	* support icedax in addition to cdparanoia
+	* v0.3.4 support icedax in addition to cdparanoia
+	* use --device for in ripping
+
+2026-02-18  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
 	* rip accepts extra arguments for the external tools
 
