@@ -246,10 +246,10 @@ let encode_track ?dry ?verbose ?(extra_args=default_extra_args) bitrate encoders
   let output = Filename.concat dir output in
   Result_list.iter
     (function
-     | Opus -> opusenc ?verbose ?dry ~bitrate ~extra_args:extra_args.opus tags ~input ~output ()
-     | Vorbis -> vorbisenc ?verbose ?dry ~bitrate ~extra_args:extra_args.vorbis tags ~input ~output ()
+     | Opus -> opusenc ?verbose ?dry ~extra_args:extra_args.opus ~bitrate tags ~input ~output ()
+     | Vorbis -> vorbisenc ?verbose ?dry ~extra_args:extra_args.vorbis ~bitrate tags ~input ~output ()
      | Flac -> flacenc ?verbose ?dry ~extra_args:extra_args.flac tags ~input ~output ()
-     | Mp3 -> mp3enc ?verbose ?dry ~bitrate  ~extra_args:extra_args.mp3 tags ~input ~output ())
+     | Mp3 -> mp3enc ?verbose ?dry ~extra_args:extra_args.mp3 ~bitrate tags ~input ~output ())
     encoders
 
 let mkdir ?(dry=false) ?(verbose=false) name =
