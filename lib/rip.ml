@@ -284,7 +284,8 @@ let chdir ?(dry=false) ?(verbose=false) ?directory () =
        with
        | e -> Error (Printexc.to_string e)
 
-let execute ?dry ?verbose ?directory ?device ?icedax extra_args ~bitrate encoders d =
+let execute ?dry ?verbose ?directory ?device ?icedax ?(extra_args=default_extra_args)
+      ~bitrate encoders d =
   ignore device;
   let open Result.Syntax in
   let* () = chdir ?dry ?verbose ?directory () in

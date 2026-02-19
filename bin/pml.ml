@@ -196,13 +196,13 @@ module Ripper : Unit_Result_Cmd =
     module ESet = Set.Make (struct type t = Rip.encoder let compare = Stdlib.compare end)
 
     let f ~root ?medium ?discid ?device ?directory ~dry ~verbose ?icedax ~edits
-          ~bitrate ~encoders ~extra_args () =
+          ~bitrate ~encoders ?extra_args () =
       let open Result.Syntax in
       let* id = get_discid ?device ?discid () in
       let* disc = Taggable.of_discid ~root ?medium id in
       let* tagged = Tagged.Edits.apply_all edits (Tagged.of_mb disc) in
       let encoders = ESet.of_list encoders |> ESet.elements in
-      Rip.execute ~dry ~verbose ?directory ?device ?icedax ~bitrate extra_args encoders tagged
+      Rip.execute ~dry ~verbose ?directory ?device ?icedax ?extra_args ~bitrate encoders tagged
 
     let cmd =
       let open Cmd in
