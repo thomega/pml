@@ -98,25 +98,25 @@ let vorbiscomments opt tags =
       opt; "TITLE=" ^ tags.title ]
     (List.concat_map (fun p -> [opt; "ARTIST=" ^ p]) tags.performers)
 
-let opusenc ?verbose ?dry ~bitrate tags ~input ~output () =
+let opusenc ?verbose ?dry ~bitrate ?(extra_args=[]) tags ~input ~output () =
   let output = output ^ ".opus" in
   synchronously ?verbose ?dry "opusenc"
     (["--quiet";
       "--bitrate"; string_of_int bitrate ] @
-       vorbiscomments "--comment" tags @ [input; output])
+       vorbiscomments "--comment" tags @ extra_args @ [input; output])
 
-let vorbisenc ?verbose ?dry ~bitrate tags ~input ~output () =
+let vorbisenc ?verbose ?dry ~bitrate ?(extra_args=[]) tags ~input ~output () =
   let output = output ^ ".ogg" in
   synchronously ?verbose ?dry "oggenc"
     (["--quiet";
       "--bitrate"; string_of_int bitrate;] @
-       vorbiscomments "--comment" tags @ ["--output"; output; input])
+       vorbiscomments "--comment" tags @ extra_args @ ["--output"; output; input])
 
-let flacenc ?verbose ?dry tags ~input ~output () =
+let flacenc ?verbose ?dry ?(extra_args=[]) tags ~input ~output () =
   let output = output ^ ".oga" in
   synchronously ?verbose ?dry "flac"
     (["--silent"; "--force"; "--ogg" ] @
-       vorbiscomments "--tag" tags @ ["--output-name"; output; input])
+       vorbiscomments "--tag" tags @ extra_args @ ["--output-name"; output; input])
 
 (** Derive lame quality option from [bitrate] *)
 (** German Wikipedia: https://de.wikipedia.org/wiki/LAME *)
@@ -156,7 +156,7 @@ let%test _ = lame_quality_of_bitrate 115 = 6.
 let%test _ = lame_quality_of_bitrate 100 = 7.
 let%test _ = lame_quality_of_bitrate 85 = 8.
 
-let mp3enc ?verbose ?dry ~bitrate tags ~input ~output () =
+let mp3enc ?verbose ?dry ~bitrate ?(extra_args=[]) tags ~input ~output () =
   let quality = lame_quality_of_bitrate bitrate in
   let output = output ^ ".mp3" in
   synchronously ?verbose ?dry "lame"
@@ -165,7 +165,7 @@ let mp3enc ?verbose ?dry ~bitrate tags ~input ~output () =
       "--tn"; string_of_int tags.tracknumber;
       "--ta"; tags.artist;
       "--tt"; tags.title;
-      "--tc"; String.concat "; " tags.performers] @ [input; output])
+      "--tc"; String.concat "; " tags.performers] @ extra_args @ [input; output])
 
 let wav_name d i =
   Printf.sprintf "%s%s%02d.wav" wav_prefix d.Tagged.discid i
@@ -203,7 +203,7 @@ let rip_track ?verbose ?dry ?(force=false) ?device ?icedax ?extra_args d i =
   else
     rip_synchronously ?verbose ?dry ?device ?icedax ?extra_args i wav
 
-let encode_track ?dry ?verbose bitrate encoders dir d t =
+let encode_track ?dry ?verbose ?(extra_args=default_extra_args) bitrate encoders dir d t =
   let album = List.hd d.Tagged.titles |> Tagged.title_to_string
   and discid = d.Tagged.discid
   and track_id = t.Track.id
@@ -246,10 +246,10 @@ let encode_track ?dry ?verbose bitrate encoders dir d t =
   let output = Filename.concat dir output in
   Result_list.iter
     (function
-     | Opus -> opusenc ?verbose ?dry ~bitrate tags ~input ~output ()
-     | Vorbis -> vorbisenc ?verbose ?dry ~bitrate tags ~input ~output ()
-     | Flac -> flacenc ?verbose ?dry tags ~input ~output ()
-     | Mp3 -> mp3enc ?verbose ?dry ~bitrate tags ~input ~output ())
+     | Opus -> opusenc ?verbose ?dry ~bitrate ~extra_args:extra_args.opus tags ~input ~output ()
+     | Vorbis -> vorbisenc ?verbose ?dry ~bitrate ~extra_args:extra_args.vorbis tags ~input ~output ()
+     | Flac -> flacenc ?verbose ?dry ~extra_args:extra_args.flac tags ~input ~output ()
+     | Mp3 -> mp3enc ?verbose ?dry ~bitrate  ~extra_args:extra_args.mp3 tags ~input ~output ())
     encoders
 
 let mkdir ?(dry=false) ?(verbose=false) name =
