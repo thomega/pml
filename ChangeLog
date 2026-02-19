@@ -1,5 +1,7 @@
 2026-02-19  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
+	* v0.3.5 pml refresh
+
 	* v0.3.4 support icedax in addition to cdparanoia
 	* use --device for in ripping
 

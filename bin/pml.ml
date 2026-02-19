@@ -339,6 +339,7 @@ module Main : Unit_Result_Cmd =
       group (info "pml" ~man)
         [ Disc.cmd;
           Cli_ls.cmd;
+          Cli_refresh.cmd;
           Medium.cmd;
           Editor.cmd;
           Ripper.cmd;

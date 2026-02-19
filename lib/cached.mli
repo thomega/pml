@@ -34,11 +34,16 @@ module type T =
     val remote : string -> (string, string) result
     (** Return the JSON for the given key, ignoring any cache. *)
 
+    val refresh : root:string -> string -> (bool, string) result
+    (** Refresh the JSON for the given key, if the remote value is different
+        and not an error. *)
+
     val all_local : root:string -> ((string * string) list, string) result
     (** Return the cached [key] JSON pairs. *)
 
     val url : string -> (string, string) result
-    (** Return the URL for querying Musicbrainz for the entry corresponding to a key. *)
+    (** Return the URL for querying Musicbrainz for the entry corresponding to a key.
+        This should only be needed for debugging. *)
 
     module M : Map.S with type key = string
 

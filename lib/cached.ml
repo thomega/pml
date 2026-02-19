@@ -120,6 +120,7 @@ module type T =
     val get : root:string -> string -> (string, string) result
     val local : root:string -> string -> (string option, string) result
     val remote : string -> (string, string) result
+    val refresh : root:string -> string -> (bool, string) result
     val all_local : root:string -> ((string * string) list, string) result
     val url : string -> (string, string) result
     module M : Map.S with type key = string
@@ -165,6 +166,23 @@ module Make (Table : Table) : T =
       match Mb_error.get_error_opt text with
       | Some msg -> Error (Printf.sprintf "get '%s' returns error object: %s" key msg)
       | None -> Ok text
+
+    let refresh ~root key =
+      let* value = remote key in
+      match Mb_error.get_error_opt value with
+      | Some msg -> Error (Printf.sprintf "get '%s' returns error object: %s" key msg)
+      | None ->
+         let* value_local_opt = C.get ~root key in
+         match value_local_opt with
+         | None ->
+            let* () = C.set ~root key value in
+            Ok true
+         | Some value_local ->
+            if value <> value_local then
+              let* () = C.set ~root key value in
+              Ok true
+            else
+              Ok false
 
     let url key =
       let* key = Table.valid_key key in

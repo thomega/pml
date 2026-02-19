@@ -1,4 +1,4 @@
-(* config.ml -- part of PML (Physical Media Library)
+(* cli_refresh.mli -- part of PML (Physical Media Library)
 
    Copyright (C) 2026 by Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
 
@@ -15,15 +15,4 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>. *)
 
-let version = "0.3.5"
-let copyright = "2026"
-let name = "PML"
-let long_name = "Physical Media Library"
-let author = "Thorsten Ohl"
-let email = "ohl@physik.uni-wuerzburg.de"
-
-(** Don't overload the MusicBrainz servers with unit tests. *)
-let only_local_queries =
-  match Sys.getenv_opt "PML_ONLY_LOCAL_QUERIES" with
-  | Some _ -> true
-  | None -> false
+val cmd : (unit, string) result Cmdliner.Cmd.t
