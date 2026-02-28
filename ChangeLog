@@ -1,6 +1,7 @@
 2026-02-28  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
-	* pml refresh discid: default do disc in device
+	* pml refresh discid: default to disc in device
+	* pml refresh discid -r: refresh the releases
 
 2026-02-19  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 

@@ -108,22 +108,40 @@ module Refresh_discids : Unit_Result_Cmd =
         `S Manpage.s_description;
         `P "Update a discid in the local cache." ] @ Common.man_footer
 
-    let f ~root ?discid ?device () =
+    let releases =
+      let doc = "Update the releases for the discid, not the discid itself." in
+      Arg.(value & flag & info ["r"; "releases"] ~doc)
+
+    let update_releases_for_discid ~root discid =
+      let open Result.Syntax in
+      let* releases = Cached.releases_of_discid ~root discid in
+      Result_list.iter
+        (fun release ->
+          let* updated = Cached.Release.refresh ~root release in
+          if updated then
+            Ok (Printf.printf "release %s updated for discid %s\n" release discid)
+          else
+            Ok (Printf.printf "release %s unchanged for discid %s\n" release discid))
+        releases
+
+    let f ~root ?discid ?device ~releases () =
       let open Result.Syntax in
       let* discid = get_discid ?device ?discid () in
-      let* updated = Cached.Discid.refresh ~root discid in
-      if updated then
-        Printf.printf "discid %s updated\n" discid
+      if releases then
+        update_releases_for_discid ~root discid
       else
-        Printf.printf "discid %s unchanged\n" discid;
-      Ok ()
+        let* updated = Cached.Discid.refresh ~root discid in
+        if updated then
+          Ok (Printf.printf "discid %s updated\n" discid)
+        else
+          Ok (Printf.printf "discid %s unchanged\n" discid)
 
     let cmd =
       let open Cmd in
       let doc = "Update a discid in the local cache." in
       make (info "discid" ~doc ~man) @@
-        let+ root and+ discid and+ device in
-        f ~root ?discid ~device ()
+        let+ root and+ discid and+ device and+ releases in
+        f ~root ?discid ~device ~releases ()
 
   end
 
