@@ -79,6 +79,28 @@ module Refresh_releases : Unit_Result_Cmd =
 
   end
 
+(** Some redundancy with [pml.ml].  Factor it ... *)
+let default_device =
+  Libdiscid.default_device ()
+
+let device =
+  let doc = Printf.sprintf "Choose CD-ROM device." in
+  Arg.(value & opt filepath default_device & info ["device"] ~doc)
+
+let discid =
+  let doc = Printf.sprintf "Discid of the disc for which information is to
+                            be refreshed, if there is no disc in the drive.
+                            The discid is the output of $(b,pml discid --id)." in
+  Arg.(value & pos 0 (some string) None & info [] ~docv:"discid" ~doc)
+
+let get_discid ?device ?discid () =
+  let open Result.Syntax in
+  match discid with
+  | Some discid -> Ok discid
+  | None ->
+     let* ids = Libdiscid.get ?device () in
+     Ok (ids.Libdiscid.id)
+
 module Refresh_discids : Unit_Result_Cmd =
   struct
 
@@ -86,12 +108,9 @@ module Refresh_discids : Unit_Result_Cmd =
         `S Manpage.s_description;
         `P "Update a discid in the local cache." ] @ Common.man_footer
 
-    let discid =
-      let doc = Printf.sprintf "The MBID of the discid to update." in
-      Arg.(required & pos 0 (some string) None & info [] ~docv:"MBID" ~doc)
-
-    let f ~root ~discid () =
+    let f ~root ?discid ?device () =
       let open Result.Syntax in
+      let* discid = get_discid ?device ?discid () in
       let* updated = Cached.Discid.refresh ~root discid in
       if updated then
         Printf.printf "discid %s updated\n" discid
@@ -103,8 +122,8 @@ module Refresh_discids : Unit_Result_Cmd =
       let open Cmd in
       let doc = "Update a discid in the local cache." in
       make (info "discid" ~doc ~man) @@
-        let+ root and+ discid in
-        f ~root ~discid ()
+        let+ root and+ discid and+ device in
+        f ~root ?discid ~device ()
 
   end
 

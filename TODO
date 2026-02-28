@@ -4,6 +4,9 @@ Bugs/Urgent:
 
 Nice to have:
 
+ * make refresh release default to the releases mentioned in the discid
+   entry for the disc in the drive
+
  * suggest to refresh the release JSON if it doesn't point back to the disc
    (this can happen while entering multiple discids)
 
