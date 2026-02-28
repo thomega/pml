@@ -119,9 +119,9 @@ module Refresh_discids : Unit_Result_Cmd =
         (fun release ->
           let* updated = Cached.Release.refresh ~root release in
           if updated then
-            Ok (Printf.printf "release %s updated for discid %s\n" release discid)
+            Ok (Printf.printf "release %s updated\n" release)
           else
-            Ok (Printf.printf "release %s unchanged for discid %s\n" release discid))
+            Ok (Printf.printf "release %s unchanged\n" release))
         releases
 
     let f ~root ?discid ?device ~releases () =
