@@ -117,6 +117,26 @@ module Ls_discids : Unit_Result_Cmd =
         discids;
       Ok ()
 
+    let errors =
+      let doc = "List only the discids for which MusicBrainz
+                 responded with an error." in
+      Arg.(value & flag & info ["e"; "errors"] ~doc)
+
+    let duplicates =
+      let doc = "List only the discids for which MusicBrainz
+                 found more than one release." in
+      Arg.(value & flag & info ["d"; "duplicates"] ~doc)
+
+    let orphaned =
+      let doc = "List only the discids for which MusicBrainz
+                 found no matching release." in
+      Arg.(value & flag & info ["o"; "orphaned"] ~doc)
+
+    let unique =
+      let doc = "List only the discids for which MusicBrainz
+                 wound exacly one release." in
+      Arg.(value & flag & info ["u"; "unique"] ~doc)
+
     let ls_discid ~root (discid, _json) =
       match Taggable.of_discid_local ~root discid with
       | Error msg ->
@@ -141,17 +161,76 @@ module Ls_discids : Unit_Result_Cmd =
               (Option.value ~default:"???" t.Taggable.release.Mb_release.title)
          end
 
-    let f ~root () =
+    let ls_all ~root discids =
+      Ok (List.iter (ls_discid ~root) discids)
+
+    let ls_errors discids =
+      List.iter
+        (fun (discid, json) ->
+          match Mb_error.get_error_opt json with
+          | Some error -> Printf.printf "%s: %s\n" discid error
+          | None -> ())
+        discids;
+      Ok ()
+
+    let ls_duplicates ~root discids =
+      Result_list.iter
+        (fun (discid, _json) ->
+          let open Result.Syntax in
+          let* releases = Cached.releases_of_discid ~root discid in
+          match releases with
+          | [] | [_] -> Ok ()
+          | releases ->
+             Ok (Printf.printf "%s: %s\n" discid (String.concat " " releases)))
+        discids
+
+    let ls_orphaned ~root discids =
+      Result_list.iter
+        (fun (discid, json) ->
+          match Mb_error.get_error_opt json with
+          | Some _ -> Ok ()
+          | None ->
+             let open Result.Syntax in
+             let* releases = Cached.releases_of_discid ~root discid in
+             match releases with
+             | [] -> Ok (Printf.printf "%s\n" discid)
+             | _ -> Ok ())
+        discids
+
+    let ls_unique ~root discids =
+      Result_list.iter
+        (fun (discid, json) ->
+          let open Result.Syntax in
+          let* releases = Cached.releases_of_discid ~root discid in
+          match releases with
+          | [_] -> Ok (ls_discid ~root (discid, json))
+          | _ -> Ok ())
+        discids
+
+    let f ~root ~errors ~duplicates ~orphaned ~unique () =
       let open Result.Syntax in
       let* discids = Cached.Discid.all_local ~root in
-      Ok (List.iter (ls_discid ~root) discids)
+      if [errors; duplicates; orphaned; unique]
+         |> List.map (function true -> 1 | false -> 0) 
+         |> List.fold_left ( + ) 0 > 1 then
+        Error "pml ls discids: more than one of -e/-d/-o/-u"
+      else if errors then
+        ls_errors discids
+      else if duplicates then
+        ls_duplicates ~root discids
+      else if orphaned then
+        ls_orphaned ~root discids
+      else if unique then
+        ls_unique ~root discids
+      else
+        ls_all ~root discids
 
     let cmd =
       let open Cmd in
       let doc = "List the discids in the local cache." in
       make (info "discids" ~doc ~man) @@
-        let+ root in
-        f ~root ()
+        let+ root and+ errors and+ duplicates and+ orphaned and+ unique in
+        f ~root ~errors ~duplicates ~orphaned ~unique ()
 
   end
 

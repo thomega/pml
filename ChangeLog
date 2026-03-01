@@ -1,5 +1,6 @@
 2026-03-01  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
 
+	* pml ls discids: -e, -d, -o, -u options
 	* pml init creates cache directory recursively
 
 2026-02-28  Thorsten Ohl  <ohl@physik.uni-wuerzburg.de>
