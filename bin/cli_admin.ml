@@ -21,22 +21,6 @@ open Cli_common
 open Cmdliner
 open Cmdliner.Term.Syntax
 
-module Init : Unit_Result_Cmd =
-  struct
-
-    let man = [
-        `S Manpage.s_description;
-        `P "Initialize the cache." ] @ Common.man_footer
-
-    let cmd =
-      Cmd.(make (info "init" ~man)) @@
-        let+ root in
-        let open Result.Syntax in
-        let* () = Cached.init ~root in
-        Ok (Printf.printf "pml admin: initialized cache at '%s'\n" root)
-
-  end
-
 module Cachetest : Unit_Result_Cmd =
   struct
 
@@ -329,11 +313,11 @@ let man =
 
 let cmd =
   let open Cmd in
-  let doc = "For maintaining the local cache and debugging.
-             Only $(b,pml admin init) should be important for users." in
-  group (info "admin" ~doc ~man)
+  let doc = "Debug $(b,pml) and maintain the local cache.
+             This should not $(i,never) be used or necessary
+             to be used by users." in
+  group (info "xxx" ~doc ~man)
     [ JSON.cmd;
       Grep.cmd;
-      Init.cmd;
       Cachetest.cmd;
       Curl.cmd]

@@ -40,6 +40,54 @@ module type Table =
     val value_to_string : value -> (string, string) result
   end
 
+let mkdir ?(perm=0o755) path =
+  let perm = perm lor 0o700 in
+  let rec mkdir' path =
+    if Sys.file_exists path then
+      if Sys.is_directory path then
+        Ok ()
+      else
+        Error ("not a directory: " ^ path)
+    else
+      match mkdir' (Filename.dirname path) with
+      | Ok () ->
+         begin
+           try
+             Ok (Unix.mkdir path perm)
+           with
+           | e -> Error (Printexc.to_string e)
+         end
+      | Error _ as e -> e in
+  mkdir' path
+
+let%test_module _ =
+  (module struct
+
+     open Result.Syntax
+
+     let write_to path text =
+       let* () = mkdir (Filename.dirname path) in
+       try
+         Ok (Out_channel.with_open_text path (fun oc -> Out_channel.output_string oc text))
+       with
+       | e -> Error (Printexc.to_string e)
+
+     let read_from path =
+       In_channel.with_open_text path In_channel.input_all
+
+     let%test _ = mkdir "foo/bar" |> Result.is_ok
+     let%test _ = mkdir "foo/bar/baz" |> Result.is_ok
+     let%test _ = mkdir "foo" |> Result.is_ok
+     let%test _ = mkdir ~perm:0o000 "./bar/baz" |> Result.is_ok
+     let%test _ = mkdir "/foo/bar" |> Result.is_error
+
+     let%test _ =
+       let _ = write_to "foo/baz" "fubar" in
+       (mkdir "foo/baz/bar" = Error "not a directory: foo/baz")
+       && (read_from "foo/baz" = "fubar")
+
+   end)
+
 module Make (Table : Table) : T with type key = Table.key and type value = Table.value =
   struct
 
@@ -52,14 +100,14 @@ module Make (Table : Table) : T with type key = Table.key and type value = Table
     module IC = In_channel
     module OC = Out_channel
     
-    let is_directory name =
-      if Sys.file_exists name then
-        if Sys.is_directory name then
-          Ok name
+    let is_directory path =
+      if Sys.file_exists path then
+        if Sys.is_directory path then
+          Ok path
         else
-          Error ("not a directory: " ^ name)
+          Error ("not a directory: " ^ path)
       else
-        Error ("no such file or directory: " ^ name)
+        Error ("no such file or directory: " ^ path)
     
     let table ~root =
       let* root = is_directory root in
@@ -71,26 +119,7 @@ module Make (Table : Table) : T with type key = Table.key and type value = Table
       |> Result.map (fun path -> Filename.concat path key)
 
     let init ~root =
-      let path = Filename.concat root name in
-      if Sys.file_exists root then
-        if Sys.is_directory root then
-          if Sys.file_exists path then
-            if Sys.is_directory path then
-              Ok ()
-            else
-              Error ("Cache.init: not a directory: " ^ path)
-          else
-            try
-              Ok (Sys.mkdir path 0o755)
-            with
-            | exn -> Error (Printexc.to_string exn)
-        else
-          Error ("Cache.init: not a directory: " ^ root)
-      else
-        try
-          Ok (Sys.mkdir root 0o755; Sys.mkdir path 0o755)
-        with
-        | exn -> Error (Printexc.to_string exn)
+      mkdir (Filename.concat root name)
         
     let get ~root key =
       let* name = filename ~root key in

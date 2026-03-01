@@ -20,7 +20,6 @@
  (description "Cataloging and ripping physical discs with interface to MusicBrainz")
  (depends
    (ocaml (>= 5.04.0))
-   (fileutil (>= 0.6.6)) ; shall we use it for "mkdir -p" or make our own?
    (cmdliner (>= 2.1.0))
    (re (>= 1.14.0))   ; preferred regular expression matching, but not UTF-8 aware
    (pcre2 (>= 8.0.4)) ; convenient for grep'ping and sed-like editing. UTF-8 aware

@@ -162,8 +162,9 @@ let man = [
         and trigger updates." ] @ Common.man_footer
 
 let cmd =
+  let doc = "List the entries in the local cache for MusicBrainz database lookups." in
   let open Cmd in
-  group (info "ls" ~man)
+  group (info "ls" ~doc ~man)
     [ Ls_artists.cmd;
       Ls_releases.cmd;
       Ls_discids.cmd ]

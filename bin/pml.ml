@@ -280,6 +280,23 @@ module Disc : Unit_Result_Cmd =
 
 end
 
+module Init : Unit_Result_Cmd =
+  struct
+
+    let man = [
+        `S Manpage.s_description;
+        `P "Initialize the cache." ] @ Common.man_footer
+
+    let cmd =
+      let doc = "Initialize the local cache for MusicBrainz database lookups." in
+      Cmd.(make (info "init" ~doc ~man)) @@
+        let+ root in
+        let open Result.Syntax in
+        let* () = Cached.init ~root in
+        Ok (Printf.printf "pml: initialized cache at '%s'\n" root)
+
+  end
+
 module Version : Unit_Result_Cmd =
   struct
 
@@ -343,6 +360,7 @@ module Main : Unit_Result_Cmd =
           Medium.cmd;
           Editor.cmd;
           Ripper.cmd;
+          Init.cmd;
           Version.cmd;
           Cli_admin.cmd]
 

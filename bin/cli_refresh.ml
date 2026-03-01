@@ -150,8 +150,9 @@ let man = [
     `P "Refresh the contents of the local cache." ] @ Common.man_footer
 
 let cmd =
+  let doc = "Refresh entries in the local cache for MusicBrainz database lookups." in
   let open Cmd in
-  group (info "refresh" ~man)
+  group (info "refresh" ~doc ~man)
     [ Refresh_artists.cmd;
       Refresh_releases.cmd;
       Refresh_discids.cmd ]
