@@ -10,6 +10,7 @@ tags: ["music" "media"]
 depends: [
   "dune" {>= "3.20"}
   "ocaml" {>= "5.04.0"}
+  "fileutil" {>= "0.6.6"}
   "cmdliner" {>= "2.1.0"}
   "re" {>= "1.14.0"}
   "pcre2" {>= "8.0.4"}

@@ -81,14 +81,14 @@ module Make (Table : Table) : T with type key = Table.key and type value = Table
               Error ("Cache.init: not a directory: " ^ path)
           else
             try
-              Ok (Sys.mkdir path 0o700)
+              Ok (Sys.mkdir path 0o755)
             with
             | exn -> Error (Printexc.to_string exn)
         else
           Error ("Cache.init: not a directory: " ^ root)
       else
         try
-          Ok (Sys.mkdir root 0o700; Sys.mkdir path 0o700)
+          Ok (Sys.mkdir root 0o755; Sys.mkdir path 0o755)
         with
         | exn -> Error (Printexc.to_string exn)
         
