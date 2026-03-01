@@ -39,7 +39,7 @@ module type T =
         and not an error. *)
 
     val all_local : root:string -> ((string * string) list, string) result
-    (** Return the cached [key] JSON pairs. *)
+    (** Return the cached [(key, json)] pairs. *)
 
     val url : string -> (string, string) result
     (** Return the URL for querying Musicbrainz for the entry corresponding to a key.

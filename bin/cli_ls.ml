@@ -117,35 +117,34 @@ module Ls_discids : Unit_Result_Cmd =
         discids;
       Ok ()
 
+    let ls_discid ~root (discid, _json) =
+      match Taggable.of_discid_local ~root discid with
+      | Error msg ->
+         begin match Cached.releases_of_discid ~root discid with
+         | Error msg ->
+            Printf.printf "%s error: %s\n" discid msg
+         | Ok releases ->
+            Printf.printf "%s -> %s\n%s\n" discid (String.concat " " releases) msg
+         end
+      | Ok t ->
+         begin match t.Taggable.medium.Mb_medium.title with
+         | Some medium ->
+            Printf.printf
+              "%s '%s' '%s'\n"
+              t.Taggable.discid
+              (Option.value ~default:"???" t.Taggable.release.Mb_release.title)
+              medium
+         | None ->
+            Printf.printf
+              "%s '%s'\n"
+              t.Taggable.discid
+              (Option.value ~default:"???" t.Taggable.release.Mb_release.title)
+         end
+
     let f ~root () =
       let open Result.Syntax in
       let* discids = Cached.Discid.all_local ~root in
-      List.map fst discids
-      |> List.iter
-           (fun discid ->
-             match Taggable.of_discid_local ~root discid with
-             | Error msg ->
-                begin match Cached.releases_of_discid ~root discid with
-                | Error msg ->
-                   Printf.printf "%s error: %s\n" discid msg
-                | Ok releases ->
-                   Printf.printf "%s -> %s\n%s\n" discid (String.concat " " releases) msg
-                end
-             | Ok t ->
-                begin match t.Taggable.medium.Mb_medium.title with
-                | Some medium ->
-                Printf.printf
-                  "%s '%s' '%s'\n"
-                  t.Taggable.discid
-                  (Option.value ~default:"???" t.Taggable.release.Mb_release.title)
-                  medium
-                | None ->
-                   Printf.printf
-                     "%s '%s'\n"
-                     t.Taggable.discid
-                     (Option.value ~default:"???" t.Taggable.release.Mb_release.title)
-                end);
-      Ok ()
+      Ok (List.iter (ls_discid ~root) discids)
 
     let cmd =
       let open Cmd in
