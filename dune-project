@@ -19,7 +19,7 @@
  (synopsis "Physical Media Library")
  (description "Cataloging and ripping physical discs with interface to MusicBrainz")
  (depends
-   (ocaml (>= 5.04.0))
+   (ocaml (>= 5.05.0))
    (cmdliner (>= 2.1.0))
    (re (>= 1.14.0))   ; preferred regular expression matching, but not UTF-8 aware
    (pcre2 (>= 8.0.4)) ; convenient for grep'ping and sed-like editing. UTF-8 aware
