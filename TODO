@@ -21,9 +21,9 @@ Nice to have:
 
 Future enhancements:
 
- * make directory- and filenames configurable (templates)
+ * make directory- and filenames configurable (templates, Picard compatible?)
 
- * make tagging configurable (templates)
+ * make tagging configurable (templates, Picard compatible?)
 
  * change artists roles: select from disambiguation or add new ones
 
