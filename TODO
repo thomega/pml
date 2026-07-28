@@ -2,6 +2,13 @@ Bugs/Urgent:
 
  * find a good replacement for question marks in file names to make Android happy.
 
+Important:
+
+ * Find a new name: PML is also the name of a proof assistent
+   (https://github.com/rlepigre/pml).  The GitHub repo has not
+   been touched for 5 years, but it would be nice to avoid a
+   a name clash.
+
 Nice to have:
 
  * make refresh release default to the releases mentioned in the discid
